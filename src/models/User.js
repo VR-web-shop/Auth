@@ -15,7 +15,7 @@ Role.hasMany(User);
 
 // Sync the table
 Database.sync().then(() => {
-    console.log('Role table created successfully!');
+    console.log('User table created successfully!');
 }).catch((error) => {
     console.error('Unable to create table : ', error);
 });
