@@ -1,14 +1,25 @@
 import { DataTypes } from 'sequelize';
 import Database from './Database.js';
 
-// Define the model
+const ROLES = {
+    ADMIN: 'admin',
+    MEMBER: 'member',
+    GUEST: 'guest'
+};
+
 const Role = Database.define("Role", {
-    title: DataTypes.STRING,
+    title: {
+        type: DataTypes.STRING,
+        allowNull: false, 
+        primaryKey: true
+    },
 });
 
-// Sync the table
 Database.sync().then(() => {
     console.log('Role table created successfully!');
+    Role.findOrCreate({ where: { title: ROLES.ADMIN } });
+    Role.findOrCreate({ where: { title: ROLES.MEMBER } });
+    Role.findOrCreate({ where: { title: ROLES.GUEST } });
 }).catch((error) => {
     console.error('Unable to create table : ', error);
 });
@@ -19,7 +30,7 @@ Database.sync().then(() => {
  * @returns {Promise<Role>}
  */
 export const defaultRole = async () => {
-    return await Role.findOne({ where: { title: 'member' } });
+    return await Role.findOne({ where: { title: ROLES.MEMBER } });
 }
 
 export default Role;

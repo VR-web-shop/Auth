@@ -3,17 +3,36 @@ import Database from './Database.js';
 import Role from './Role.js';
 import bcrypt from 'bcrypt';
 
-// Define the model
 const User = Database.define("User", {
-    username: DataTypes.STRING,
-    password: DataTypes.STRING,
+    uuid: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true
+    },
+    email: {
+        type: DataTypes.STRING,
+        allowNull: false, 
+        unique: true
+    },
+    password: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+}, {
+    hooks: {
+        beforeCreate: hashPassword,
+        beforeUpdate: hashPassword
+    }
 });
 
-// Define relationships
-User.belongsTo(Role);
+User.belongsTo(Role, { 
+    foreignKey: { 
+        name: 'title',
+        allowNull: false 
+    }
+});
 Role.hasMany(User);
 
-// Sync the table
 Database.sync().then(() => {
     console.log('User table created successfully!');
 }).catch((error) => {
@@ -21,13 +40,23 @@ Database.sync().then(() => {
 });
 
 /**
+ * @function hashPassword
+ * @description Hash the password
+ * @param {User} user
+ * @returns {Promise<void>}
+ */
+async function hashPassword(user) {
+    user.password = await bcrypt.hash(user.password, 10);
+}
+
+/**
  * @function verifyPassword
- * @description Verify the password of a user
+ * @description Verify the password
  * @param {string} password
  * @param {User} user
  * @returns {Promise<boolean>}
  */
-export const verifyPassword = async (password, user) => {
+export async function verifyPassword(password, user) {
     return await bcrypt.compare(password, user.password);
 }
 

@@ -1,6 +1,14 @@
 import Jwt from 'jsonwebtoken';
 
-const Authorize = function(req, res, next) {
+/**
+ * @function MiddlewareJWT
+ * @description A middleware function to authenticate a JSON Web Token
+ * @param {Request} req
+ * @param {Response} res
+ * @param {NextFunction} next
+ * @returns {void}
+ */
+const MiddlewareJWT = function(req, res, next) {
     const token = req.headers['authorization'];
     if (!token) {
         return res.status(401).send({ message: 'No token provided' });
@@ -15,4 +23,4 @@ const Authorize = function(req, res, next) {
     }
 }
 
-export default Authorize;
+export default MiddlewareJWT;
