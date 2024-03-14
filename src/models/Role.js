@@ -17,9 +17,9 @@ const Role = Database.define("Role", {
 
 Database.sync().then(() => {
     console.log('Role table created successfully!');
-    Role.findOrCreate({ where: { title: ROLES.ADMIN } });
-    Role.findOrCreate({ where: { title: ROLES.MEMBER } });
-    Role.findOrCreate({ where: { title: ROLES.GUEST } });
+    Object.keys(ROLES).forEach((role) => {
+        Role.findOrCreate({ where: { title: ROLES[role] } });
+    });
 }).catch((error) => {
     console.error('Unable to create table : ', error);
 });
