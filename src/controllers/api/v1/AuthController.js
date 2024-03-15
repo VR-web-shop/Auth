@@ -1,66 +1,110 @@
-import User, { verifyPassword } from "../../../models/User.js";
-import Role from "../../../models/Role.js";
-import AuthJWT from "../../../jwt/AuthenticateJWT.js";
+import APIActorError from "../errors/APIActorError.js";
+import AuthService from "../../../services/AuthService.js";
 import express from 'express';
 
 const router = express.Router()
 
-/**
- * @description Generate a new access token and a refresh token
- * @param {string} email
- * @param {string} password
- * @returns {Response}
- */
-router.post('/api/v1/authenticate', async (req, res) => {
-    const { email, password } = req.body
+router.route('/api/v1/auth')
+    /**
+     * @openapi
+     * '/api/v1/auth':
+     *  post:
+     *     tags:
+     *       - Auth Controller
+     *     summary: Authenticate a user
+     *     requestBody:
+     *      required: true
+     *      content:
+     *        application/json:
+     *           schema:
+     *            type: object
+     *            required:
+     *              - email
+     *              - password
+     *            properties:
+     *              email:
+     *                type: string
+     *                default: member@example.com
+     *              password:
+     *                type: string
+     *                default: SuperSecretPassword
+     *     responses:
+     *      200:
+     *        description: OK
+     *        content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               access_token:
+     *                 type: string
+     *      400:
+     *        description: Bad Request
+     *      404:
+     *        description: Not Found
+     *      401:
+     *        description: Unauthorized
+     *      500:
+     *        description: Internal Server Error
+     */
+    .post(async (req, res) => {
+        try {
+            const request = new AuthService.AuthRequest.CreateRequest(req.body)
+            const { response, refresh_token } = await AuthService.create(request)
 
-    if (!email) {
-        return res.status(400).send({ message: 'E-mail is required' })
-    }
+            res.cookie('refresh_token', refresh_token, { httpOnly: true })
+            res.send(response)
+        } catch (error) {
+            if (error instanceof APIActorError) {
+                return res.status(error.statusCode).send({ message: error.message })
+            }
 
-    if (!password) {
-        return res.status(400).send({ message: 'Password is required' })
-    }
-
-    const user = await User.findOne({ where: { email }, include: Role })
-    if (!user) {
-        return res.status(401).send({ message: 'User not found' })
-    }
-
-    if (!await verifyPassword(password, user)) {
-        return res.status(401).send({ message: 'Invalid password' })
-    }
-
-    const { access_token, refresh_token } = AuthJWT.NewAuthentication(user.uuid, user.title)
-
-    res.cookie('refresh_token', refresh_token, { httpOnly: true })
-    res.send({ access_token, refresh_token })
-})
-
-/**
- * @description Refresh the access token
- * @param {string} refresh_token
- * @returns {Response}
- */
-router.post('/api/v1/refresh_authentication', (req, res) => {
-    if (!req.cookies.refresh_token) {
-        return res.status(401).send({ message: 'Unauthorized' })
-    }
-
-    try {
-        const { refresh_token } = req.cookies
-        AuthJWT.RefreshAuthentication(refresh_token, (access_token) => {
-            res.send({ access_token })
-        })
-    } catch (error) {
-        if (error instanceof AuthJWT.RefreshTokenError) {
-            return res.status(401).send({ message: 'Unauthorized' })
+            console.error(error)
+            return res.status(500).send({ message: 'Internal Server Error' })
         }
+    })
+    /**
+     * @openapi
+     * '/api/v1/auth':
+     *  put:
+     *     tags:
+     *       - Auth Controller
+     *     summary: Reauthenticate a user
+     *     parameters:
+     *       - in: cookie
+     *         name: refresh_token
+     *     responses:
+     *      200:
+     *        description: OK
+     *        content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               access_token:
+     *                 type: string
+     *      400:
+     *        description: Bad Request
+     *      404:
+     *        description: Not Found
+     *      401:
+     *        description: Unauthorized
+     *      500:
+     *        description: Internal Server Error
+     */
+    .put(async (req, res) => {
+        try {
+            const request = new AuthService.AuthRequest.RefreshRequest(req.cookies)
+            const response = await AuthService.refresh(request)
+            res.send(response)
+        } catch (error) {
+            if (error instanceof APIActorError) {
+                return res.status(error.statusCode).send({ message: error.message })
+            }
 
-        console.error(error)
-
-        return res.status(500).send({ message: 'Internal Server Error' })
-    }    
-})
+            console.error(error)
+            return res.status(500).send({ message: 'Internal Server Error' })
+        }
+    })
 
 export default router;

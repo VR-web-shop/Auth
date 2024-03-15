@@ -7,23 +7,17 @@ $ npm install
 ```
 $ cp .env.example .env
 ```
+3. Seed Database
+```
+$ npm run seed
+```
 
 # Usage
 ```
 npm start
 ```
 
-# API
+# API Documentation
+1. Start Server
+2. Visit [localhost:3000/api/v1/documentation](http://localhost:3000/api/v1/documentation) for Swagger UI
 
-## Users
-
-**POST** api/v1/users {email, password}
-Register a new user.
-
-## Authentication
-
-**POST** api/v1/authenticate {email, password} => {access_token}, Cookie: refresh_token
-Login a user
-
-**POST** api/v1/refresh_authentication Cookie: refresh_token => {access_token}
-Refresh an access token

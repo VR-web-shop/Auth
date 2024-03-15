@@ -1,4 +1,6 @@
 import Jwt from 'jsonwebtoken';
+import InvalidRefreshTokenError from './errors/InvalidRefreshTokenError.js';
+import AuthenticateJWTArgumentError from './errors/AuthenticateJWTArgumentError.js';
 
 const {
     JWT_ACCESS_SECRET, JWT_ACCESS_EXPIRES_IN,
@@ -6,31 +8,20 @@ const {
 } = process.env;
 
 /**
- * @class RefreshTokenError
- * @description An error describing an invalid refresh token.
- * If this error is thrown, the provided refresh token is invalid.
- * @extends Error
- */
-class RefreshTokenError extends Error {
-    constructor(message) {
-        super(message);
-        this.name = 'RefreshTokenError';
-    }
-}
-
-/**
  * @function NewAuthentication
  * @description Generate a JSON Web Token and a Refresh Token
  * @param {number} userID
  * @param {string} role
- * @returns {object} 
+ * @returns {Object} { access_token, refresh_token }
+ * @throws {AuthenticateJWTArgumentError} if uuid is not a string
+ * @throws {AuthenticateJWTArgumentError} if role is not a string
  */
 const NewAuthentication = function (uuid, role) {
-    if (!uuid) throw new Error('uuid is required');
-    if (typeof uuid !== 'string') throw new Error('uuid must be a string');
+    if (!uuid) throw new AuthenticateJWTArgumentError('uuid is required');
+    if (typeof uuid !== 'string') throw new AuthenticateJWTArgumentError('uuid must be a string');
 
-    if (!role) throw new Error('role is required');
-    if (typeof role !== 'string') throw new Error('role must be a string');
+    if (!role) throw new AuthenticateJWTArgumentError('role is required');
+    if (typeof role !== 'string') throw new AuthenticateJWTArgumentError('role must be a string');
 
     const iat = new Date().getTime() / 1000;
     const payload = { iat, sub: uuid, role };
@@ -50,29 +41,34 @@ const NewAuthentication = function (uuid, role) {
  * @function RefreshAuthentication
  * @description Refresh a JSON Web Token
  * @param {string} refreshToken
- * @returns {object} 
+ * @returns {Promise<Object>} access_token
+ * @throws {AuthenticateJWTArgumentError} if refreshToken is not a string
+ * @throws {AuthenticateJWTArgumentError} if callback is not a function
+ * @throws {InvalidRefreshTokenError} if the refresh token is invalid
  */
-const RefreshAuthentication = async function (refreshToken, callback) {
-    if (!refreshToken) throw new Error('refreshToken is required');
-    if (typeof refreshToken !== 'string') throw new Error('refreshToken must be a string');
+const RefreshAuthentication = async function (refreshToken) {
+    if (!refreshToken) throw new AuthenticateJWTArgumentError('refreshToken is required');
+    if (typeof refreshToken !== 'string') throw new AuthenticateJWTArgumentError('refreshToken must be a string');
 
-    Jwt.verify(refreshToken, JWT_REFRESH_SECRET, (err, decoded) => {
-        if (err) {
-            throw new RefreshTokenError('Unauthorized');
-        } else {
-            const iat = new Date().getTime() / 1000;
-            const payload = { iat, sub: decoded.sub, role: decoded.role };
-            const accessToken = Jwt.sign(payload, JWT_ACCESS_SECRET, { 
-                expiresIn: JWT_ACCESS_EXPIRES_IN 
-            });
+    return new Promise((resolve, reject) => {
+        Jwt.verify(refreshToken, JWT_REFRESH_SECRET, (err, decoded) => {
+            if (err) {
+                reject(new InvalidRefreshTokenError());
+            } else {
+                const iat = new Date().getTime() / 1000;
+                const payload = { iat, sub: decoded.sub, role: decoded.role };
+                const accessToken = Jwt.sign(payload, JWT_ACCESS_SECRET, { 
+                    expiresIn: JWT_ACCESS_EXPIRES_IN 
+                });
 
-            callback(accessToken);
-        }
+                resolve(accessToken);
+            }
+        });
     });
 }
 
 export default { 
     NewAuthentication, 
     RefreshAuthentication,
-    RefreshTokenError
+    InvalidRefreshTokenError
 }

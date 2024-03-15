@@ -1,3 +1,4 @@
+import ModelArgumentError from './errors/ModelArgumentError.js';
 import { DataTypes } from 'sequelize';
 import Database from './Database.js';
 import Role from './Role.js';
@@ -25,19 +26,8 @@ const User = Database.define("User", {
     }
 });
 
-User.belongsTo(Role, { 
-    foreignKey: { 
-        name: 'title',
-        allowNull: false 
-    }
-});
+User.belongsTo(Role);
 Role.hasMany(User);
-
-Database.sync().then(() => {
-    console.log('User table created successfully!');
-}).catch((error) => {
-    console.error('Unable to create table : ', error);
-});
 
 /**
  * @function hashPassword
@@ -55,8 +45,21 @@ async function hashPassword(user) {
  * @param {string} password
  * @param {User} user
  * @returns {Promise<boolean>}
+ * @throws {ModelArgumentError}
  */
 export async function verifyPassword(password, user) {
+    if (!password) {
+        throw new ModelArgumentError('Password is required');
+    }
+
+    if (!user) {
+        throw new ModelArgumentError('User is required');
+    }
+
+    if (!user.password) {
+        throw new ModelArgumentError('User.password is missing');
+    }
+
     return await bcrypt.compare(password, user.password);
 }
 
