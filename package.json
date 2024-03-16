@@ -3,7 +3,7 @@
   "version": "1.0.2",
   "description": "",
   "type": "module",
-  "module": "./dist_contract_api/bundle.js",
+  "main": "/dist_contract_api/bundle.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon index.js",
