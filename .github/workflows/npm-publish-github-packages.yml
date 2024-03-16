@@ -41,7 +41,7 @@ jobs:
         with:
             token: ${{ secrets.PACKAGES_TOKEN }}
             commit-message: Bump version
-            branch: contract-release
+            branch: main
 
       - run: npm ci
       - run: npm run bundle_contract
