@@ -27,14 +27,9 @@ jobs:
       - name: Bump version and push tag
         uses: phips28/gh-action-bump-version@master
         with:
-          push: true
-          push_tag: true
-          push_branch: true
-          push_description: true
-          push_changes: true
-          version: patch
-          token: ${{secrets.GITHUB_TOKEN }}
-          
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - uses: actions/setup-node@v3
         with:
           node-version: 18
