@@ -1,23 +1,11 @@
-name: Node.js Package Publish
+name: Node.js Package Patch Version
 
 on:
   push:
     branches:
-      - contract-release
+      - contract-patch
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
-      - run: npm ci
-      - run: npm run bundle_contract
-
-  publish-gpr:
-    needs: build
+  prepare-release:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -33,17 +21,12 @@ jobs:
         run: |
           git config --global user.email "test@example.com"
           git config --global user.name "test"
+      - name: Bump version
+        run: npm version patch
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
         with:
             token: ${{ secrets.PACKAGES_TOKEN }}
-            commit-message: Merge contract into main
-            branch: main
-
-      - run: npm ci
-      - run: npm run bundle_contract
-      - run: npm publish
-
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN }}
+            commit-message: Bump version
+            branch: contract-release
