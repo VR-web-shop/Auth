@@ -2,7 +2,7 @@ git add .
 git commit -m "Prepare deployment"
 
 # Bumb version
-npm run version patch
+npm version patch
 
 # Commit changes
 git add .
