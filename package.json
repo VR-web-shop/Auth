@@ -10,7 +10,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon index.js",
     "seed": "node seed.js",
-    "bundle_contract": "rollup --config rollup.config.mjs"
+    "bundle_contract": "rollup --config rollup.config.mjs",
+    "deploy_contract": "bash contract_deploy.sh"
   },
   "repository": {
     "type": "git",
