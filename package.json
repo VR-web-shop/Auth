@@ -1,9 +1,11 @@
 {
   "name": "@vr-web-shop/auth",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "",
   "type": "module",
-  "main": "/dist_contract_api/bundle.js",
+  "files": [
+    "/dist_contract_api"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon index.js",
