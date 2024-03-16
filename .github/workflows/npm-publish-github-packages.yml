@@ -44,6 +44,5 @@ jobs:
       - run: npm ci
       - run: npm run bundle_contract
       - run: npm publish
-
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN }}
