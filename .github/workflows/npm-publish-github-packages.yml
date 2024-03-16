@@ -23,13 +23,8 @@ jobs:
       contents: read
       packages: write
     steps:
-      - name: "Checkout"
       - uses: actions/checkout@v3
-
-      - name: "Automated Version Bump"
-        uses: "phips28/gh-action-bump-version@master"
-
-      - name: Set up Node.js
+      - uses: "phips28/gh-action-bump-version@master"
       - uses: actions/setup-node@v3
         with:
           node-version: 18
