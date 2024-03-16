@@ -4,7 +4,7 @@ npm version patch
 
 # Commit changes
 git add .
-git commit -m "Bump version to $(npm version)"
+git commit -m "Bump version"
 
 # Push changes
 git push origin main
