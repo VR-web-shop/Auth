@@ -21,6 +21,6 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
         with:
-            token: ${{ secrets.GITHUB_TOKEN }}
+            token: ${{ secrets.PACKAGES_TOKEN }}
             commit-message: Bump version
             branch: contract-release
