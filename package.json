@@ -1,5 +1,5 @@
 {
-  "name": "@VR-web-shop/auth",
+  "name": "@vr-web-shop/auth",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -15,6 +15,7 @@
     "url": "git+https://github.com/VR-web-shop/Auth.git"
   },
   "publishConfig": {
+    "access": "public",
     "registry": "https://npm.pkg.github.com/VR-web-shop",
     "module": "./dist_contract_api/bundle.js"
   },
