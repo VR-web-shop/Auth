@@ -3,6 +3,7 @@
   "version": "1.0.4",
   "description": "",
   "type": "module",
+  "main": "/dist_contract_api/bundle.js",
   "files": [
     "/dist_contract_api"
   ],
