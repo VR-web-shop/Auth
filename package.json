@@ -12,11 +12,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/VR-web-shop/Auth.git"
+    "url": "git+https://github.com/vr-web-shop/Auth.git"
   },
   "publishConfig": {
     "access": "public",
-    "registry": "https://npm.pkg.github.com/VR-web-shop",
+    "registry": "https://npm.pkg.github.com/vr-web-shop",
     "module": "./dist_contract_api/bundle.js"
   },
   "author": "",
