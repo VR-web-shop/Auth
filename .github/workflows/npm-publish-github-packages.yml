@@ -33,12 +33,14 @@ jobs:
         run: |
           git config --global user.email "test@example.com"
           git config --global user.name "test"
+      - name: Bump version
+        run: npm version patch
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
         with:
             token: ${{ secrets.PACKAGES_TOKEN }}
-            commit-message: Merge contract into main
+            commit-message: Bump version
             branch: main
 
       - run: npm ci
