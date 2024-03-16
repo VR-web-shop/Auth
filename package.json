@@ -15,6 +15,7 @@
     "url": "git+https://github.com/VR-web-shop/Auth.git"
   },
   "publishConfig": {
+    "name": "@VR-web-shop/auth",
     "registry": "https://npm.pkg.github.com/VR-web-shop",
     "module": "./dist_contract_api/bundle.js"
   },
