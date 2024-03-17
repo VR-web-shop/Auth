@@ -1,6 +1,6 @@
 {
   "name": "@vr-web-shop/auth",
-  "version": "1.0.19",
+  "version": "1.0.20",
   "description": "",
   "type": "module",
   "main": "/dist_sdk/bundle.js",
