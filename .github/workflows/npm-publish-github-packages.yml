@@ -3,7 +3,7 @@ name: Node.js Package Publish
 on:
   push:
     branches:
-      - contract-release
+      - sdk-release
 
 jobs:
   build:
@@ -14,7 +14,7 @@ jobs:
         with:
           node-version: 18
       - run: npm ci
-      - run: npm run bundle_contract
+      - run: npm run bundle_sdk
 
   publish-gpr:
     needs: build
@@ -30,7 +30,7 @@ jobs:
           registry-url: https://npm.pkg.github.com/
 
       - run: npm ci
-      - run: npm run bundle_contract
+      - run: npm run bundle_sdk
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN }}

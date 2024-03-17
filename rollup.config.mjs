@@ -1,10 +1,9 @@
 
 
 export default {
-	input: 'contract_api.js',
+	input: 'sdk.js',
 	output: {
-		file: './dist_contract_api/bundle.js',
+		file: './dist_sdk/bundle.js',
 		format: 'cjs'
-	},
-	external: ['jsonwebtoken']
+	}
 };

@@ -24,4 +24,4 @@ dist-ssr
 *.sw?
 
 .env
-dist_contract_api
+dist_sdk

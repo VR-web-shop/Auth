@@ -12,18 +12,18 @@ git commit -m "Bump version"
 git push origin main
 
 # Check if the contract release branch exists
-if [ -z "$(git branch --list contract-release)" ]; then
+if [ -z "$(git branch --list sdk-release)" ]; then
   # Create the contract release branch
-  git checkout -b contract-release
+  git checkout -b sdk-release
 else
-    # Checkout the contract release branch
-    git checkout contract-release
+    # Checkout the sdk release branch
+    git checkout sdk-release
     # Merge the main branch
     git merge main
 fi
 
 # Push changes
-git push origin contract-release
+git push origin sdk-release
 
 # Checkout the main branch
 git checkout main

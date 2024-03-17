@@ -3,16 +3,16 @@
   "version": "1.0.6",
   "description": "",
   "type": "module",
-  "main": "/dist_contract_api/bundle.js",
+  "main": "/dist_sdk/bundle.js",
   "files": [
-    "/dist_contract_api"
+    "/dist_sdk"
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon index.js",
     "seed": "node seed.js",
-    "bundle_contract": "rollup --config rollup.config.mjs",
-    "deploy_contract": "bash contract_deploy.sh"
+    "bundle_sdk": "rollup --config rollup.config.mjs",
+    "deploy_sdk": "bash sdk_deploy.sh"
   },
   "repository": {
     "type": "git",
