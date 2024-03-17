@@ -59,7 +59,7 @@ async function create(createRequest) {
         throw new ServiceEntityDuplicateValueError('Email already in use')
     }
 
-    const user = await User.create({ email, password, RoleName: DEFAULT_ROLE })
+    const user = await User.create({ email, password, role_name: DEFAULT_ROLE })
     const { access_token, refresh_token } = AuthenticateJWT.NewAuthentication(user.uuid, DEFAULT_ROLE)
     const response = new AuthResponse(access_token)
 
@@ -80,7 +80,7 @@ async function update(updateRequest) {
         throw new ServiceArgumentError('Invalid request')
     }
 
-    const { uuid, email, password, newPassword } = updateRequest
+    const { uuid, email, password, new_password } = updateRequest
     const user = await User.findOne({ where: { uuid } })
 
     if (email && await User.findOne({ where: { email } })) {
@@ -96,7 +96,7 @@ async function update(updateRequest) {
     }
 
     if (email && email !== user.email) user.email = email
-    if (newPassword) user.password = newPassword
+    if (new_password) user.password = new_password
     await user.save()
     
     return new UserResponse(user)

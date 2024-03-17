@@ -18,9 +18,9 @@ export default class UserResponse {
      * @throws {DTOArgumentError} If user is not provided
      * @throws {DTOResponseParameterError} If user does not contain a uuid
      * @throws {DTOResponseParameterError} If user does not contain an email
-     * @throws {DTOResponseParameterError} If user does not contain a createdAt
-     * @throws {DTOResponseParameterError} If user does not contain an updatedAt
-     * @throws {DTOResponseParameterError} If user does not contain a RoleName
+     * @throws {DTOResponseParameterError} If user does not contain a created_at
+     * @throws {DTOResponseParameterError} If user does not contain an updated_at
+     * @throws {DTOResponseParameterError} If user does not contain a role_name
      */
     constructor(user) {
         if (!user) {
@@ -35,22 +35,22 @@ export default class UserResponse {
             throw new DTOResponseParameterError('User email is required');
         }
 
-        if (!user.createdAt) {
-            throw new DTOResponseParameterError('User createdAt is required');
+        if (!user.created_at) {
+            throw new DTOResponseParameterError('User created_at is required');
         }
 
-        if (!user.updatedAt) {
-            throw new DTOResponseParameterError('User updatedAt is required');
+        if (!user.updated_at) {
+            throw new DTOResponseParameterError('User updated_at is required');
         }
 
-        if (!user.RoleName) {
-            throw new DTOResponseParameterError('User RoleName is required');
+        if (!user.role_name) {
+            throw new DTOResponseParameterError('User role_name is required');
         }
 
         this.uuid = user.uuid
         this.email = user.email
-        this.created_at = user.createdAt
-        this.updated_at = user.updatedAt
-        this.role_name = user.RoleName
+        this.created_at = user.created_at
+        this.updated_at = user.updated_at
+        this.role_name = user.role_name
     }
 }

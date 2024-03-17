@@ -12,15 +12,17 @@ export default class AuthenticationResponse {
      * @param {string} access_token
      * @throws {DTOArgumentError} If access_token is not provided
      */
-    constructor(access_token) {
+    constructor(body) {
+        if (!body) {
+            throw new DTOArgumentError('Body is required');
+        }
+
+        const { access_token } = body;
+
         if (!access_token) {
             throw new DTOArgumentError('Access token is required');
         }
 
         this.access_token = access_token;
-    }
-
-    static fromJSON(json) {
-        return new AuthenticationResponse(json.access_token);
     }
 }

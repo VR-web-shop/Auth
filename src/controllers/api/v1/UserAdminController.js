@@ -141,7 +141,7 @@ router.route('/api/v1/admin/users')
     *           default: new_admin@example.com
     *          password:
     *           type: string
-    *           default: SuperSecretPassword
+    *           default: 12345678
     *          role_name:
     *           type: string
     *           default: admin
@@ -215,7 +215,7 @@ router.route('/api/v1/admin/users')
     *           default: new_admin2@example.com
     *          password:
     *           type: string
-    *           default: SuperSecretPassword2
+    *           default: 12345678
     *          role_name:
     *           type: string
     *           default: member

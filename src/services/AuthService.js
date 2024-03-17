@@ -32,8 +32,8 @@ async function create(createRequest) {
         throw new ServiceIncorectPasswordError('Invalid password')
     }
 
-    const { access_token, refresh_token } = AuthJWT.NewAuthentication(user.uuid, user.RoleName)
-    const response = new AuthResponse(access_token)
+    const { access_token, refresh_token } = AuthJWT.NewAuthentication(user.uuid, user.role_name)
+    const response = new AuthResponse({access_token})
 
     return {response, refresh_token}
 }
@@ -53,7 +53,7 @@ async function refresh(refreshRequest) {
 
     const { refresh_token } = refreshRequest
     const access_token = await AuthJWT.RefreshAuthentication(refresh_token)
-    const reponse = new AuthResponse(access_token)
+    const reponse = new AuthResponse({access_token})
 
     return reponse
 }

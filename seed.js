@@ -6,7 +6,7 @@ import User from './src/models/User.js';
 
 (async () => {
     try {
-        await Database.sync();
+        await Database.sync({ force: true });
     } catch (error) {
         console.log('Error syncing database: ', error);
     }
@@ -17,12 +17,12 @@ import User from './src/models/User.js';
 
     await (async () => {
         const { ADMIN_EMAIL: email, ADMIN_PASSWORD: password } = process.env;
-        await User.findOrCreate({ where: { email, password, RoleName: ROLES.ADMIN } });
+        await User.findOrCreate({ where: { email, password, role_name: ROLES.ADMIN } });
     })();
 
     await (async () => {
         const email = 'member@example.com';
         const password = 'SuperSecretPassword';
-        await User.findOrCreate({ where: { email, password, RoleName: ROLES.MEMBER } });
+        await User.findOrCreate({ where: { email, password, role_name: ROLES.MEMBER } });
     })();
 })();

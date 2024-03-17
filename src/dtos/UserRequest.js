@@ -42,7 +42,7 @@ class CreateRequest {
  * @property {string} uuid
  * @property {string} email
  * @property {string} password
- * @property {string} newPassword
+ * @property {string} new_password
  */
 class UpdateRequest {
 
@@ -63,7 +63,7 @@ class UpdateRequest {
             throw new DTOArgumentError('UUID is required');
         }
 
-        const { email, password, newPassword } = body;
+        const { email, password, new_password } = body;
 
         if (!password) {
             throw new DTORequestParameterError('Password is required');
@@ -72,7 +72,7 @@ class UpdateRequest {
         this.uuid = uuid;
         this.email = email;
         this.password = password;
-        this.newPassword = newPassword;
+        this.new_password = new_password;
     }
 }
 
@@ -171,7 +171,7 @@ class AdminFindAllRequest {
  * @classdesc DTO for admin user creation requests
  * @property {string} email
  * @property {string} password
- * @property {string} RoleName
+ * @property {string} role_name
  */
 class AdminCreateRequest extends CreateRequest {
 
@@ -191,7 +191,7 @@ class AdminCreateRequest extends CreateRequest {
             throw new DTORequestParameterError('Role name is required');
         }
 
-        this.RoleName = role_name;
+        this.role_name = role_name;
     }
 }
 
@@ -201,7 +201,7 @@ class AdminCreateRequest extends CreateRequest {
  * @property {string} uuid
  * @property {string} email
  * @property {string} password
- * @property {string} RoleName
+ * @property {string} role_name
  */
 class AdminUpdateRequest {
 
@@ -225,7 +225,7 @@ class AdminUpdateRequest {
         this.uuid = uuid;
         this.email = email;
         this.password = password;
-        this.RoleName = role_name;
+        this.role_name = role_name;
     }
 }
 

@@ -52,17 +52,17 @@ async function create(adminCreateRequest) {
         throw new ServiceArgumentError('adminCreateRequest must be an instance of UserRequest.AdminCreateRequest');
     }
 
-    const { email, password, RoleName } = adminCreateRequest
+    const { email, password, role_name } = adminCreateRequest
 
     if (await User.findOne({ where: { email } })) {
         throw new ServiceEntityDuplicateValueError('Email already in use')
     }
 
-    if (!Object.values(ROLES).includes(RoleName)) {
+    if (!Object.values(ROLES).includes(role_name)) {
         throw new ServiceEntityNotFound('Role not found')
     }
 
-    const user = await User.create({ email, password, RoleName })
+    const user = await User.create({ email, password, role_name })
     
     return new UserResponse(user)
 }
@@ -80,7 +80,7 @@ async function update(adminUpdateRequest) {
         throw new ServiceArgumentError('adminUpdateRequest must be an instance of UserRequest.AdminUpdateRequest');
     }
 
-    const { uuid, email, password, RoleName } = adminUpdateRequest
+    const { uuid, email, password, role_name } = adminUpdateRequest
     const user = await User.findOne({ where: { uuid } })
 
     if (!user) {
@@ -91,13 +91,13 @@ async function update(adminUpdateRequest) {
         throw new ServiceEntityDuplicateValueError('Email already in use')
     }
 
-    if (RoleName && !Object.values(ROLES).includes(RoleName)) {
+    if (role_name && !Object.values(ROLES).includes(role_name)) {
         throw new ServiceEntityNotFound('Role not found')
     }
 
     if (email) user.email = email
     if (password) user.password = password
-    if (RoleName) user.RoleName = RoleName
+    if (role_name) user.role_name = role_name
     await user.save()
     
     return new UserResponse(user)

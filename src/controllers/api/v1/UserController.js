@@ -140,9 +140,9 @@ router.route('/api/v1/users')
     *              password:
     *                type: string
     *                default: 12345678
-    *              newPassword:
+    *              new_password:
     *                type: string
-    *                default: 123456789
+    *                default: 12345678
     *     responses:
     *      200:
     *        description: OK

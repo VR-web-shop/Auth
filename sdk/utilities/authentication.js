@@ -14,7 +14,7 @@ async function login(authCreateRequest) {
     });
 
     const data = await response.json();
-    const res = AuthResponse.fromJSON(data);
+    const res = new AuthResponse(data);
     fetchAPI.setAuthToken(res.access_token);
 
     return res;
@@ -27,7 +27,7 @@ async function refresh() {
     });
 
     const data = await response.json();
-    const res = AuthResponse.fromJSON(data);
+    const res = new AuthResponse(data);
     fetchAPI.setAuthToken(res.access_token);
 
     return res;

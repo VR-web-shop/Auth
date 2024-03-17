@@ -20,13 +20,16 @@ const User = Database.define("User", {
         allowNull: false
     },
 }, {
+    underscored: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
     hooks: {
         beforeCreate: hashPassword,
         beforeUpdate: hashPassword
     }
 });
 
-User.belongsTo(Role);
+User.belongsTo(Role, { foreignKey: 'role_name', targetKey: 'name' });
 Role.hasMany(User);
 
 /**
