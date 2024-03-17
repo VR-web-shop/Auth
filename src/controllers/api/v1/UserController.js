@@ -131,7 +131,6 @@ router.route('/api/v1/users')
     *           schema:
     *            type: object
     *            required:
-    *              - uuid
     *              - password
     *            properties:
     *              email:
@@ -172,8 +171,8 @@ router.route('/api/v1/users')
     */
     .put(Middleware.AuthorizeJWT, async (req, res) => {
         try {
-            const request = new UserService.UserRequest.UpdateRequest(req.body, req.user.sub)
-            const reponse = await UserService.update(request)
+            const request = new UserService.UserRequest.UpdateRequest(req.body)
+            const reponse = await UserService.update(request, req.user.sub)
             res.send(reponse)
         } catch (error) {
             if (error instanceof APIActorError) {
@@ -219,8 +218,8 @@ router.route('/api/v1/users')
     */
     .delete(Middleware.AuthorizeJWT, async (req, res) => {
         try {
-            const request = new UserService.UserRequest.DeleteRequest(req.body, req.user.sub)
-            await UserService.destroy(request)
+            const request = new UserService.UserRequest.DeleteRequest(req.body)
+            await UserService.destroy(request, req.user.sub)
             res.sendStatus(204)
         } catch (error) {
             if (error instanceof APIActorError) {

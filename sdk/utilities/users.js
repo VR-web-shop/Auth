@@ -67,7 +67,7 @@ async function update(updateRequest) {
  * @throws {Error} If deleteRequest is not provided.
  */
 async function destroy(deleteRequest) {
-    if (!(deleteRequest instanceof UserRequest.DestroyRequest)) {
+    if (!(deleteRequest instanceof UserRequest.DeleteRequest)) {
         throw new Error('deleteRequest must be an instance of UserRequest.DestroyRequest');
     }
     

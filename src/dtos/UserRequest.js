@@ -49,18 +49,12 @@ class UpdateRequest {
     /**
      * @constructor
      * @param {object} body
-     * @param {string} uuid
      * @throws {DTOArgumentError} If body is not provided
-     * @throws {DTOArgumentError} If body does not contain an uuid
      * @throws {DTORequestParameterError} If body does not contain a password
      */
-    constructor(body, uuid) {
+    constructor(body) {
         if (!body) {
             throw new DTOArgumentError('Body is required');
-        }
-
-        if (!uuid) {
-            throw new DTOArgumentError('UUID is required');
         }
 
         const { email, password, new_password } = body;
@@ -69,7 +63,6 @@ class UpdateRequest {
             throw new DTORequestParameterError('Password is required');
         }
 
-        this.uuid = uuid;
         this.email = email;
         this.password = password;
         this.new_password = new_password;
@@ -79,7 +72,6 @@ class UpdateRequest {
 /**
  * @class DeleteRequest
  * @classdesc DTO for user delete requests
- * @property {string} uuid
  * @property {string} password
  */
 class DeleteRequest {
@@ -88,16 +80,11 @@ class DeleteRequest {
      * @constructor
      * @param {object} body
      * @throws {DTOArgumentError} If body is not provided
-     * @throws {DTOArgumentError} If uuid is not provided
      * @throws {DTORequestParameterError} If body does not contain a password
      */
-    constructor(body, uuid) {
+    constructor(body) {
         if (!body) {
             throw new DTOArgumentError('Body is required');
-        }
-
-        if (!uuid) {
-            throw new DTOArgumentError('uuid is required');
         }
 
         const { password } = body;
@@ -106,7 +93,6 @@ class DeleteRequest {
             throw new DTORequestParameterError('Password is required');
         }
 
-        this.uuid = uuid;
         this.password = password;
     }
 }

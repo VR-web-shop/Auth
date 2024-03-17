@@ -72,17 +72,22 @@ async function create(createRequest) {
  * @param {UserRequest.UpdateRequest} updateRequest
  * @returns {Promise<UserResponse>} response
  * @throws {ServiceArgumentError} If updateRequest is not an instance of UserRequest.UpdateRequest
+ * @throws {ServiceEntityNotFound} If uuid is not a string
  * @throws {ServiceEntityNotFound} If user not found
  * @throws {ServiceIncorectPasswordError} If password is incorrect
  */
-async function update(updateRequest) {
+async function update(updateRequest, uuid) {
     if (!(updateRequest instanceof UserRequest.UpdateRequest)) {
         throw new ServiceArgumentError('Invalid request')
     }
 
-    const { uuid, email, password, new_password } = updateRequest
-    const user = await User.findOne({ where: { uuid } })
+    if (typeof uuid !== 'string') {
+        throw new ServiceArgumentError('Invalid uuid')
+    }
 
+    const { email, password, new_password } = updateRequest
+    const user = await User.findOne({ where: { uuid } })
+    
     if (email && await User.findOne({ where: { email } })) {
         throw new ServiceEntityDuplicateValueError('Email already in use')
     }
@@ -108,15 +113,20 @@ async function update(updateRequest) {
  * @param {UserRequest.DeleteRequest} deleteRequest
  * @returns {Promise<UserResponse>} response
  * @throws {ServiceArgumentError} If deleteRequest is not an instance of UserRequest.DeleteRequest
+ * @throws {ServiceEntityNotFound} If uuid is not a string
  * @throws {ServiceEntityNotFound} If user not found
  * @throws {ServiceIncorectPasswordError} If password is incorrect
  */
-async function destroy(deleteRequest) {
+async function destroy(deleteRequest, uuid) {
     if (!(deleteRequest instanceof UserRequest.DeleteRequest)) {
         throw new ServiceArgumentError('Invalid request')
     }
 
-    const { uuid, password } = deleteRequest
+    if (typeof uuid !== 'string') {
+        throw new ServiceArgumentError('Invalid uuid')
+    }
+
+    const { password } = deleteRequest
     const user = await User.findOne({ where: { uuid } })
 
     if(!user) {
