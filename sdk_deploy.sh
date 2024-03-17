@@ -1,32 +1,33 @@
+echo "Commiting any changes made before bumping the version"
 git add .
 git commit -m "Prepare deployment"
 
-# Bumb version
+echo "Bumping the version"
 npm version patch
 
-# Commit changes
+echo "Pushing the changes to the main branch"
 git add .
 git commit -m "Bump version"
-
-# Push changes
 git push origin main
 
-# Check if the contract release branch exists
+echo "Looking for the release branch"
 if [ -z "$(git branch --list sdk-release)" ]; then
-  # Create the contract release branch
+  echo "Creating the release branch locally"
   git checkout -b sdk-release
 else
-    # Checkout the sdk release branch
+    echo "Checking out the release branch"
     git checkout sdk-release
-    # Merge the main branch
+    
+    echo "Merging the main branch into the release branch"
     git merge main
 fi
 
-# Push changes
+echo "Pushing the release branch to the remote"
 git push origin sdk-release
 
-# Checkout the main branch
+echo "Checking out the main branch"
 git checkout main
 
-# Exit with success
+echo "Deployment completed successfully"
+echo "Find the triggered workflow at: https://github.com/VR-web-shop/Auth/actions"
 exit 0
