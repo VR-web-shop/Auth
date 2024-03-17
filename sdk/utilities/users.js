@@ -1,5 +1,6 @@
 import UserRequest from '../../src/dtos/UserRequest.js'
 import UserResponse from '../../src/dtos/UserResponse.js'
+import AuthResponse from '../../src/dtos/AuthResponse.js';
 import fetchAPI from '../fetchAPI.js'
 
 /**
@@ -31,7 +32,10 @@ async function create(createRequest) {
     }, true);
 
     const data = await response.json();
-    return new UserResponse(data);
+    const res = new AuthResponse(data);
+    fetchAPI.setAuthToken(res.access_token);
+
+    return res;
 }
 
 /**
