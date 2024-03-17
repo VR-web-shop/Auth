@@ -51,7 +51,7 @@ The configuration of the SDK package and deployment of SDK package includes:
 
 * **Deploy Script:** `sdk_deploy.sh` is configured to handle the deployment preparation and triggering of the GitHub Workflow. First, it increment the version number of `package.json` to ensure the deployed package version number does not conflict with an earlier version. Second, it commits and pushes the changes to sdk-release (to trigger the workflow) and main.
 
-**SDK file:** `sdk.js` defines the functionality exposed in the package.
+**SDK file:** `sdk.js` in the directory `sdk/` defines the functionality exposed in the package.
 
 ### Deploy
 Execute the following command:

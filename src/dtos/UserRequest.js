@@ -112,7 +112,7 @@ class DeleteRequest {
 }
 
 /**
- * @class AdminCreateRequest
+ * @class AdminFindRequest
  * @classdesc DTO for admin user find requests
  * @property {string} uuid
  */
@@ -135,6 +135,34 @@ class AdminFindRequest {
         }
 
         this.uuid = uuid;
+    }
+}
+
+/**
+ * @class AdminFindAllRequest
+ * @classdesc DTO for admin user find all requests
+ * @property {string} uuid
+ */
+class AdminFindAllRequest {
+
+    /**
+     * @constructor
+     * @param {object} params
+     * @throws {DTOArgumentError} If params is not provided
+     * @throws {DTORequestParameterError} If params does not contain an uuid
+     */
+    constructor(params) {
+        if (!params) {
+            throw new DTOArgumentError('params is required');
+        }
+
+        const { page, limit } = params;
+        if (!limit) {
+            throw new DTORequestParameterError('uuid is required');
+        }
+
+        this.limit = limit;
+        this.page = page;
     }
 }
 
@@ -234,6 +262,7 @@ export default {
     UpdateRequest,
     DeleteRequest,
     AdminFindRequest,
+    AdminFindAllRequest,
     AdminCreateRequest,
     AdminUpdateRequest,
     AdminDeleteRequest
