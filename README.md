@@ -18,11 +18,16 @@ $ npm run seed
 ```
 
 ## Start server
+Execute the following command:
 ```
-npm start
+$ npm start
 ```
 
-## Deploy SDK Package
+## API Documentation
+1. Start Server
+2. Visit [localhost:3000/api/v1/documentation](http://localhost:3000/api/v1/documentation) for Swagger UI
+
+## SDK Package
 [![Node.js Package Publish](https://github.com/VR-web-shop/Auth/actions/workflows/npm-publish-github-packages.yml/badge.svg?branch=sdk-release)](https://github.com/VR-web-shop/Auth/actions/workflows/npm-publish-github-packages.yml)
 
 ### Setup
@@ -36,7 +41,7 @@ The configuration of the SDK package and deployment of SDK package includes:
 
     b. To ensure only files from the directory `/dist_sdk` is included in the package, the directory is specified using the `files` key.
     
-    c. The key `publishConfig` has been configured to publish the package with publish access to a registry located at GitHub: `https://npm.pkg.github.com/vr-web-shop`; to specify where to publish the package, when executing `npm publish`
+    c. The key `publishConfig` has been configured to publish the package with publish access to a registry located at GitHub: [https://npm.pkg.github.com/vr-web-shop](https://npm.pkg.github.com/vr-web-shop); to specify where to publish the package, when executing `npm publish`
     
     d. A script command called `bundle_sdk` has been added that can be used to execute the rollup.js config.
 
@@ -54,7 +59,5 @@ Execute the following command:
 $ npm run deploy_sdk
 ```
 
-## API Documentation
-1. Start Server
-2. Visit [localhost:3000/api/v1/documentation](http://localhost:3000/api/v1/documentation) for Swagger UI
+
 
