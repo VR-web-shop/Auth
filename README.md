@@ -23,6 +23,7 @@ npm start
 ```
 
 ## Deploy SDK Package
+[![Node.js Package Publish](https://github.com/VR-web-shop/Auth/actions/workflows/npm-publish-github-packages.yml/badge.svg?branch=sdk-release)](https://github.com/VR-web-shop/Auth/actions/workflows/npm-publish-github-packages.yml)
 
 ### Setup
 The configuration of the SDK package and deployment of SDK package includes:
