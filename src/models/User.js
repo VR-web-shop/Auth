@@ -24,8 +24,7 @@ const User = Database.define("User", {
     createdAt: 'created_at',
     updatedAt: 'updated_at',
     hooks: {
-        beforeCreate: hashPassword,
-        beforeUpdate: hashPassword
+        beforeCreate: hashPassword
     }
 });
 
@@ -38,7 +37,7 @@ Role.hasMany(User);
  * @param {User} user
  * @returns {Promise<void>}
  */
-async function hashPassword(user) {
+export async function hashPassword(user) {
     user.password = await bcrypt.hash(user.password, 10);
 }
 

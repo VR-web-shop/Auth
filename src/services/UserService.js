@@ -3,7 +3,7 @@ import ServiceEntityNotFound from "./errors/ServiceEntityNotFound.js";
 import ServiceEntityDuplicateValueError from "./errors/ServiceEntityDuplicateValueError.js";
 import ServiceIncorectPasswordError from "./errors/ServiceIncorectPasswordError.js";
 import { DEFAULT_ROLE } from "../models/Role.js";
-import User, { verifyPassword} from "../models/User.js";
+import User, { verifyPassword, hashPassword } from "../models/User.js";
 import AuthenticateJWT from "../jwt/AuthenticateJWT.js";
 import AuthResponse from "../dtos/AuthResponse.js";
 import UserRequest from "../dtos/UserRequest.js";
@@ -101,7 +101,10 @@ async function update(updateRequest, uuid) {
     }
 
     if (email && email !== user.email) user.email = email
-    if (new_password) user.password = new_password
+    if (new_password) {
+        user.password = new_password
+        hashPassword(user)
+    }
     await user.save()
     
     return new UserResponse(user)

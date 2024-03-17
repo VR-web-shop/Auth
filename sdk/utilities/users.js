@@ -76,7 +76,7 @@ async function destroy(deleteRequest) {
         body: deleteRequest
     }, true);
 
-    if (response.status === 203) {
+    if (response.status === 204) {
         return true;
     } else {
         return false;

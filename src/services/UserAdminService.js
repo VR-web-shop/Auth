@@ -1,7 +1,7 @@
 import ServiceArgumentError from "./errors/ServiceArgumentError.js";
 import ServiceEntityNotFound from "./errors/ServiceEntityNotFound.js";
 import ServiceEntityDuplicateValueError from "./errors/ServiceEntityDuplicateValueError.js";
-import User from "../models/User.js";
+import User, { hashPassword } from "../models/User.js";
 import { ROLES } from "../models/Role.js";
 import UserRequest from "../dtos/UserRequest.js";
 import UserResponse from "../dtos/UserResponse.js";
@@ -96,7 +96,10 @@ async function update(adminUpdateRequest) {
     }
 
     if (email) user.email = email
-    if (password) user.password = password
+    if (password) {
+        user.password = password
+        hashPassword(user)
+    }
     if (role_name) user.role_name = role_name
     await user.save()
     
