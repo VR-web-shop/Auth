@@ -24,6 +24,7 @@ const sdk = function(serverURL) {
                 headers: {
                     'Content-Type': 'application/json'
                 },
+                credentials: 'include',
                 body: JSON.stringify(authCreateRequest)
             });
     

@@ -2,6 +2,7 @@ import 'dotenv/config'
 import express from 'express'
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
+import cors from 'cors'
 
 import AuthController from './src/controllers/api/v1/AuthController.js'
 import UserController from './src/controllers/api/v1/UserController.js'
@@ -13,14 +14,10 @@ import SwaggerController from './src/controllers/SwaggerController.js'
 const app = express()
 const port = process.env.SERVER_PORT
 
-// enable CORS for all requests
-app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*")
-    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization")
-    next()
-})
-
+app.use(cors({
+    origin: 'http://localhost:5173', // Allow requests from any origin
+    credentials: true // Allow credentials (including cookies)
+}));
 
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
