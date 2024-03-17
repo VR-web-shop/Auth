@@ -9,7 +9,8 @@ import fetchAPI from '../fetchAPI.js'
 async function findAll() {
     const response = await fetchAPI.request('admin/roles', { method: 'GET' }, true);
     const data = await response.json();
-    return new RoleResponse(data);
+    const roles = data.map(role => new RoleResponse(role));
+    return roles;
 }
 
 export default {
