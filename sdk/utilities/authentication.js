@@ -7,38 +7,30 @@ async function login(authCreateRequest) {
         throw new Error('authCreateRequest must be an instance of AuthRequest.CreateRequest');
     }
 
-    try {
-        const response = await fetchAPI.request('auth', {
-            method: 'POST',
-            credentials: 'include',
-            body: authCreateRequest
-        });
+    const response = await fetchAPI.request('auth', {
+        method: 'POST',
+        credentials: 'include',
+        body: authCreateRequest
+    });
 
-        const data = await response.json();
-        const res = AuthResponse.fromJSON(data);
-        fetchAPI.setAuthToken(res.access_token);
+    const data = await response.json();
+    const res = AuthResponse.fromJSON(data);
+    fetchAPI.setAuthToken(res.access_token);
 
-        return res;
-    } catch (e) {
-        return e;
-    }
+    return res;
 }
 
 async function refresh() {
-    try {
-        const response = await fetchAPI.request('auth', {
-            method: 'PUT',
-            credentials: 'include'
-        });
+    const response = await fetchAPI.request('auth', {
+        method: 'PUT',
+        credentials: 'include'
+    });
 
-        const data = await response.json();
-        const res = AuthResponse.fromJSON(data);
-        fetchAPI.setAuthToken(res.access_token);
+    const data = await response.json();
+    const res = AuthResponse.fromJSON(data);
+    fetchAPI.setAuthToken(res.access_token);
 
-        return res;
-    } catch (e) {
-        return e;
-    }
+    return res;
 }
 
 export default {

@@ -52,7 +52,7 @@ async function request(endpoint, options, useAuth = false, refreshes = 0) {
     }
 
     if (useAuth) {
-        const token = authentication.getAuthToken();
+        const token = getAuthToken();
         if (token) {
             if (!options.headers) options.headers = {};
             if (!options.headers['Authorization']) {
