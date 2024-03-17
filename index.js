@@ -9,6 +9,7 @@ import UserAdminController from './src/controllers/api/v1/UserAdminController.js
 import RoleAdminController from './src/controllers/api/v1/RoleAdminController.js'
 import SwaggerController from './src/controllers/SwaggerController.js'
 
+
 const app = express()
 const port = process.env.SERVER_PORT
 
@@ -21,4 +22,4 @@ app.use(SwaggerController)
 app.use(UserAdminController)
 app.use(RoleAdminController)
 
-app.listen(port, () => console.log(`Server is running on port ${port}`))
+app.listen(port, () => console.log(`Server is running on port ${port}`));

@@ -19,4 +19,8 @@ export default class AuthenticationResponse {
 
         this.access_token = access_token;
     }
+
+    static fromJSON(json) {
+        return new AuthenticationResponse(json.access_token);
+    }
 }
