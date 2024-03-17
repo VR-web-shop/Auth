@@ -78,26 +78,43 @@ router.route('/api/v1/admin/users')
     *     summary: Fetch all users
     *     security:
     *      - bearerAuth: []
+    *     parameters:
+    *     - in: query
+    *       name: page
+    *       schema:
+    *        type: integer
+    *       description: The page number
+    *     - in: query
+    *       name: limit
+    *       schema:
+    *        type: integer
+    *       description: The number of items per page
     *     responses:
     *      200:
     *        description: OK
     *        content:
     *         application/json:
     *           schema:
-    *             type: array
-    *             items:
-    *              type: object
-    *              properties:
-    *               uuid:
-    *                 type: string
-    *               email:
-    *                 type: string
-    *               created_at:
-    *                 type: string
-    *               updated_at:
-    *                 type: string
-    *               role_name:
-    *                 type: string
+    *             type: object
+    *             properties:
+    *              pages:
+    *               type: integer
+    *              users:
+    *               type: array
+    *               items:
+    *                type: object
+    *                properties:
+    *                 uuid:
+    *                  type: string
+    *                 email:
+    *                  type: string
+    *                 created_at:
+    *                  type: string
+    *                 updated_at:
+    *                  type: string
+    *                 role_name:
+    *                  type: string
+    *             
     *      400:
     *        description: Bad Request
     *      404:
@@ -109,8 +126,9 @@ router.route('/api/v1/admin/users')
     */
     .get(async (req, res) => {
         try {
-            const response = await UserAdminService.findAll()
-            res.send(response)
+            const request = new UserAdminService.UserRequest.AdminFindAllRequest(req.query)
+            const { users, pages } = await UserAdminService.findAll(request)
+            res.send({ users, pages })
         } catch (error) {
             console.error(error)
             return res.status(500).send({ message: 'Internal Server Error' })

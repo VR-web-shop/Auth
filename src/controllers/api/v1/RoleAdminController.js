@@ -30,6 +30,8 @@ router.route('/api/v1/admin/roles')
      *              properties:
      *               name:
      *                type: string
+     *               description:
+     *                type: string
      *      404:
      *        description: Not Found
      *      401:

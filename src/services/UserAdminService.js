@@ -32,12 +32,25 @@ async function find(adminFindRequest) {
 /**
  * @function findAll
  * @description Find all users
+ * @param {UserRequest.AdminFindAllRequest} adminFindAllRequest
  * @returns {Promise<UserResponse[]>} response
  */
-async function findAll() {
-    const users = await User.findAll()
+async function findAll(adminFindRequest) {
+    if (!(adminFindRequest instanceof UserRequest.AdminFindAllRequest)) {
+        throw new ServiceArgumentError('adminFindRequest must be an instance of UserRequest.AdminFindAllRequest');
+    }
 
-    return users.map(user => new UserResponse(user))
+    const { page, limit } = adminFindRequest
+    if (!page) page = 1
+    
+    const offset = (page - 1) * limit
+    console.log(offset, page, limit)
+    const users = await User.findAll({ offset: (page - 1) * limit, limit })
+    const count = await User.count()
+    const pages = Math.ceil(count / limit)
+    const userResponses = users.map(user => new UserResponse(user))
+
+    return { users: userResponses, pages }
 }
 
 /**

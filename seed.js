@@ -12,17 +12,17 @@ import User from './src/models/User.js';
     }
 
     for (const role of Object.values(ROLES)) {
-        await Role.findOrCreate({ where: { name: role } });
+        await Role.findOrCreate({ where: { name: role.name, description: role.description } });
     }
 
     await (async () => {
         const { ADMIN_EMAIL: email, ADMIN_PASSWORD: password } = process.env;
-        await User.findOrCreate({ where: { email, password, role_name: ROLES.ADMIN } });
+        await User.findOrCreate({ where: { email, password, role_name: ROLES.ADMIN.name } });
     })();
 
     await (async () => {
         const email = 'member@example.com';
         const password = 'SuperSecretPassword';
-        await User.findOrCreate({ where: { email, password, role_name: ROLES.MEMBER } });
+        await User.findOrCreate({ where: { email, password, role_name: ROLES.MEMBER.name } });
     })();
 })();

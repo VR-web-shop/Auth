@@ -10,17 +10,6 @@ import UserRequest from "../dtos/UserRequest.js";
 import UserResponse from "../dtos/UserResponse.js";
 
 /**
- * @function findAll
- * @description Find all users
- * @returns {Promise<UserResponse[]>} response
- */
-async function findAll() {
-    const users = await User.findAll()
-
-    return users.map(user => new UserResponse(user))
-}
-
-/**
  * @function find
  * @description Find a user
  * @param {string} uuid
@@ -143,7 +132,6 @@ async function destroy(deleteRequest, uuid) {
 }
 
 export default {
-    findAll,
     find,
     create,
     update,

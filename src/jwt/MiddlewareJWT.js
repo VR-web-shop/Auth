@@ -43,7 +43,7 @@ const AuthorizeAdminJWT = function(req, res, next) {
         return res.status(401).send({ message: 'Unauthorized' });
     }
 
-    if (user.role !== ROLES.ADMIN) {
+    if (user.role !== ROLES.ADMIN.name) {
         return res.status(403).send({ message: 'Forbidden' });
     }
 

@@ -28,7 +28,7 @@ async function findAll(adminFindAllRequest) {
     if (page) endpoint += `&page=${page}`;
     const response = await fetchAPI.request(endpoint, { method: 'GET' }, true);
     const data = await response.json();
-    return data.map(user => new UserResponse(user));
+    return {users: data.users.map(user => new UserResponse(user)), pages: data.pages};
 }
 
 /**

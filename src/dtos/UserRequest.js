@@ -142,9 +142,22 @@ class AdminFindAllRequest {
             throw new DTOArgumentError('params is required');
         }
 
-        const { page, limit } = params;
+        let { page, limit } = params;
         if (!limit) {
             throw new DTORequestParameterError('uuid is required');
+        }
+
+        limit = parseInt(limit);
+        if (limit < 1) {
+            throw new DTORequestParameterError('Limit must be greater than 0');
+        }
+
+        if (page) {
+            page = parseInt(page);
+        }
+
+        if (page && page < 1) {
+            throw new DTORequestParameterError('Page must be greater than 0');
         }
 
         this.limit = limit;
