@@ -61,7 +61,7 @@ async function create(createRequest) {
 
     const user = await User.create({ email, password, role_name: DEFAULT_ROLE })
     const { access_token, refresh_token } = AuthenticateJWT.NewAuthentication(user.uuid, DEFAULT_ROLE)
-    const response = new AuthResponse(access_token)
+    const response = new AuthResponse({access_token})
 
     return { response, refresh_token }
 }
