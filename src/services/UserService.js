@@ -101,10 +101,7 @@ async function update(updateRequest, uuid) {
     }
 
     if (email && email !== user.email) user.email = email
-    if (new_password) {
-        user.password = new_password
-        hashPassword(user)
-    }
+    if (new_password) user.password = new_password
     await user.save()
     
     return new UserResponse(user)

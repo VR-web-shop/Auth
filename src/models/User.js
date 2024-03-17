@@ -24,7 +24,12 @@ const User = Database.define("User", {
     createdAt: 'created_at',
     updatedAt: 'updated_at',
     hooks: {
-        beforeCreate: hashPassword
+        beforeCreate: hashPassword,
+        beforeUpdate: (user) => {
+            if (user.changed('password')) {
+                return hashPassword(user);
+            }
+        }
     }
 });
 
