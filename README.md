@@ -41,7 +41,7 @@ The configuration of the SDK package and deployment of SDK package includes:
 
     b. To ensure only files from the directory `/dist_sdk` is included in the package, the directory is specified using the `files` key.
     
-    c. The key `publishConfig` has been configured to publish the package with publish access to a registry located at GitHub: [https://npm.pkg.github.com/vr-web-shop](https://npm.pkg.github.com/vr-web-shop); to specify where to publish the package, when executing `npm publish`
+    c. The key `publishConfig` has been configured to publish the package with publish access to a registry located at GitHub: [https://github.com/VR-web-shop/Auth/pkgs/npm/auth](https://github.com/VR-web-shop/Auth/pkgs/npm/auth); to specify where to publish the package, when executing `npm publish`
     
     d. A script command called `bundle_sdk` has been added that can be used to execute the rollup.js config.
 
