@@ -41,7 +41,7 @@ const sdk = function(serverURL) {
             });
     
             const data = await response.json();
-            return new AuthResponse.fromJSON(data);
+            return AuthResponse.fromJSON(data);
         }
     }
 
