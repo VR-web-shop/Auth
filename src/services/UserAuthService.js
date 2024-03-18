@@ -1,5 +1,5 @@
 import ServiceArgumentError from "./errors/ServiceArgumentError.js";
-import ServiceEntityNotFound from "./errors/ServiceEntityNotFound.js";
+import ServiceEntityNotFoundError from "./errors/ServiceEntityNotFoundError.js";
 import ServiceEntityDuplicateValueError from "./errors/ServiceEntityDuplicateValueError.js";
 import ServiceIncorectPasswordError from "./errors/ServiceIncorectPasswordError.js";
 import Permission from "../models/Permission.js";
@@ -27,10 +27,10 @@ async function find(uuid) {
     const user = await User.findOne({ where: { uuid } })
 
     if (!user) {
-        throw new ServiceEntityNotFound('User not found')
+        throw new ServiceEntityNotFoundError('User not found')
     }
 
-    return new UserResponse(user)
+    return new UserResponse(user.dataValues)
 }
 
 /**
@@ -53,7 +53,7 @@ async function create(createRequest) {
 
     const user = await User.create({ email, password, role_name: DEFAULT_ROLE })
     const rolePermission = await RolePermission.findAll({where: { role_name: DEFAULT_ROLE }, include: Permission})
-    const permissionResponses = rolePermission.map(rp => new PermissionResponse(rp.dataValues.Permission))
+    const permissionResponses = rolePermission.map(rp => new PermissionResponse(rp.dataValues.Permission.dataValues))
     const { access_token, refresh_token } = AuthenticateJWT.NewAuthentication(user.uuid, permissionResponses)
     const response = new AuthResponse({access_token})
 
@@ -66,8 +66,8 @@ async function create(createRequest) {
  * @param {UserRequest.UpdateRequest} updateRequest
  * @returns {Promise<UserResponse>} response
  * @throws {ServiceArgumentError} If updateRequest is not an instance of UserRequest.UpdateRequest
- * @throws {ServiceEntityNotFound} If uuid is not a string
- * @throws {ServiceEntityNotFound} If user not found
+ * @throws {ServiceArgumentError} If uuid is not a string
+ * @throws {ServiceEntityNotFoundError} If user not found
  * @throws {ServiceIncorectPasswordError} If password is incorrect
  */
 async function update(updateRequest, uuid) {
@@ -87,7 +87,7 @@ async function update(updateRequest, uuid) {
     }
 
     if (!user) {
-        throw new ServiceEntityNotFound('User not found')
+        throw new ServiceEntityNotFoundError('User not found')
     }
 
     if (!await verifyPassword(password, user)) {
@@ -98,7 +98,7 @@ async function update(updateRequest, uuid) {
     if (new_password) user.password = new_password
     await user.save()
     
-    return new UserResponse(user)
+    return new UserResponse(user.dataValues)
 }
 
 /**
@@ -107,8 +107,8 @@ async function update(updateRequest, uuid) {
  * @param {UserRequest.DeleteRequest} deleteRequest
  * @returns {Promise<UserResponse>} response
  * @throws {ServiceArgumentError} If deleteRequest is not an instance of UserRequest.DeleteRequest
- * @throws {ServiceEntityNotFound} If uuid is not a string
- * @throws {ServiceEntityNotFound} If user not found
+ * @throws {ServiceArgumentError} If uuid is not a string
+ * @throws {ServiceEntityNotFoundError} If user not found
  * @throws {ServiceIncorectPasswordError} If password is incorrect
  */
 async function destroy(deleteRequest, uuid) {
@@ -124,7 +124,7 @@ async function destroy(deleteRequest, uuid) {
     const user = await User.findOne({ where: { uuid } })
 
     if(!user) {
-        throw new ServiceEntityNotFound('User not found')
+        throw new ServiceEntityNotFoundError('User not found')
     }
 
     if (!await verifyPassword(password, user)) {
@@ -132,8 +132,6 @@ async function destroy(deleteRequest, uuid) {
     }
 
     await user.destroy()
-
-    return new UserResponse(user)
 }
 
 export default {

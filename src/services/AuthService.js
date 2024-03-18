@@ -1,11 +1,13 @@
+import ServiceArgumentError from "./errors/ServiceArgumentError.js";
+import ServiceIncorectPasswordError from "./errors/ServiceIncorectPasswordError.js";
+import ServiceEntityNotFoundError from "./errors/ServiceEntityNotFoundError.js";
+
 import User, { verifyPassword } from "../models/User.js";
 import Role from "../models/Role.js";
 import RolePermission from "../models/RolePermission.js";
 import Permission from "../models/Permission.js";
 import PermissionResponse from "../dtos/PermissionResponse.js";
-import ServiceArgumentError from "./errors/ServiceArgumentError.js";
-import ServiceIncorectPasswordError from "./errors/ServiceIncorectPasswordError.js";
-import ServiceEntityNotFound from "./errors/ServiceEntityNotFound.js";
+
 import AuthJWT from "../jwt/AuthenticateJWT.js";
 import AuthRequest from "../dtos/AuthRequest.js";
 import AuthResponse from "../dtos/AuthResponse.js";
@@ -16,10 +18,11 @@ import AuthResponse from "../dtos/AuthResponse.js";
  * @param {AuthRequest.CreateRequest} createRequest
  * @returns {Promise<Object>} response, refresh_token
  * @throws {ServiceArgumentError} If createRequest is not an instance of AuthRequest.CreateRequest
- * @throws {ServiceEntityNotFound} If user not found
+ * @throws {ServiceEntityNotFoundError} If user not found
  * @throws {ServiceIncorectPasswordError} If password is incorrect
  */
 async function create(createRequest) {
+    console.log('createRequest', typeof createRequest)
     if (!(createRequest instanceof AuthRequest.CreateRequest)) {
         throw new ServiceArgumentError('Invalid request')
     }
@@ -28,7 +31,7 @@ async function create(createRequest) {
     const user = await User.findOne({ where: { email }, include: Role })
     
     if (!user) {
-        throw new ServiceEntityNotFound('User not found')
+        throw new ServiceEntityNotFoundError('User not found')
     }
 
     if (!await verifyPassword(password, user)) {
@@ -36,7 +39,7 @@ async function create(createRequest) {
     }
 
     const rolePermission = await RolePermission.findAll({where: { role_name: user.role_name }, include: Permission})
-    const permissionResponses = rolePermission.map(rp => new PermissionResponse(rp.dataValues.Permission))
+    const permissionResponses = rolePermission.map(rp => new PermissionResponse(rp.dataValues.Permission.dataValues))
     const { access_token, refresh_token } = AuthJWT.NewAuthentication(user.uuid, permissionResponses)
     const response = new AuthResponse({access_token})
 

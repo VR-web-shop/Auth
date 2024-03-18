@@ -106,7 +106,7 @@ router.route('/api/v1/admin/user/:uuid')
      *      500:
      *        description: Internal Server Error
      */
-    .get(Middleware.AuthorizePermissionJWT(PERMISSIONS.USERS.SHOW.name), async (req, res) => {
+    .get(Middleware.AuthorizePermissionJWT(PERMISSIONS.USERS.SHOW_PERMISSIONS.name), async (req, res) => {
         try {
             const request = new UserAdminService.UserRequest.AdminFindRequest(req.params)
             const response = await UserAdminService.findPermissions(request)

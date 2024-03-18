@@ -15,25 +15,39 @@ import User from './src/models/User.js';
 
     for (const permissionCategory of Object.values(PERMISSIONS)) {
         for (const permission of Object.values(permissionCategory)) {
-            await Permission.findOrCreate({ where: { name: permission.name, description: permission.description } });
+            await Permission.findOrCreate({ where: { 
+                name: permission.name, 
+                description: permission.description,
+                is_user_defined: false
+            } });
         }        
     }
     
     for (const role of Object.values(ROLES)) {
-        await Role.findOrCreate({ where: { name: role.name, description: role.description } });
+        await Role.findOrCreate({ where: { 
+            name: role.name, 
+            description: role.description,
+            is_user_defined: false
+        } });
 
         for (const permissionName of role.permissions) {
             if (permissionName === '*') {
                 const all = await Permission.findAll();
                 for (const permission of all) {
-                    await RolePermission.findOrCreate({ where: { role_name: role.name, permission_name: permission.name } });
+                    await RolePermission.findOrCreate({ where: { 
+                        role_name: role.name, 
+                        permission_name: permission.name 
+                    } });
                 }
 
                 continue;
             }
 
             const permission = await Permission.findOne({ where: { name: permissionName } });
-            await RolePermission.findOrCreate({ where: { role_name: role.name, permission_name: permission.name } });
+            await RolePermission.findOrCreate({ where: { 
+                role_name: role.name, 
+                permission_name: permission.name 
+            } });
         }
     }
 

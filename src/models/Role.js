@@ -29,6 +29,11 @@ const Role = Database.define("Role", {
     description: {
         type: DataTypes.STRING,
         allowNull: false
+    },
+    is_user_defined: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true
     }
 }, {
     underscored: true,

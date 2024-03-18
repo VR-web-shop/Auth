@@ -1,14 +1,12 @@
-import DTOArgumentError from './errors/DTOArgumentError.js';
-import DTORequestParameterError from './errors/DTORequestParameterError.js';
+import DTO from './DTO.js';
 
 /**
- * @class AccessRequest
+ * @class CreateRequest
  * @classdesc DTO for access requests
  * @property {string} email
  * @property {string} password
  */
-class CreateRequest {
-
+class CreateRequest extends DTO.DTOBaseClass {
     /**
      * @constructor
      * @param {object} body
@@ -17,22 +15,7 @@ class CreateRequest {
      * @throws {DTORequestParameterError} If body does not contain a password
      */
     constructor(body) {
-        if (!body) {
-            throw new DTOArgumentError('Body is required');
-        }
-
-        const { email, password } = body;
-
-        if (!email) {
-            throw new DTORequestParameterError('Email is required');
-        }
-
-        if (!password) {
-            throw new DTORequestParameterError('Password is required');
-        }
-
-        this.email = email;
-        this.password = password;
+        super(body, ['email', 'password'], ['email', 'password'], DTO.TYPES.REQUEST);
     }
 }
 
@@ -41,25 +24,15 @@ class CreateRequest {
  * @classdesc DTO for refresh access requests
  * @property {string} refresh_token
  */
-class RefreshRequest {
-
+class RefreshRequest extends DTO.DTOBaseClass {
     /**
      * @constructor
-     * @param {object} cookies
-     * @throws {DTOArgumentError} If cookies is not provided
-     * @throws {DTORequestParameterError} If cookies does not contain a refresh_token
+     * @param {object} body
+     * @throws {DTOArgumentError} If body is not provided
+     * @throws {DTORequestParameterError} If body does not contain a refresh_token
      */
-    constructor(cookies) {
-        if (!cookies) {
-            throw new DTOArgumentError('Cookies are required');
-        }
-
-        const { refresh_token } = cookies;
-        if (!refresh_token) {
-            throw new DTORequestParameterError('Refresh token is required');
-        }
-
-        this.refresh_token = refresh_token;
+    constructor(body) {
+        super(body, ['refresh_token'], ['refresh_token'], DTO.TYPES.REQUEST);
     }
 }
 

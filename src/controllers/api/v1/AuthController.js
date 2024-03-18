@@ -24,10 +24,10 @@ router.route('/api/v1/auth')
      *            properties:
      *              email:
      *                type: string
-     *                default: member@example.com
+     *                default: admin@example.com
      *              password:
      *                type: string
-     *                default: SuperSecretPassword
+     *                default: 12345678
      *     responses:
      *      200:
      *        description: OK

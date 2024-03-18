@@ -56,7 +56,7 @@ const RefreshAuthentication = async function (refreshToken) {
                 reject(new InvalidRefreshTokenError());
             } else {
                 const iat = new Date().getTime() / 1000;
-                const payload = { iat, sub: decoded.sub, role: decoded.role };
+                const payload = { iat, sub: decoded.sub, permissions: decoded.permissions };
                 const accessToken = Jwt.sign(payload, JWT_ACCESS_SECRET, { 
                     expiresIn: JWT_ACCESS_EXPIRES_IN 
                 });

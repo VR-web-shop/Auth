@@ -5,7 +5,7 @@ import cookieParser from 'cookie-parser'
 import cors from 'cors'
 
 import AuthController from './src/controllers/api/v1/AuthController.js'
-import UserController from './src/controllers/api/v1/UserController.js'
+import UserAuthController from './src/controllers/api/v1/UserAuthController.js'
 import UserAdminController from './src/controllers/api/v1/UserAdminController.js'
 import RoleAdminController from './src/controllers/api/v1/RoleAdminController.js'
 import PermissionAdminController from './src/controllers/api/v1/PermissionAdminController.js'
@@ -26,7 +26,7 @@ app.use(cookieParser())
 
 app.use(SwaggerController)
 app.use(AuthController)
-app.use(UserController)
+app.use(UserAuthController)
 app.use(UserAdminController)
 app.use(RoleAdminController)
 app.use(PermissionAdminController)

@@ -1,5 +1,5 @@
 import ServiceArgumentError from "./errors/ServiceArgumentError.js";
-import ServiceEntityNotFound from "./errors/ServiceEntityNotFound.js";
+import ServiceEntityNotFoundError from "./errors/ServiceEntityNotFoundError.js";
 import ServiceEntityDuplicateValueError from "./errors/ServiceEntityDuplicateValueError.js";
 import Permission from "../models/Permission.js";
 import PermissionResponse from "../dtos/PermissionResponse.js";
@@ -15,7 +15,7 @@ import UserResponse from "../dtos/UserResponse.js";
  * @param {UserRequest.AdminFindRequest} adminFindRequest
  * @returns {Promise<UserResponse>} response
  * @throws {ServiceArgumentError} If adminFindRequest is not provided
- * @throws {ServiceEntityNotFound} If user is not found
+ * @throws {ServiceEntityNotFoundError} If user is not found
  */
 async function find(adminFindRequest) {
     if (!adminFindRequest instanceof UserRequest.AdminFindRequest) {
@@ -26,10 +26,10 @@ async function find(adminFindRequest) {
     const user = await User.findOne({ where: { uuid } })
     
     if (!user) {
-        throw new ServiceEntityNotFound('User not found')
+        throw new ServiceEntityNotFoundError('User not found')
     }
 
-    return new UserResponse(user)
+    return new UserResponse(user.dataValues)
 }
 
 async function findPermissions(adminFindRequest) {
@@ -41,11 +41,11 @@ async function findPermissions(adminFindRequest) {
     const user = await User.findOne({ where: { uuid } })
     
     if (!user) {
-        throw new ServiceEntityNotFound('User not found')
+        throw new ServiceEntityNotFoundError('User not found')
     }
 
     const rolePermission = await RolePermission.findAll({where: { role_name: user.role_name }, include: Permission})
-    const permissionResponses = rolePermission.map(rp => new PermissionResponse(rp.dataValues.Permission))
+    const permissionResponses = rolePermission.map(rp => new PermissionResponse(rp.dataValues.Permission.dataValues))
 
     return permissionResponses
 }
@@ -68,7 +68,7 @@ async function findAll(adminFindRequest) {
     const users = await User.findAll({ offset, limit })
     const count = await User.count()
     const pages = Math.ceil(count / limit)
-    const userResponses = users.map(user => new UserResponse(user))
+    const userResponses = users.map(user => new UserResponse(user.dataValues))
 
     return { users: userResponses, pages }
 }
@@ -79,6 +79,8 @@ async function findAll(adminFindRequest) {
  * @param {UserRequest.AdminCreateRequest} adminCreateRequest
  * @returns {Promise<UserResponse>} response
  * @throws {ServiceArgumentError} If adminCreateRequest is not provided
+ * @throws {ServiceEntityDuplicateValueError} If email is already in use
+ * @throws {ServiceEntityNotFoundError} If role is not found
  */
 async function create(adminCreateRequest) {
     if (!adminCreateRequest instanceof UserRequest.AdminCreateRequest) {
@@ -93,12 +95,12 @@ async function create(adminCreateRequest) {
 
     const roleExists = await Role.findOne({ where: { name: role_name } })
     if (!roleExists) {
-        throw new ServiceEntityNotFound('Role not found')
+        throw new ServiceEntityNotFoundError('Role not found')
     }
 
     const user = await User.create({ email, password, role_name })
     
-    return new UserResponse(user)
+    return new UserResponse(user.dataValues)
 }
 
 /**
@@ -107,7 +109,7 @@ async function create(adminCreateRequest) {
  * @param {UserRequest.AdminUpdateRequest} adminUpdateRequest
  * @returns {Promise<UserResponse>} response
  * @throws {ServiceArgumentError} If adminUpdateRequest is not provided
- * @throws {ServiceEntityNotFound} If user is not found
+ * @throws {ServiceEntityNotFoundError} If user is not found
  */
 async function update(adminUpdateRequest) {
     if (!adminUpdateRequest instanceof UserRequest.AdminUpdateRequest) {
@@ -118,7 +120,7 @@ async function update(adminUpdateRequest) {
     const user = await User.findOne({ where: { uuid } })
 
     if (!user) {
-        throw new ServiceEntityNotFound('User not found')
+        throw new ServiceEntityNotFoundError('User not found')
     }
 
     if (email && await User.findOne({ where: { email } })) {
@@ -126,7 +128,7 @@ async function update(adminUpdateRequest) {
     }
 
     if (role_name && !await Role.findOne({ where: { name: role_name } })) {
-        throw new ServiceEntityNotFound('Role not found')
+        throw new ServiceEntityNotFoundError('Role not found')
     }
 
     if (email) user.email = email
@@ -134,7 +136,7 @@ async function update(adminUpdateRequest) {
     if (role_name) user.role_name = role_name
     await user.save()
     
-    return new UserResponse(user)
+    return new UserResponse(user.dataValues)
 }
 
 /**
@@ -153,12 +155,10 @@ async function destroy(adminDeleteRequest) {
     const user = await User.findOne({ where: { uuid } })
 
     if (!user) {
-        throw new ServiceEntityNotFound('User not found')
+        throw new ServiceEntityNotFoundError('User not found')
     }
 
     await user.destroy()
-
-    return new UserResponse(user)
 }
 
 export default {

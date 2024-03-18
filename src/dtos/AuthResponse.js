@@ -1,28 +1,18 @@
-import DTOArgumentError from './errors/DTOArgumentError.js';
+import DTO from './DTO.js';
 
 /**
  * @class AuthenticationResponse
  * @classdesc DTO for authentication response
  * @property {string} access_token
  */
-export default class AuthenticationResponse {
+export default class AuthenticationResponse extends DTO.DTOBaseClass {
 
     /**
      * @constructor
-     * @param {string} access_token
-     * @throws {DTOArgumentError} If access_token is not provided
+     * @param {object} body
+     * @throws {DTOArgumentError} If body does not contain an access_token
      */
     constructor(body) {
-        if (!body) {
-            throw new DTOArgumentError('Body is required');
-        }
-
-        const { access_token } = body;
-
-        if (!access_token) {
-            throw new DTOArgumentError('Access token is required');
-        }
-
-        this.access_token = access_token;
+        super(body, ['access_token'], ['access_token'], DTO.TYPES.RESPONSE);
     }
 }

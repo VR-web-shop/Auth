@@ -1,6 +1,4 @@
-import DTOArgumentError from './errors/DTOArgumentError.js';
-import DTOResponseParameterError from './errors/DTOResponseParameterError.js';
-
+import DTO from './DTO.js';
 /**
  * @class UserResponse
  * @classdesc DTO for User
@@ -10,7 +8,8 @@ import DTOResponseParameterError from './errors/DTOResponseParameterError.js';
  * @property {string} updated_at
  * @property {string} role_name
  */
-export default class UserResponse {
+const REQUIRED = ['uuid', 'email', 'created_at', 'updated_at', 'role_name'];
+export default class UserResponse extends DTO.DTOBaseClass {
 
     /**
      * @constructor
@@ -23,34 +22,6 @@ export default class UserResponse {
      * @throws {DTOResponseParameterError} If user does not contain a role_name
      */
     constructor(user) {
-        if (!user) {
-            throw new DTOArgumentError('User is required');
-        }
-
-        if (!user.uuid) {
-            throw new DTOResponseParameterError('User uuid is required');
-        }
-
-        if (!user.email) {
-            throw new DTOResponseParameterError('User email is required');
-        }
-
-        if (!user.created_at) {
-            throw new DTOResponseParameterError('User created_at is required');
-        }
-
-        if (!user.updated_at) {
-            throw new DTOResponseParameterError('User updated_at is required');
-        }
-
-        if (!user.role_name) {
-            throw new DTOResponseParameterError('User role_name is required');
-        }
-
-        this.uuid = user.uuid
-        this.email = user.email
-        this.created_at = user.created_at
-        this.updated_at = user.updated_at
-        this.role_name = user.role_name
+        super(user, REQUIRED, REQUIRED, DTO.TYPES.RESPONSE);
     }
 }

@@ -1,5 +1,4 @@
-import DTOArgumentError from './errors/DTOArgumentError.js';
-import DTORequestParameterError from './errors/DTORequestParameterError.js';
+import DTO from './DTO.js';
 
 /**
  * @class CreateRequest
@@ -7,7 +6,7 @@ import DTORequestParameterError from './errors/DTORequestParameterError.js';
  * @property {string} email
  * @property {string} password
  */
-class CreateRequest {
+class CreateRequest extends DTO.DTOBaseClass {
 
     /**
      * @constructor
@@ -17,22 +16,7 @@ class CreateRequest {
      * @throws {DTORequestParameterError} If body does not contain a password
      */
     constructor(body) {
-        if (!body) {
-            throw new DTOArgumentError('Body is required');
-        }
-
-        const { email, password } = body;
-
-        if (!email) {
-            throw new DTORequestParameterError('Email is required');
-        }
-
-        if (!password) {
-            throw new DTORequestParameterError('Password is required');
-        }
-
-        this.email = email;
-        this.password = password;
+        super(body, ['email', 'password'], ['email', 'password'], DTO.TYPES.REQUEST);
     }
 }
 
@@ -44,7 +28,7 @@ class CreateRequest {
  * @property {string} password
  * @property {string} new_password
  */
-class UpdateRequest {
+class UpdateRequest extends DTO.DTOBaseClass {
 
     /**
      * @constructor
@@ -53,19 +37,7 @@ class UpdateRequest {
      * @throws {DTORequestParameterError} If body does not contain a password
      */
     constructor(body) {
-        if (!body) {
-            throw new DTOArgumentError('Body is required');
-        }
-
-        const { email, password, new_password } = body;
-
-        if (!password) {
-            throw new DTORequestParameterError('Password is required');
-        }
-
-        this.email = email;
-        this.password = password;
-        this.new_password = new_password;
+        super(body, ['email', 'password', 'new_password'], ['password'], DTO.TYPES.REQUEST);
     }
 }
 
@@ -74,7 +46,7 @@ class UpdateRequest {
  * @classdesc DTO for user delete requests
  * @property {string} password
  */
-class DeleteRequest {
+class DeleteRequest extends DTO.DTOBaseClass {
 
     /**
      * @constructor
@@ -83,17 +55,7 @@ class DeleteRequest {
      * @throws {DTORequestParameterError} If body does not contain a password
      */
     constructor(body) {
-        if (!body) {
-            throw new DTOArgumentError('Body is required');
-        }
-
-        const { password } = body;
-
-        if (!password) {
-            throw new DTORequestParameterError('Password is required');
-        }
-
-        this.password = password;
+        super(body, ['password'], ['password'], DTO.TYPES.REQUEST);
     }
 }
 
@@ -102,7 +64,7 @@ class DeleteRequest {
  * @classdesc DTO for admin user find requests
  * @property {string} uuid
  */
-class AdminFindRequest {
+class AdminFindRequest extends DTO.DTOBaseClass {
 
     /**
      * @constructor
@@ -111,25 +73,17 @@ class AdminFindRequest {
      * @throws {DTORequestParameterError} If params does not contain an uuid
      */
     constructor(params) {
-        if (!params) {
-            throw new DTOArgumentError('params is required');
-        }
-
-        const { uuid } = params;
-        if (!uuid) {
-            throw new DTORequestParameterError('uuid is required');
-        }
-
-        this.uuid = uuid;
+        super(params, ['uuid'], ['uuid'], DTO.TYPES.REQUEST);
     }
 }
 
 /**
  * @class AdminFindAllRequest
  * @classdesc DTO for admin user find all requests
- * @property {string} uuid
+ * @property {number} page
+ * @property {number} limit
  */
-class AdminFindAllRequest {
+class AdminFindAllRequest extends DTO.DTOBaseClass {
 
     /**
      * @constructor
@@ -138,30 +92,20 @@ class AdminFindAllRequest {
      * @throws {DTORequestParameterError} If params does not contain an uuid
      */
     constructor(params) {
-        if (!params) {
-            throw new DTOArgumentError('params is required');
-        }
+        super(params, ['page', 'limit'], ['limit'], DTO.TYPES.REQUEST);
 
-        let { page, limit } = params;
-        if (!limit) {
-            throw new DTORequestParameterError('uuid is required');
-        }
-
-        limit = parseInt(limit);
-        if (limit < 1) {
+        this.limit = parseInt(this.limit);
+        if (this.limit < 1) {
             throw new DTORequestParameterError('Limit must be greater than 0');
         }
 
-        if (page) {
-            page = parseInt(page);
+        if (this.page) {
+            this.page = parseInt(this.page);
         }
 
-        if (page && page < 1) {
+        if (this.page && this.page < 1) {
             throw new DTORequestParameterError('Page must be greater than 0');
         }
-
-        this.limit = limit;
-        this.page = page;
     }
 }
 
@@ -172,7 +116,7 @@ class AdminFindAllRequest {
  * @property {string} password
  * @property {string} role_name
  */
-class AdminCreateRequest extends CreateRequest {
+class AdminCreateRequest extends DTO.DTOBaseClass {
 
     /**
      * @constructor
@@ -183,14 +127,12 @@ class AdminCreateRequest extends CreateRequest {
      * @throws {DTORequestParameterError} If body does not contain a role_name
      */
     constructor(body) {
-        super(body);
-
-        const { role_name } = body;
-        if (!role_name) {
-            throw new DTORequestParameterError('Role name is required');
-        }
-
-        this.role_name = role_name;
+        super(
+            body, 
+            ['email', 'password', 'role_name'], 
+            ['email', 'password', 'role_name'], 
+            DTO.TYPES.REQUEST
+        );
     }
 }
 
@@ -202,7 +144,7 @@ class AdminCreateRequest extends CreateRequest {
  * @property {string} password
  * @property {string} role_name
  */
-class AdminUpdateRequest {
+class AdminUpdateRequest extends DTO.DTOBaseClass {
 
     /**
      * @constructor
@@ -211,20 +153,7 @@ class AdminUpdateRequest {
      * @throws {DTORequestParameterError} If body does not contain an uuid
      */
     constructor(body) {
-        if (!body) {
-            throw new DTOArgumentError('Body is required');
-        }
-
-        const { uuid, email, password, role_name } = body;
-
-        if (!uuid) {
-            throw new DTORequestParameterError('UUID is required');
-        }
-
-        this.uuid = uuid;
-        this.email = email;
-        this.password = password;
-        this.role_name = role_name;
+        super(body, ['uuid', 'email', 'password', 'role_name'], ['uuid'], DTO.TYPES.REQUEST);
     }
 }
 
@@ -233,7 +162,7 @@ class AdminUpdateRequest {
  * @classdesc DTO for admin user delete requests
  * @property {string} uuid
  */
-class AdminDeleteRequest {
+class AdminDeleteRequest extends DTO.DTOBaseClass {
 
     /**
      * @constructor
@@ -242,17 +171,7 @@ class AdminDeleteRequest {
      * @throws {DTORequestParameterError} If body does not contain an uuid
      */
     constructor(body) {
-        if (!body) {
-            throw new DTOArgumentError('body is required');
-        }
-
-        const { uuid } = body;
-
-        if (!uuid) {
-            throw new DTORequestParameterError('UUID is required');
-        }
-
-        this.uuid = uuid;
+        super(body, ['uuid'], ['uuid'], DTO.TYPES.REQUEST);
     }
 }
 

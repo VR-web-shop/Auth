@@ -1,13 +1,14 @@
-import DTOArgumentError from './errors/DTOArgumentError.js';
-import DTOResponseParameterError from './errors/DTOResponseParameterError.js';
+import DTO from './DTO.js';
 
 /**
  * @class RoleResponse
  * @classdesc DTO for Role model
  * @property {string} name
  * @property {string} description
+ * @property {boolean} is_user_defined
  */
-export default class RoleResponse {
+const REQUIRED = ['name', 'description', 'is_user_defined'];
+export default class RoleResponse extends DTO.DTOBaseClass {
 
     /**
      * @constructor
@@ -17,19 +18,6 @@ export default class RoleResponse {
      * @throws {DTOResponseParameterError} If role does not contain a description
      */
     constructor(role) {
-        if (!role) {
-            throw new DTOArgumentError('Role is required');
-        }
-
-        if (!role.name) {
-            throw new DTOResponseParameterError('Role name is required');
-        }
-
-        if (!role.description) {
-            throw new DTOResponseParameterError('Role description is required');
-        }
-
-        this.name = role.name;
-        this.description = role.description;
+        super(role, REQUIRED, REQUIRED, DTO.TYPES.RESPONSE);
     }
 }

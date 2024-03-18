@@ -9,6 +9,7 @@ export const PERMISSIONS = {
     },
     USERS: {
         SHOW: { name: 'users:show', description: 'Show a user' },
+        SHOW_PERMISSIONS: { name: 'users:show:permissions', description: 'Show a user\'s permissions' },
         INDEX: { name: 'users:index', description: 'List all users' },
         CREATE: { name: 'users:create', description: 'Create a user' },
         UPDATE: { name: 'users:update', description: 'Update a user' },
@@ -39,6 +40,11 @@ const Permission = Database.define("Permission", {
     description: {
         type: DataTypes.STRING,
         allowNull: false
+    },
+    is_user_defined: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true
     }
 }, {
     underscored: true,

@@ -1,6 +1,7 @@
 import APIActorError from "../errors/APIActorError.js";
-import UserService from "../../../services/UserService.js";
+import UserAuthService from "../../../services/UserAuthService.js";
 import Middleware from "../../../jwt/MiddlewareJWT.js";
+import { PERMISSIONS } from "../../../models/Permission.js";
 import express from 'express';
 
 const router = express.Router()
@@ -12,7 +13,7 @@ router.route('/api/v1/user')
      * '/api/v1/user':
      *  get:
      *     tags:
-     *       - User Controller
+     *       - User Auth Controller
      *     summary: Fetch authenticated user
      *     security:
      *      - bearerAuth: []
@@ -41,9 +42,9 @@ router.route('/api/v1/user')
      *      500:
      *        description: Internal Server Error
      */
-    .get(Middleware.AuthorizeJWT, async (req, res) => {
+    .get(Middleware.AuthorizeJWT, Middleware.AuthorizePermissionJWT(PERMISSIONS.AUTH.SHOW.name), async (req, res) => {
         try {
-            const response = await UserService.find(req.user.sub)
+            const response = await UserAuthService.find(req.user.sub)
             res.send(response)
         } catch (error) {
             if (error instanceof APIActorError) {
@@ -62,7 +63,7 @@ router.route('/api/v1/users')
     * '/api/v1/users':
     *  post:
     *     tags:
-    *       - User Controller
+    *       - User Auth Controller
     *     summary: Create a new user with default role
     *     requestBody:
     *      required: true
@@ -101,8 +102,8 @@ router.route('/api/v1/users')
     */
     .post(async (req, res) => {
         try {
-            const request = new UserService.UserRequest.CreateRequest(req.body)
-            const { response, refresh_token } = await UserService.create(request)
+            const request = new UserAuthService.UserRequest.CreateRequest(req.body)
+            const { response, refresh_token } = await UserAuthService.create(request)
 
             res.cookie('refresh_token', refresh_token, { httpOnly: true })
             res.send(response)
@@ -120,7 +121,7 @@ router.route('/api/v1/users')
     * '/api/v1/users':
     *  put:
     *     tags:
-    *       - User Controller
+    *       - User Auth Controller
     *     summary: Update the authenticated user
     *     security:
     *      - bearerAuth: []
@@ -169,10 +170,10 @@ router.route('/api/v1/users')
     *      500:
     *        description: Internal Server Error
     */
-    .put(Middleware.AuthorizeJWT, async (req, res) => {
+    .put(Middleware.AuthorizeJWT, Middleware.AuthorizePermissionJWT(PERMISSIONS.AUTH.UPDATE.name), async (req, res) => {
         try {
-            const request = new UserService.UserRequest.UpdateRequest(req.body)
-            const reponse = await UserService.update(request, req.user.sub)
+            const request = new UserAuthService.UserRequest.UpdateRequest(req.body)
+            const reponse = await UserAuthService.update(request, req.user.sub)
             res.send(reponse)
         } catch (error) {
             if (error instanceof APIActorError) {
@@ -188,7 +189,7 @@ router.route('/api/v1/users')
     * '/api/v1/users':
     *  delete:
     *     tags:
-    *       - User Controller
+    *       - User Auth Controller
     *     summary: Delete the authenticated user
     *     security:
     *      - bearerAuth: []
@@ -216,10 +217,10 @@ router.route('/api/v1/users')
     *      500:
     *        description: Internal Server Error
     */
-    .delete(Middleware.AuthorizeJWT, async (req, res) => {
+    .delete(Middleware.AuthorizeJWT, Middleware.AuthorizePermissionJWT(PERMISSIONS.AUTH.DELETE.name), async (req, res) => {
         try {
-            const request = new UserService.UserRequest.DeleteRequest(req.body)
-            await UserService.destroy(request, req.user.sub)
+            const request = new UserAuthService.UserRequest.DeleteRequest(req.body)
+            await UserAuthService.destroy(request, req.user.sub)
             res.sendStatus(204)
         } catch (error) {
             if (error instanceof APIActorError) {
