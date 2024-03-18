@@ -2,9 +2,14 @@ import ServiceArgumentError from "./errors/ServiceArgumentError.js";
 import ServiceEntityNotFoundError from "./errors/ServiceEntityNotFoundError.js";
 import ServiceEntityDuplicateValueError from "./errors/ServiceEntityDuplicateValueError.js";
 import ServiceEntityNotDeletableError from "./errors/ServiceEntityNotDeletableError.js";
+
+import Permission from "../models/Permission.js";
+import RolePermission from "../models/RolePermission.js";
 import Role from "../models/Role.js";
+
 import RoleRequest from "../dtos/RoleRequest.js";
 import RoleResponse from "../dtos/RoleResponse.js";
+import PermissionResponse from "../dtos/PermissionResponse.js";
 
 /**
  * @function find
@@ -27,6 +32,32 @@ async function find(adminFindRequest) {
     }
 
     return new RoleResponse(role.dataValues)
+}
+
+/**
+ * @function findPermissions
+ * @description Find a role's permissions by name
+ * @param {RoleRequest.AdminFindRequest} adminFindRequest
+ * @returns {Promise<PermissionResponse[]>} response
+ * @throws {ServiceArgumentError} If adminFindRequest is not provided
+ * @throws {ServiceEntityNotFoundError} If role is not found
+ */
+async function findPermissions(adminFindRequest) {
+    if (!adminFindRequest instanceof RoleRequest.AdminFindRequest) {
+        throw new ServiceArgumentError('adminFindRequest must be an instance of RoleRequest.AdminFindRequest');
+    }
+    
+    const { name } = adminFindRequest
+    const role = await Role.findOne({ where: { name } })
+    
+    if (!role) {
+        throw new ServiceEntityNotFoundError('Role not found')
+    }
+
+    const rolePermission = await RolePermission.findAll({where: { role_name: name }, include: Permission})
+    const permissionResponses = rolePermission.map(rp => new PermissionResponse(rp.dataValues.Permission.dataValues))
+
+    return permissionResponses
 }
 
 /**
@@ -131,6 +162,7 @@ async function destroy(adminDeleteRequest) {
 
 export default {
     find,
+    findPermissions,
     findAll,
     create,
     update,

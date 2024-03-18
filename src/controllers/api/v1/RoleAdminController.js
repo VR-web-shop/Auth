@@ -60,6 +60,61 @@ router.route('/api/v1/admin/role/:name')
         }
     })
 
+    router.route('/api/v1/admin/role/:name/permissions')
+    /**
+     * @openapi
+     * '/api/v1/admin/role/{name}/permissions':
+     *  get:
+     *     tags:
+     *       - Role Admin Controller
+     *     summary: Fetch a role's permissions by name
+     *     security:
+     *      - bearerAuth: []
+     *     parameters:
+     *      - in: path
+     *        name: name
+     *        required: true
+     *        schema:
+     *         type: string
+     *     responses:
+     *      200:
+     *        description: OK
+     *        content:
+     *         application/json:
+     *           schema:
+     *             type: array
+     *             items:
+     *              properties:
+     *               name:
+     *                 type: string
+     *               description:
+     *                 type: string
+     *               is_user_defined:
+     *                 type: boolean
+     *      400:
+     *        description: Bad Request
+     *      404:
+     *        description: Not Found
+     *      401:
+     *        description: Unauthorized
+     *      500:
+     *        description: Internal Server Error
+     */
+    .get(Middleware.AuthorizePermissionJWT(PERMISSIONS.ROLES.SHOW_PERMISSIONS.name), async (req, res) => {
+        try {
+            const request = new RoleAdminService.RoleRequest.AdminFindRequest(req.params)
+            const response = await RoleAdminService.findPermissions(request)
+            res.send(response)
+        } catch (error) {
+            if (error instanceof APIActorError) {
+                return res.status(error.statusCode).send({ message: error.message })
+            }
+
+            console.error(error)
+            return res.status(500).send({ message: 'Internal Server Error' })
+        }
+    })
+
 router.route('/api/v1/admin/roles')
     /**
      * @openapi

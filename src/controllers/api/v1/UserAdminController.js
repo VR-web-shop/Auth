@@ -67,7 +67,7 @@ router.route('/api/v1/admin/user/:uuid')
         }
     })
 
-    router.route('/api/v1/admin/user/:uuid/permissions')
+router.route('/api/v1/admin/user/:uuid/permissions')
     /**
      * @openapi
      * '/api/v1/admin/user/{uuid}/permissions':
@@ -120,7 +120,6 @@ router.route('/api/v1/admin/user/:uuid')
             return res.status(500).send({ message: 'Internal Server Error' })
         }
     })
-
 
 router.route('/api/v1/admin/users')
     /**

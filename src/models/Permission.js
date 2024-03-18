@@ -17,6 +17,7 @@ export const PERMISSIONS = {
     },
     ROLES: {
         SHOW: { name: 'roles:show', description: 'Show a role' },
+        SHOW_PERMISSIONS: { name: 'roles:show:permissions', description: 'Show a role\'s permissions' },
         INDEX: { name: 'roles:index', description: 'List all roles' },
         CREATE: { name: 'roles:create', description: 'Create a role' },
         UPDATE: { name: 'roles:update', description: 'Update a role' },

@@ -19,6 +19,22 @@ async function find(adminFindRequest) {
 }
 
 /**
+ * @function findPermissions
+ * @description Gets the role's permissions by name.
+ * @returns {Promise<PermissionResponse>} The role permissions.
+ */
+async function findPermissions(adminFindRequest) {
+    if (!(adminFindRequest instanceof RoleRequest.AdminFindRequest)) {
+        throw new Error('adminFindRequest must be an instance of RoleRequest.AdminFindRequest');
+    }
+    
+    const { name } = adminFindRequest;
+    const response = await fetchAPI.request(`admin/role/${name}/permissions`, { method: 'GET' }, true);
+    const data = await response.json();
+    return data.map(permission => new PermissionResponse(permission));
+}
+
+/**
  * @function findAll
  * @description Finds all roles.
  * @returns {Promise<RoleRequest[]>} The roles.
@@ -105,6 +121,7 @@ async function destroy(deleteRequest) {
 
 export default {
     find,
+    findPermissions,
     findAll,
     create,
     update,
