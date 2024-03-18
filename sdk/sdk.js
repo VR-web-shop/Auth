@@ -8,9 +8,12 @@ import SDKFetchError from './errors/SDKFetchError.js'
 
 import AuthRequest from '../src/dtos/AuthRequest.js'
 import AuthResponse from '../src/dtos/AuthResponse.js'
+import RoleRequest from '../src/dtos/RoleRequest.js'
 import RoleResponse from '../src/dtos/RoleResponse.js'
 import UserRequest from '../src/dtos/UserRequest.js'
 import UserResponse from '../src/dtos/UserResponse.js'
+import PermissionRequest from '../src/dtos/PermissionRequest.js'
+import PermissionResponse from '../src/dtos/PermissionResponse.js'
 
 import users from './api/users.js'
 import authentication from './api/authentication.js'
@@ -76,7 +79,9 @@ const SDK = function(serverURL, options={}) {
      */
     this.requests = {
         AuthRequest,
-        UserRequest
+        UserRequest,
+        RoleRequest,
+        PermissionRequest
     }
 
     /**
@@ -85,7 +90,8 @@ const SDK = function(serverURL, options={}) {
     this.responses = {
         AuthResponse,
         RoleResponse,
-        UserResponse
+        UserResponse,
+        PermissionResponse
     }
 
     /**
