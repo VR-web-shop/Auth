@@ -44,8 +44,7 @@ async function findAll(adminFindRequest) {
     if (!page) page = 1
     
     const offset = (page - 1) * limit
-    console.log(offset, page, limit)
-    const users = await User.findAll({ offset: (page - 1) * limit, limit })
+    const users = await User.findAll({ offset, limit })
     const count = await User.count()
     const pages = Math.ceil(count / limit)
     const userResponses = users.map(user => new UserResponse(user))

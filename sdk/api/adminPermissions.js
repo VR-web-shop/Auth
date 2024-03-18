@@ -7,9 +7,9 @@ import fetchAPI from '../fetchAPI.js'
  * @returns {Promise<PermissionResponse>} The permissions.
  */
 async function findAll() {
-    const permission = await fetchAPI.request('admin/permissions', { method: 'GET' }, true);
+    const response = await fetchAPI.request('admin/permissions', { method: 'GET' }, true);
     const data = await response.json();
-    const permissions = data.map(role => new PermissionResponse(permission));
+    const permissions = data.map(permission => new PermissionResponse(permission));
     return permissions;
 }
 
