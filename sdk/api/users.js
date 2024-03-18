@@ -89,7 +89,7 @@ async function destroy(deleteRequest) {
  * @param {string} permissionName The permission name.
  * @returns {Promise<boolean>} Whether the user has the permission or not.
  */
-async function hasPermission(permissionName) {
+function hasPermission(permissionName) {
     const token = fetchAPI.getAuthToken();
     if (!token) {
         return false;
