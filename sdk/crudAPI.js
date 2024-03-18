@@ -34,7 +34,7 @@ async function find(findRequest, FOREIGN_KEY='', REQUEST_TYPE, RESPONSE_TYPE, PA
     }
 
     const key = findRequest[FOREIGN_KEY];
-    const response = await fetchAPI.request(`${PATH}${key}`, { method: 'GET' }, true);
+    const response = await fetchAPI.request(`${PATH}/${key}`, { method: 'GET' }, true);
     const data = await response.json();
     return new RESPONSE_TYPE(data);
 }
