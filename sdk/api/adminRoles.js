@@ -1,5 +1,6 @@
 import RoleRequest from '../../src/dtos/RoleRequest.js';
 import RoleResponse from '../../src/dtos/RoleResponse.js';
+import PermissionResponse from '../../src/dtos/PermissionResponse.js';
 import fetchAPI from '../fetchAPI.js'
 
 /**
