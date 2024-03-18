@@ -33,6 +33,7 @@ const SDK = function(serverURL, options={}) {
     }
 
     fetchAPI.setServerURL(serverURL);
+    fetchAPI.setRefreshMethod(authentication.refresh);
 
     if (options.authTokenKey) {
         fetchAPI.setAuthTokenKey(options.authTokenKey);

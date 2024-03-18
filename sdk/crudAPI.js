@@ -1,4 +1,4 @@
-import fetchAPI from '../fetchAPI.js'
+import fetchAPI from './fetchAPI.js'
 
 /**
  * @function find

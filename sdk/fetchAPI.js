@@ -1,14 +1,18 @@
 import SDKFetchError from './errors/SDKFetchError.js';
 import SDKFetchMissingTokenError from './errors/SDKFetchMissingTokenError.js';
-import authentication from './api/authentication.js';
 
 const apiPath = '/api/v1/';
 
+let refreshMethod = null;
 let serverURL = 'http://localhost:5173';
 let tokenLocalStorageKey = 'auth';
 
 function setServerURL(url) {
     serverURL = url;
+}
+
+function setRefreshMethod(method) {
+    refreshMethod = method;
 }
 
 function setAuthTokenKey(key) {
@@ -73,7 +77,10 @@ async function request(endpoint, options, useAuth = false, refreshes = 0) {
 
         const isUnauthorized = status === 401 || status === 403 || status === 419;
         if (isUnauthorized && refreshes < 1) {
-            await authentication.refresh();
+            if (refreshMethod) {
+                await refreshMethod();
+            }
+
             return request(endpoint, options, useAuth, refreshes + 1);
         }
 
@@ -85,6 +92,7 @@ async function request(endpoint, options, useAuth = false, refreshes = 0) {
 
 export default {
     setServerURL,
+    setRefreshMethod,
     request,
     setAuthTokenKey,
     removeAuthToken,
