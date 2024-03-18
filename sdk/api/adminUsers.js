@@ -1,5 +1,6 @@
 import UserRequest from '../../src/dtos/UserRequest.js'
 import UserResponse from '../../src/dtos/UserResponse.js'
+import PermissionResponse from '../../src/dtos/PermissionResponse.js';
 import fetchAPI from '../fetchAPI.js'
 
 /**
@@ -16,6 +17,22 @@ async function find(adminFindRequest) {
     const response = await fetchAPI.request(`admin/user/${uuid}`, { method: 'GET' }, true);
     const data = await response.json();
     return new UserResponse(data);
+}
+
+/**
+ * @function findPermissions
+ * @description Gets the user's permissions by UUID.
+ * @returns {Promise<PermissionResponse>} The user permissions.
+ */
+async function findPermissions(adminFindRequest) {
+    if (!(adminFindRequest instanceof UserRequest.AdminFindRequest)) {
+        throw new Error('adminFindRequest must be an instance of UserRequest.AdminFindRequest');
+    }
+    
+    const { uuid } = adminFindRequest;
+    const response = await fetchAPI.request(`admin/user/${uuid}/permissions`, { method: 'GET' }, true);
+    const data = await response.json();
+    return data.map(permission => new PermissionResponse(permission));
 }
 
 async function findAll(adminFindAllRequest) {
@@ -99,6 +116,7 @@ async function destroy(deleteRequest) {
 
 export default {
     find,
+    findPermissions,
     findAll,
     create,
     update,

@@ -67,6 +67,60 @@ router.route('/api/v1/admin/user/:uuid')
         }
     })
 
+    router.route('/api/v1/admin/user/:uuid/permissions')
+    /**
+     * @openapi
+     * '/api/v1/admin/user/{uuid}/permissions':
+     *  get:
+     *     tags:
+     *       - User Admin Controller
+     *     summary: Fetch a user's permissions by UUID
+     *     security:
+     *      - bearerAuth: []
+     *     parameters:
+     *      - in: path
+     *        name: uuid
+     *        required: true
+     *        schema:
+     *         type: string
+     *         format: uuid
+     *     responses:
+     *      200:
+     *        description: OK
+     *        content:
+     *         application/json:
+     *           schema:
+     *             type: array
+     *             items:
+     *              properties:
+     *               name:
+     *                 type: string
+     *               description:
+     *                 type: string
+     *      400:
+     *        description: Bad Request
+     *      404:
+     *        description: Not Found
+     *      401:
+     *        description: Unauthorized
+     *      500:
+     *        description: Internal Server Error
+     */
+    .get(Middleware.AuthorizePermissionJWT(PERMISSIONS.USERS.SHOW.name), async (req, res) => {
+        try {
+            const request = new UserAdminService.UserRequest.AdminFindRequest(req.params)
+            const response = await UserAdminService.findPermissions(request)
+            res.send(response)
+        } catch (error) {
+            if (error instanceof APIActorError) {
+                return res.status(error.statusCode).send({ message: error.message })
+            }
+
+            console.error(error)
+            return res.status(500).send({ message: 'Internal Server Error' })
+        }
+    })
+
 
 router.route('/api/v1/admin/users')
     /**

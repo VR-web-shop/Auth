@@ -1,8 +1,11 @@
 import ServiceArgumentError from "./errors/ServiceArgumentError.js";
 import ServiceEntityNotFound from "./errors/ServiceEntityNotFound.js";
 import ServiceEntityDuplicateValueError from "./errors/ServiceEntityDuplicateValueError.js";
-import User from "../models/User.js";
+import Permission from "../models/Permission.js";
+import PermissionResponse from "../dtos/PermissionResponse.js";
+import RolePermission from "../models/RolePermission.js";
 import Role from "../models/Role.js";
+import User from "../models/User.js";
 import UserRequest from "../dtos/UserRequest.js";
 import UserResponse from "../dtos/UserResponse.js";
 
@@ -27,6 +30,24 @@ async function find(adminFindRequest) {
     }
 
     return new UserResponse(user)
+}
+
+async function findPermissions(adminFindRequest) {
+    if (!adminFindRequest instanceof UserRequest.AdminFindRequest) {
+        throw new ServiceArgumentError('adminFindRequest must be an instance of UserRequest.AdminFindRequest');
+    }
+
+    const { uuid } = adminFindRequest
+    const user = await User.findOne({ where: { uuid } })
+    
+    if (!user) {
+        throw new ServiceEntityNotFound('User not found')
+    }
+
+    const rolePermission = await RolePermission.findAll({where: { role_name: user.role_name }, include: Permission})
+    const permissionResponses = rolePermission.map(rp => new PermissionResponse(rp.dataValues.Permission))
+
+    return permissionResponses
 }
 
 /**
@@ -142,6 +163,7 @@ async function destroy(adminDeleteRequest) {
 
 export default {
     find,
+    findPermissions,
     findAll,
     create,
     update,
