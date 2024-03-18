@@ -2,8 +2,11 @@ import ServiceArgumentError from "./errors/ServiceArgumentError.js";
 import ServiceEntityNotFound from "./errors/ServiceEntityNotFound.js";
 import ServiceEntityDuplicateValueError from "./errors/ServiceEntityDuplicateValueError.js";
 import ServiceIncorectPasswordError from "./errors/ServiceIncorectPasswordError.js";
+import Permission from "../models/Permission.js";
+import PermissionResponse from "../dtos/PermissionResponse.js";
+import RolePermission from "../models/RolePermission.js";
 import { DEFAULT_ROLE } from "../models/Role.js";
-import User, { verifyPassword, hashPassword } from "../models/User.js";
+import User, { verifyPassword } from "../models/User.js";
 import AuthenticateJWT from "../jwt/AuthenticateJWT.js";
 import AuthResponse from "../dtos/AuthResponse.js";
 import UserRequest from "../dtos/UserRequest.js";
@@ -49,7 +52,9 @@ async function create(createRequest) {
     }
 
     const user = await User.create({ email, password, role_name: DEFAULT_ROLE })
-    const { access_token, refresh_token } = AuthenticateJWT.NewAuthentication(user.uuid, DEFAULT_ROLE)
+    const rolePermission = await RolePermission.findAll({where: { role_name: DEFAULT_ROLE }, include: Permission})
+    const permissionResponses = rolePermission.map(rp => new PermissionResponse(rp.dataValues.Permission))
+    const { access_token, refresh_token } = AuthenticateJWT.NewAuthentication(user.uuid, permissionResponses)
     const response = new AuthResponse({access_token})
 
     return { response, refresh_token }

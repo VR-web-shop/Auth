@@ -1,4 +1,4 @@
-import RoleAdminService from "../../../services/RoleAdminService.js";
+import PermissionAdminService from "../../../services/PermissionAdminService.js";
 import Middleware from "../../../jwt/MiddlewareJWT.js";
 import { PERMISSIONS } from "../../../models/Permission.js";
 import express from 'express';
@@ -6,14 +6,14 @@ import express from 'express';
 const router = express.Router()
 
 router.use(Middleware.AuthorizeJWT)
-router.route('/api/v1/admin/roles')
+router.route('/api/v1/admin/permissions')
     /**
      * @openapi
-     * '/api/v1/admin/roles':
+     * '/api/v1/admin/permissions':
      *  get:
      *     tags:
-     *       - Role Admin Controller
-     *     summary: Fetch all roles
+     *       - Permission Admin Controller
+     *     summary: Fetch all permissions
      *     security:
      *      - bearerAuth: []
      *     responses:
@@ -37,9 +37,9 @@ router.route('/api/v1/admin/roles')
      *      500:
      *        description: Internal Server Error
      */
-    .get(Middleware.AuthorizePermissionJWT(PERMISSIONS.ROLES.INDEX.name), async (req, res) => {
+    .get(Middleware.AuthorizePermissionJWT(PERMISSIONS.PERMISSIONS.INDEX.name), async (req, res) => {
         try {
-            const response = await RoleAdminService.findAll()
+            const response = await PermissionAdminService.findAll()
             res.send(response)
         } catch (error) {
             console.error(error)

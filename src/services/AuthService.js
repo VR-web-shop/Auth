@@ -1,5 +1,8 @@
 import User, { verifyPassword } from "../models/User.js";
 import Role from "../models/Role.js";
+import RolePermission from "../models/RolePermission.js";
+import Permission from "../models/Permission.js";
+import PermissionResponse from "../dtos/PermissionResponse.js";
 import ServiceArgumentError from "./errors/ServiceArgumentError.js";
 import ServiceIncorectPasswordError from "./errors/ServiceIncorectPasswordError.js";
 import ServiceEntityNotFound from "./errors/ServiceEntityNotFound.js";
@@ -32,7 +35,9 @@ async function create(createRequest) {
         throw new ServiceIncorectPasswordError('Invalid password')
     }
 
-    const { access_token, refresh_token } = AuthJWT.NewAuthentication(user.uuid, user.role_name)
+    const rolePermission = await RolePermission.findAll({where: { role_name: user.role_name }, include: Permission})
+    const permissionResponses = rolePermission.map(rp => new PermissionResponse(rp.dataValues.Permission))
+    const { access_token, refresh_token } = AuthJWT.NewAuthentication(user.uuid, permissionResponses)
     const response = new AuthResponse({access_token})
 
     return {response, refresh_token}

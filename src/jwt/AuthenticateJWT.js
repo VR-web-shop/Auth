@@ -11,20 +11,20 @@ const {
  * @function NewAuthentication
  * @description Generate a JSON Web Token and a Refresh Token
  * @param {number} userID
- * @param {string} role
+ * @param {Array} permissions
  * @returns {Object} { access_token, refresh_token }
  * @throws {AuthenticateJWTArgumentError} if uuid is not a string
  * @throws {AuthenticateJWTArgumentError} if role is not a string
  */
-const NewAuthentication = function (uuid, role) {
+const NewAuthentication = function (uuid, permissions) {
     if (!uuid) throw new AuthenticateJWTArgumentError('uuid is required');
     if (typeof uuid !== 'string') throw new AuthenticateJWTArgumentError('uuid must be a string');
 
-    if (!role) throw new AuthenticateJWTArgumentError('role is required');
-    if (typeof role !== 'string') throw new AuthenticateJWTArgumentError('role must be a string');
+    if (!permissions) throw new AuthenticateJWTArgumentError('permissions is required');
+    if (!Array.isArray(permissions)) throw new AuthenticateJWTArgumentError('permissions must be an array');
 
     const iat = new Date().getTime() / 1000;
-    const payload = { iat, sub: uuid, role };
+    const payload = { iat, sub: uuid, permissions };
 
     const access_token = Jwt.sign(payload, JWT_ACCESS_SECRET, { 
         expiresIn: JWT_ACCESS_EXPIRES_IN 

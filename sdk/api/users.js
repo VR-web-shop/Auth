@@ -83,9 +83,32 @@ async function destroy(deleteRequest) {
     }
 }
 
+/**
+ * @function hasPermission
+ * @description Checks if the user has a permission.
+ * @param {string} permissionName The permission name.
+ * @returns {Promise<boolean>} Whether the user has the permission or not.
+ */
+async function hasPermission(permissionName) {
+    const token = fetchAPI.getAuthToken();
+    if (!token) {
+        return false;
+    }
+
+    const parsedToken = JSON.parse(atob(token.split('.')[1]));
+    for (const permission of parsedToken.permissions) {
+        if (permission.name === permissionName) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 export default {
     findMe,
     create,
     update,
     destroy,
+    hasPermission
 }

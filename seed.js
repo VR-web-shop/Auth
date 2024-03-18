@@ -1,7 +1,9 @@
 import 'dotenv/config'
 import Database from './src/models/Database.js';
 
+import RolePermission from './src/models/RolePermission.js';
 import Role, { ROLES } from './src/models/Role.js';
+import Permission, { PERMISSIONS } from './src/models/Permission.js';
 import User from './src/models/User.js';
 
 (async () => {
@@ -11,8 +13,28 @@ import User from './src/models/User.js';
         console.log('Error syncing database: ', error);
     }
 
+    for (const permissionCategory of Object.values(PERMISSIONS)) {
+        for (const permission of Object.values(permissionCategory)) {
+            await Permission.findOrCreate({ where: { name: permission.name, description: permission.description } });
+        }        
+    }
+    
     for (const role of Object.values(ROLES)) {
         await Role.findOrCreate({ where: { name: role.name, description: role.description } });
+
+        for (const permissionName of role.permissions) {
+            if (permissionName === '*') {
+                const all = await Permission.findAll();
+                for (const permission of all) {
+                    await RolePermission.findOrCreate({ where: { role_name: role.name, permission_name: permission.name } });
+                }
+
+                continue;
+            }
+
+            const permission = await Permission.findOne({ where: { name: permissionName } });
+            await RolePermission.findOrCreate({ where: { role_name: role.name, permission_name: permission.name } });
+        }
     }
 
     await (async () => {

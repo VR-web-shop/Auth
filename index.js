@@ -8,6 +8,7 @@ import AuthController from './src/controllers/api/v1/AuthController.js'
 import UserController from './src/controllers/api/v1/UserController.js'
 import UserAdminController from './src/controllers/api/v1/UserAdminController.js'
 import RoleAdminController from './src/controllers/api/v1/RoleAdminController.js'
+import PermissionAdminController from './src/controllers/api/v1/PermissionAdminController.js'
 import SwaggerController from './src/controllers/SwaggerController.js'
 
 
@@ -23,10 +24,11 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 app.use(cookieParser())
 
+app.use(SwaggerController)
 app.use(AuthController)
 app.use(UserController)
-app.use(SwaggerController)
 app.use(UserAdminController)
 app.use(RoleAdminController)
+app.use(PermissionAdminController)
 
 app.listen(port, () => console.log(`Server is running on port ${port}`));

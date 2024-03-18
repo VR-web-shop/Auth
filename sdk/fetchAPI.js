@@ -1,6 +1,6 @@
 import SDKFetchError from './errors/SDKFetchError.js';
 import SDKFetchMissingTokenError from './errors/SDKFetchMissingTokenError.js';
-import authentication from './utilities/authentication.js';
+import authentication from './api/authentication.js';
 
 const apiPath = '/api/v1/';
 

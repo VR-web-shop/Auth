@@ -1,12 +1,12 @@
 import APIActorError from "../errors/APIActorError.js";
 import UserAdminService from "../../../services/UserAdminService.js";
 import Middleware from "../../../jwt/MiddlewareJWT.js";
+import { PERMISSIONS } from "../../../models/Permission.js";
 import express from 'express';
 
 const router = express.Router()
 
 router.use(Middleware.AuthorizeJWT)
-router.use(Middleware.AuthorizeAdminJWT)
 
 router.route('/api/v1/admin/user/:uuid')
     /**
@@ -52,7 +52,7 @@ router.route('/api/v1/admin/user/:uuid')
      *      500:
      *        description: Internal Server Error
      */
-    .get(async (req, res) => {
+    .get(Middleware.AuthorizePermissionJWT(PERMISSIONS.USERS.SHOW.name), async (req, res) => {
         try {
             const request = new UserAdminService.UserRequest.AdminFindRequest(req.params)
             const response = await UserAdminService.find(request)
@@ -124,7 +124,7 @@ router.route('/api/v1/admin/users')
     *      500:
     *        description: Internal Server Error
     */
-    .get(async (req, res) => {
+    .get(Middleware.AuthorizePermissionJWT(PERMISSIONS.USERS.INDEX.name), async (req, res) => {
         try {
             const request = new UserAdminService.UserRequest.AdminFindAllRequest(req.query)
             const { users, pages } = await UserAdminService.findAll(request)
@@ -190,7 +190,7 @@ router.route('/api/v1/admin/users')
     *      500:
     *        description: Internal Server Error
     */
-    .post(async (req, res) => {
+    .post(Middleware.AuthorizePermissionJWT(PERMISSIONS.USERS.CREATE.name), async (req, res) => {
         try {
             const request = new UserAdminService.UserRequest.AdminCreateRequest(req.body)
             const response = await UserAdminService.create(request)
@@ -264,7 +264,7 @@ router.route('/api/v1/admin/users')
     *      500:
     *        description: Internal Server Error
     */
-    .put(async (req, res) => {
+    .put(Middleware.AuthorizePermissionJWT(PERMISSIONS.USERS.UPDATE.name), async (req, res) => {
         try {
             const request = new UserAdminService.UserRequest.AdminUpdateRequest(req.body)
             const response = await UserAdminService.update(request)
@@ -311,7 +311,7 @@ router.route('/api/v1/admin/users')
     *      500:
     *        description: Internal Server Error
     */
-    .delete(async (req, res) => {
+    .delete(Middleware.AuthorizePermissionJWT(PERMISSIONS.USERS.DELETE.name), async (req, res) => {
         try {
             const request = new UserAdminService.UserRequest.AdminDeleteRequest(req.body)
             await UserAdminService.destroy(request)

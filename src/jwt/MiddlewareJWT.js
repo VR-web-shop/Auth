@@ -30,27 +30,36 @@ const AuthorizeJWT = function(req, res, next) {
 }
 
 /**
- * @function AuthorizeAdminJWT
- * @description A middleware function to authenticate a JSON Web Token
- * @param {Request} req
- * @param {Response} res
- * @param {NextFunction} next
+ * @function AuthorizePermissionJWT
+ * @description A middleware function to authenticate a permission against JSON Web Token
+ * @param {string} permissionName
  * @returns {void}
  */
-const AuthorizeAdminJWT = function(req, res, next) {
-    const user = req.user;
-    if (!user) {
-        return res.status(401).send({ message: 'Unauthorized' });
-    }
+const AuthorizePermissionJWT = function(permissionName) {
+    return (req, res, next) => {
+        const user = req.user;
+        if (!user) {
+            return res.status(401).send({ message: 'Unauthorized' });
+        }
 
-    if (user.role !== ROLES.ADMIN.name) {
-        return res.status(403).send({ message: 'Forbidden' });
-    }
+        const { permissions } = user;
+        let hasPermission = false;
+        for (const permission of permissions) {
+            if (permission.name === permissionName) {
+                hasPermission = true;
+                break;
+            }
+        }
 
-    next();
+        if (!hasPermission) {
+            return res.status(403).send({ message: 'Forbidden' });
+        }
+
+        next();
+    }
 }
 
 export default {
     AuthorizeJWT,
-    AuthorizeAdminJWT
+    AuthorizePermissionJWT
 }

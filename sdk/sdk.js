@@ -12,10 +12,11 @@ import RoleResponse from '../src/dtos/RoleResponse.js'
 import UserRequest from '../src/dtos/UserRequest.js'
 import UserResponse from '../src/dtos/UserResponse.js'
 
-import authentication from './utilities/authentication.js'
-import users from './utilities/users.js'
-import adminUsers from './utilities/adminUsers.js'
-import adminRoles from './utilities/adminRoles.js'
+import users from './api/users.js'
+import authentication from './api/authentication.js'
+import adminUsers from './api/adminUsers.js'
+import adminRoles from './api/adminRoles.js'
+import adminPermissions from './api/adminPermissions.js'
 
 /**
  * @function SDK
@@ -65,7 +66,8 @@ const SDK = function(serverURL, options={}) {
         users,
         authentication,
         adminUsers,
-        adminRoles
+        adminRoles,
+        adminPermissions
     }
 
     /**

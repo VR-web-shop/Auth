@@ -4,11 +4,17 @@ import Database from './Database.js';
 export const ROLES = {
     ADMIN: {
         name: 'admin',
-        description: 'Administrator has full access to all resources.'
+        description: 'Administrator has full access to all resources.',
+        permissions: ['*']
     },
     MEMBER: {
         name: 'member',
-        description: 'Everyone can become a member by signing up. They have access to public authenticated resources.'
+        description: 'Everyone can become a member by signing up. They have access to public authenticated resources.',
+        permissions: [
+            'auth:users:show',
+            'auth:users:update',
+            'auth:users:delete',
+        ]
     }
 };
 

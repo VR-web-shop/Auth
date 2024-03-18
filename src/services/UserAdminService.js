@@ -2,7 +2,7 @@ import ServiceArgumentError from "./errors/ServiceArgumentError.js";
 import ServiceEntityNotFound from "./errors/ServiceEntityNotFound.js";
 import ServiceEntityDuplicateValueError from "./errors/ServiceEntityDuplicateValueError.js";
 import User from "../models/User.js";
-import { ROLES } from "../models/Role.js";
+import Role from "../models/Role.js";
 import UserRequest from "../dtos/UserRequest.js";
 import UserResponse from "../dtos/UserResponse.js";
 
@@ -40,7 +40,7 @@ async function findAll(adminFindRequest) {
         throw new ServiceArgumentError('adminFindRequest must be an instance of UserRequest.AdminFindAllRequest');
     }
 
-    const { page, limit } = adminFindRequest
+    let { page, limit } = adminFindRequest
     if (!page) page = 1
     
     const offset = (page - 1) * limit
@@ -71,7 +71,8 @@ async function create(adminCreateRequest) {
         throw new ServiceEntityDuplicateValueError('Email already in use')
     }
 
-    if (!Object.values(ROLES).includes(role_name)) {
+    const roleExists = await Role.findOne({ where: { name: role_name } })
+    if (!roleExists) {
         throw new ServiceEntityNotFound('Role not found')
     }
 
@@ -104,7 +105,7 @@ async function update(adminUpdateRequest) {
         throw new ServiceEntityDuplicateValueError('Email already in use')
     }
 
-    if (role_name && !Object.values(ROLES).includes(role_name)) {
+    if (role_name && !await Role.findOne({ where: { name: role_name } })) {
         throw new ServiceEntityNotFound('Role not found')
     }
 
