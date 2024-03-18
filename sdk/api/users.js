@@ -84,19 +84,29 @@ async function destroy(deleteRequest) {
 }
 
 /**
+ * @function getPermissions
+ * @description Gets the user permissions.
+ * @returns {Array} The user permissions.
+ */
+function getPermissions() {
+    const token = fetchAPI.getAuthToken();
+    if (!token) {
+        return [];
+    }
+
+    const parsedToken = JSON.parse(atob(token.split('.')[1]));
+    return parsedToken.permissions;
+}
+
+/**
  * @function hasPermission
  * @description Checks if the user has a permission.
  * @param {string} permissionName The permission name.
  * @returns {Promise<boolean>} Whether the user has the permission or not.
  */
 function hasPermission(permissionName) {
-    const token = fetchAPI.getAuthToken();
-    if (!token) {
-        return false;
-    }
-
-    const parsedToken = JSON.parse(atob(token.split('.')[1]));
-    for (const permission of parsedToken.permissions) {
+    const permissions = getPermissions();
+    for (const permission of permissions) {
         if (permission.name === permissionName) {
             return true;
         }
@@ -110,5 +120,6 @@ export default {
     create,
     update,
     destroy,
+    getPermissions,
     hasPermission
 }
