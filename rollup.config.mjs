@@ -5,5 +5,6 @@ export default {
 	output: {
 		file: './dist_sdk/bundle.js',
 		format: 'cjs'
-	}
+	},
+	external: ['jsonwebtoken']
 };
