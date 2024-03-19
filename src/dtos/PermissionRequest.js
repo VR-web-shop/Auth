@@ -88,10 +88,9 @@ class UpdateRequest extends DTO.DTOBaseClass {
      * @param {object} body
      * @throws {DTOArgumentError} If body is not provided
      * @throws {DTORequestParameterError} If body does not contain an name
-     * @throws {DTORequestParameterError} If body does not contain a description
      */
     constructor(body) {
-        super(body, ['name', 'description'], ['name', 'description'], DTO.TYPES.REQUEST);
+        super(body, ['name', 'description'], ['name'], DTO.TYPES.REQUEST);
     }
 }
 

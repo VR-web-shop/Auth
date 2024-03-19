@@ -55,6 +55,7 @@ class AdminFindAllRequest extends DTO.DTOBaseClass {
  * @classdesc DTO for admin role creation requests
  * @property {string} name
  * @property {string} description
+ * @property {string[]} permissionNames
  */
 class AdminCreateRequest extends DTO.DTOBaseClass {
 
@@ -64,12 +65,13 @@ class AdminCreateRequest extends DTO.DTOBaseClass {
      * @throws {DTOArgumentError} If body is not provided
      * @throws {DTORequestParameterError} If body does not contain an name
      * @throws {DTORequestParameterError} If body does not contain a description
+     * @throws {DTORequestParameterError} If body does not contain a permissionNames
      */
     constructor(body) {
         super(
             body, 
-            ['name', 'description'], 
-            ['name', 'description'], 
+            ['name', 'description', 'permissionNames'], 
+            ['name', 'description', 'permissionNames'], 
             DTO.TYPES.REQUEST
         );
     }
@@ -80,6 +82,7 @@ class AdminCreateRequest extends DTO.DTOBaseClass {
  * @classdesc DTO for admin role update requests
  * @property {string} name
  * @property {string} description
+ * @property {string[]} permissionNames
  */
 class AdminUpdateRequest extends DTO.DTOBaseClass {
 
@@ -88,10 +91,9 @@ class AdminUpdateRequest extends DTO.DTOBaseClass {
      * @param {object} body
      * @throws {DTOArgumentError} If body is not provided
      * @throws {DTORequestParameterError} If body does not contain an name
-     * @throws {DTORequestParameterError} If body does not contain a description
      */
     constructor(body) {
-        super(body, ['name', 'description'], ['name', 'description'], DTO.TYPES.REQUEST);
+        super(body, ['name', 'description', 'permissionNames'], ['name'], DTO.TYPES.REQUEST);
     }
 }
 
