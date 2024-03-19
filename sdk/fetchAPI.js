@@ -101,5 +101,6 @@ export default {
     setAuthTokenKey,
     removeAuthToken,
     setAuthToken,
-    getAuthToken
+    getAuthToken,
+    setAPIVersion
 }
