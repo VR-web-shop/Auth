@@ -30,6 +30,33 @@ export const PERMISSIONS = {
         UPDATE: { name: 'permissions:update', description: 'Update a permission' },
         DELETE: { name: 'permissions:delete', description: 'Delete a permission' },
     },
+    PRODUCTS: {
+        SHOW: { name: 'products:show', description: 'Show a product' },
+        INDEX: { name: 'products:index', description: 'List all products' },
+        CREATE: { name: 'products:create', description: 'Create a product' },
+        UPDATE: { name: 'products:update', description: 'Update a product' },
+        DELETE: { name: 'products:delete', description: 'Delete a product' },
+    },
+    PRODUCT_ENTITY: {
+        SHOW: { name: 'product-entities:show', description: 'Show a product entity' },
+        INDEX: { name: 'product-entities:index', description: 'List all product entities' },
+        CREATE: { name: 'product-entities:create', description: 'Create a product entity' },
+        UPDATE: { name: 'product-entities:update', description: 'Update a product entity' },
+        DELETE: { name: 'product-entities:delete', description: 'Delete a product entity' },
+        SHIP: { name: 'product-entities:ship', description: 'Ship a product entity' },
+        DISCARD: { name: 'product-entities:discard', description: 'Discard a product entity' },
+        RETURN: { name: 'product-entities:return', description: 'Return a product entity' },
+    },
+    PRODUCT_ENTITY_STATE: {
+        SHOW: { name: 'product-entity-states:show', description: 'Show a product entity state' },
+        INDEX: { name: 'product-entity-states:index', description: 'List all product entity states' },
+    },
+    ADMIN_CLIENT: {
+        ACCESS: { name: 'admin:client:access', description: 'Access the admin client' },
+    },
+    SCENES_EDITOR_CLIENT: {
+        ACCESS: { name: 'scenes-editor:client:access', description: 'Access the scenes editor client' },
+    },
 };
 
 const Permission = Database.define("Permission", {

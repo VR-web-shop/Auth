@@ -192,6 +192,10 @@ router.route('/api/v1/admin/roles')
     *           type: string
     *          description:
     *           type: string
+    *          permissionNames:
+    *           type: array
+    *           items:
+    *            type: string
     *     responses:
     *      200:
     *        description: OK
@@ -252,6 +256,10 @@ router.route('/api/v1/admin/roles')
     *           type: string
     *          description:
     *           type: string
+    *          permissionNames:
+    *           type: array
+    *           items:
+    *            type: string
     *     responses:
     *      200:
     *        description: OK

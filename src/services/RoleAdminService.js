@@ -96,13 +96,26 @@ async function create(adminCreateRequest) {
         throw new ServiceArgumentError('adminCreateRequest must be an instance of RoleRequest.AdminCreateRequest');
     }
 
-    const { name, description } = adminCreateRequest
+    const { name, description, permissionNames } = adminCreateRequest
 
     if (await Role.findOne({ where: { name } })) {
         throw new ServiceEntityDuplicateValueError('Name already in use')
     }
 
+    if (permissionNames && permissionNames.length > 0) {
+        for (const permissionName of permissionNames) {
+            const permission = await Permission.findOne({ where: { name: permissionName } })
+            if (!permission) {
+                throw new ServiceEntityNotFoundError('Permission not found')
+            }
+        }
+    }
+
     const role = await Role.create({ name, description })
+
+    for (const permissionName of permissionNames) {
+        await RolePermission.create({ role_name: name, permission_name: permissionName })
+    }
     
     return new RoleResponse(role.dataValues)
 }
@@ -120,11 +133,25 @@ async function update(adminUpdateRequest) {
         throw new ServiceArgumentError('adminUpdateRequest must be an instance of RoleRequest.AdminUpdateRequest');
     }
 
-    const { name, description } = adminUpdateRequest
+    const { name, description, permissionNames } = adminUpdateRequest
     const role = await Role.findOne({ where: { name } })
 
     if (!role) {
         throw new ServiceEntityNotFoundError('Role not found')
+    }
+
+    if (permissionNames && permissionNames.length > 0) {
+        for (const permissionName of permissionNames) {
+            const permission = await Permission.findOne({ where: { name: permissionName } })
+            if (!permission) {
+                throw new ServiceEntityNotFoundError('Permission not found')
+            }
+        }
+
+        await RolePermission.destroy({ where: { role_name: name } })
+        for (const permissionName of permissionNames) {
+            await RolePermission.create({ role_name: name, permission_name: permissionName })
+        }
     }
 
     if (description) role.description = description

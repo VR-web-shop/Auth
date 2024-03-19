@@ -57,8 +57,26 @@ import User from './src/models/User.js';
     })();
 
     await (async () => {
+        const email = 'userAdmin@example.com';
+        const password = '126345678';
+        await User.findOrCreate({ where: { email, password, role_name: ROLES.USER_ADMIN.name } });
+    })();
+
+    await (async () => {
         const email = 'member@example.com';
         const password = 'SuperSecretPassword';
         await User.findOrCreate({ where: { email, password, role_name: ROLES.MEMBER.name } });
+    })();
+
+    await (async () => {
+        const email = 'productManager@example.com';
+        const password = '126345678';
+        await User.findOrCreate({ where: { email, password, role_name: ROLES.PRODUCT_MANAGER.name } });
+    })();
+
+    await (async () => {
+        const email = 'productEmployee@example.com';
+        const password = '126345678';
+        await User.findOrCreate({ where: { email, password, role_name: ROLES.PRODUCT_EMPLOYEE.name } });
     })();
 })();

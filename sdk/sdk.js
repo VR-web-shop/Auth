@@ -1,5 +1,7 @@
 import fetchAPI from './fetchAPI.js'
 
+import MiddlewareJWT from '../src/jwt/MiddlewareJWT.js'
+
 import DTOArgumentError from '../src/dtos/errors/DTOArgumentError.js'
 import DTORequestParameterError from '../src/dtos/errors/DTORequestParameterError.js'
 import DTOResponseParameterError from '../src/dtos/errors/DTOResponseParameterError.js'
@@ -103,6 +105,13 @@ const SDK = function(serverURL, options={}) {
         DTOArgumentError,
         DTORequestParameterError,
         DTOResponseParameterError
+    }
+
+    /**
+     * @property {object} middleware The SDK middleware
+     */
+    this.middleware = {
+        JWT: MiddlewareJWT
     }
 }
 

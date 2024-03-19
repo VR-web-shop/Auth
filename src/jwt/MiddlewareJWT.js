@@ -1,5 +1,4 @@
 import Jwt from 'jsonwebtoken';
-import { ROLES } from '../models/Role.js';
 
 /**
  * @function AuthorizeJWT
