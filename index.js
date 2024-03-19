@@ -11,8 +11,6 @@ import RoleAdminController from './src/controllers/api/v1/RoleAdminController.js
 import PermissionAdminController from './src/controllers/api/v1/PermissionAdminController.js'
 import SwaggerController from './src/controllers/SwaggerController.js'
 
-import SDK from './sdk/sdk.js'
-
 const app = express()
 const port = process.env.SERVER_PORT
 
