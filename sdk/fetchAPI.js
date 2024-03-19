@@ -1,8 +1,8 @@
 import SDKFetchError from './errors/SDKFetchError.js';
 import SDKFetchMissingTokenError from './errors/SDKFetchMissingTokenError.js';
 
-const apiPath = '/api/v1/';
-
+const apiPath = '/api/';
+let apiVersion = 'v1';
 let refreshMethod = null;
 let serverURL = 'http://localhost:5173';
 let tokenLocalStorageKey = 'auth';
@@ -29,6 +29,10 @@ function setAuthToken(token) {
 
 function getAuthToken() {
     return localStorage.getItem(tokenLocalStorageKey);
+}
+
+function setAPIVersion(version) {
+    apiVersion = version;
 }
 
 /**
@@ -70,7 +74,7 @@ async function request(endpoint, options, useAuth = false, refreshes = 0) {
         }
     }
 
-    const response = await fetch(`${serverURL}${apiPath}${endpoint}`, options);
+    const response = await fetch(`${serverURL}${apiPath}${apiVersion}/${endpoint}`, options);
     
     if (!response.ok) {
         const { statusText, status } = response.status;

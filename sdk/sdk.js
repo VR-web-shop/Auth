@@ -25,17 +25,19 @@ import adminPermissions from './api/adminPermissions.js'
  * @function SDK
  * @description The SDK constructor
  * @param {string} serverURL The server URL
+ * @param {string} APIVersion The API version
  * @param {object} options The options
  * @returns {object} The SDK object
  * @throws {Error} If serverURL is not provided
- * @example const s = new SDK('http://localhost:3000', { authTokenKey: 'auth' });
+ * @example const s = new SDK('http://localhost:3000', 'v1, { authTokenKey: 'auth' });
  */
-const SDK = function(serverURL, options={}) {
+const SDK = function(serverURL, APIVersion = 'v1', options={}) {
     if (!serverURL) {
         throw new Error('serverURL is required');
     }
 
     fetchAPI.setServerURL(serverURL);
+    fetchAPI.setAPIVersion(APIVersion);
     fetchAPI.setRefreshMethod(authentication.refresh);
 
     if (options.authTokenKey) {
