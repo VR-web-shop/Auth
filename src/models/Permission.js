@@ -51,6 +51,10 @@ export const PERMISSIONS = {
         SHOW: { name: 'product-entity-states:show', description: 'Show a product entity state' },
         INDEX: { name: 'product-entity-states:index', description: 'List all product entity states' },
     },
+    CARTS: {
+        INDEX: { name: 'shopping-cart:carts:index', description: 'List all carts in shopping cart system' },
+        DELETE: { name: 'shopping-cart:carts:delete', description: 'Delete a cart in shopping cart system' },
+    },
     ADMIN_CLIENT: {
         ACCESS: { name: 'admin:client:access', description: 'Access the admin client' },
     },
