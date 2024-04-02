@@ -51,6 +51,35 @@ export const PERMISSIONS = {
         SHOW: { name: 'product-entity-states:show', description: 'Show a product entity state' },
         INDEX: { name: 'product-entity-states:index', description: 'List all product entity states' },
     },
+    PRODUCT_ORDER: {
+        SHOW: { name: 'product-orders:show', description: 'Show a product order' },
+        INDEX: { name: 'product-orders:index', description: 'List all product orders' },
+        CREATE: { name: 'product-orders:create', description: 'Create a product order' },
+        UPDATE: { name: 'product-orders:update', description: 'Update a product order' },
+        DELETE: { name: 'product-orders:delete', description: 'Delete a product order' },
+        SHIP: { name: 'product-orders:ship', description: 'Ship a product order' },
+        CANCEL: { name: 'product-orders:cancel', description: 'Cancel a product order' },
+        RETURN: { name: 'product-orders:return', description: 'Return a product order' },
+    },
+    PRODUCT_ORDER_ENTITY: {
+        SHOW: { name: 'product-order-entities:show', description: 'Show a product order entity' },
+        INDEX: { name: 'product-order-entities:index', description: 'List all product order entities' },
+        CREATE: { name: 'product-order-entities:create', description: 'Create a product order entity' },
+        UPDATE: { name: 'product-order-entities:update', description: 'Update a product order entity' },
+        DELETE: { name: 'product-order-entities:delete', description: 'Delete a product order entity' },
+    },
+    PRODUCT_ORDER_STATE: {
+        SHOW: { name: 'product-order-states:show', description: 'Show a product order state' },
+        INDEX: { name: 'product-order-states:index', description: 'List all product order states' },
+    },
+    DELIVER_OPTION: {
+        SHOW: { name: 'deliver-options:show', description: 'Show a deliver option' },
+        INDEX: { name: 'deliver-options:index', description: 'List all deliver options' },
+    },
+    PAYMENT_OPTION: {
+        SHOW: { name: 'payment-options:show', description: 'Show a payment option' },
+        INDEX: { name: 'payment-options:index', description: 'List all payment options' },
+    },
     CARTS: {
         INDEX: { name: 'shopping-cart:carts:index', description: 'List all carts in shopping cart system' },
         DELETE: { name: 'shopping-cart:carts:delete', description: 'Delete a cart in shopping cart system' },
