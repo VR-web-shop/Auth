@@ -80,6 +80,9 @@ export const PERMISSIONS = {
         SHOW: { name: 'payment-options:show', description: 'Show a payment option' },
         INDEX: { name: 'payment-options:index', description: 'List all payment options' },
     },
+    VALUTA_SETTING: {
+        UPDATE: { name: 'valuta-settings:update', description: 'Update valuta settings' },
+    },
     CARTS: {
         INDEX: { name: 'shopping-cart:carts:index', description: 'List all carts in shopping cart system' },
         DELETE: { name: 'shopping-cart:carts:delete', description: 'Delete a cart in shopping cart system' },
