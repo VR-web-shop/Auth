@@ -1,10 +1,16 @@
 import APIActorError from "../errors/APIActorError.js";
-import UserAdminService from "../../../services/UserAdminService.js";
+import ReadOneQuery from "../../../queries/User/ReadOneQuery.js";
+import ReadCollectionQuery from "../../../queries/User/ReadCollectionQuery.js";
+import PutCommand from "../../../commands/User/PutCommand.js";
+import DeleteCommand from "../../../commands/User/DeleteCommand.js";
+import ModelCommandService from "../../../services/ModelCommandService.js";
+import ModelQueryService from "../../../services/ModelQueryService.js";
 import Middleware from "../../../jwt/MiddlewareJWT.js";
-import { PERMISSIONS } from "../../../models/Permission.js";
 import express from 'express';
 
 const router = express.Router()
+const commandService = new ModelCommandService()
+const queryService = new ModelQueryService()
 
 router.use(Middleware.AuthorizeJWT)
 
@@ -52,10 +58,10 @@ router.route('/api/v1/admin/user/:uuid')
      *      500:
      *        description: Internal Server Error
      */
-    .get(Middleware.AuthorizePermissionJWT(PERMISSIONS.USERS.SHOW.name), async (req, res) => {
+    .get(Middleware.AuthorizePermissionJWT("users:show"), async (req, res) => {
         try {
-            const request = new UserAdminService.UserRequest.AdminFindRequest(req.params)
-            const response = await UserAdminService.find(request)
+            const { client_side_uuid } = req.params
+            const response = await queryService.invoke(new ReadOneQuery(client_side_uuid))
             res.send(response)
         } catch (error) {
             if (error instanceof APIActorError) {
@@ -106,7 +112,7 @@ router.route('/api/v1/admin/user/:uuid/permissions')
      *      500:
      *        description: Internal Server Error
      */
-    .get(Middleware.AuthorizePermissionJWT(PERMISSIONS.USERS.SHOW_PERMISSIONS.name), async (req, res) => {
+    .get(Middleware.AuthorizePermissionJWT("users:show:permissions"), async (req, res) => {
         try {
             const request = new UserAdminService.UserRequest.AdminFindRequest(req.params)
             const response = await UserAdminService.findPermissions(request)
@@ -177,11 +183,11 @@ router.route('/api/v1/admin/users')
     *      500:
     *        description: Internal Server Error
     */
-    .get(Middleware.AuthorizePermissionJWT(PERMISSIONS.USERS.INDEX.name), async (req, res) => {
+    .get(Middleware.AuthorizePermissionJWT("users:index"), async (req, res) => {
         try {
-            const request = new UserAdminService.UserRequest.AdminFindAllRequest(req.query)
-            const { users, pages } = await UserAdminService.findAll(request)
-            res.send({ users, pages })
+            const { limit, page } = req.query
+            const { rows, count, pages } = await queryService.invoke(new ReadCollectionQuery({limit, page}))
+            res.send({ rows, count, pages })
         } catch (error) {
             console.error(error)
             return res.status(500).send({ message: 'Internal Server Error' })
@@ -243,10 +249,11 @@ router.route('/api/v1/admin/users')
     *      500:
     *        description: Internal Server Error
     */
-    .post(Middleware.AuthorizePermissionJWT(PERMISSIONS.USERS.CREATE.name), async (req, res) => {
+    .post(Middleware.AuthorizePermissionJWT("users:put"), async (req, res) => {
         try {
-            const request = new UserAdminService.UserRequest.AdminCreateRequest(req.body)
-            const response = await UserAdminService.create(request)
+            const { client_side_uuid, email, password, first_name, last_name } = req.body
+            await commandService.invoke(new PutCommand({ client_side_uuid, email, password, first_name, last_name }))
+            const response = await queryService.invoke(new ReadOneQuery(client_side_uuid))
             res.send(response)
         } catch (error) {
             if (error instanceof APIActorError) {
@@ -317,10 +324,11 @@ router.route('/api/v1/admin/users')
     *      500:
     *        description: Internal Server Error
     */
-    .put(Middleware.AuthorizePermissionJWT(PERMISSIONS.USERS.UPDATE.name), async (req, res) => {
+    .put(Middleware.AuthorizePermissionJWT("users:put"), async (req, res) => {
         try {
-            const request = new UserAdminService.UserRequest.AdminUpdateRequest(req.body)
-            const response = await UserAdminService.update(request)
+            const { client_side_uuid, email, password, first_name, last_name } = req.body
+            await commandService.invoke(new PutCommand({ client_side_uuid, email, password, first_name, last_name }))
+            const response = await queryService.invoke(new ReadOneQuery(client_side_uuid))
             res.send(response)
         } catch (error) {
             if (error instanceof APIActorError) {
@@ -364,10 +372,10 @@ router.route('/api/v1/admin/users')
     *      500:
     *        description: Internal Server Error
     */
-    .delete(Middleware.AuthorizePermissionJWT(PERMISSIONS.USERS.DELETE.name), async (req, res) => {
+    .delete(Middleware.AuthorizePermissionJWT("users:delete"), async (req, res) => {
         try {
-            const request = new UserAdminService.UserRequest.AdminDeleteRequest(req.body)
-            await UserAdminService.destroy(request)
+            const { client_side_uuid } = req.body
+            await commandService.invoke(new DeleteCommand(client_side_uuid))
             res.sendStatus(204)
         } catch (error) {
             if (error instanceof APIActorError) {

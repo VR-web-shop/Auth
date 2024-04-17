@@ -1,0 +1,46 @@
+[
+    { 
+        "client_side_uuid": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+        "name": "Super Administrator", 
+        "description": "Super Administrator has full access to all system permissions.",
+        "permissions": ["*.*"]
+    },
+    {
+        "client_side_uuid": "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+        "name": "User Administrator",
+        "description": "User Administrator has access to user management permissions.",
+        "permissions": [
+            "auth.*",
+            "users.*",
+            "roles.*",
+            "permissions.*",
+            "admin-client.access"
+        ]
+    },
+    {
+        "client_side_uuid": "cccccccc-cccc-cccc-cccc-cccccccccccc",
+        "name": "Product Administrator",
+        "description": "Product Administrator has access to product management permissions.",
+        "permissions": [
+            "auth.*",
+            "products.*",
+            "product-entities.*",
+            "product-entity-states.*",
+            "product-orders.*",
+            "product-order-entities.*",
+            "product-order-states.*",
+            "deliver-options.*",
+            "payment-options.*",
+            "valuta-settings.*",
+            "admin-client.access"
+        ]
+    },
+    {
+        "client_side_uuid": "dddddddd-dddd-dddd-dddd-dddddddddddd",
+        "name": "Member",
+        "description": "Everyone can become a customer by signing up. They have access to public authenticated resources.",
+        "permissions": [
+            "auth.*"
+        ]
+    }
+]
