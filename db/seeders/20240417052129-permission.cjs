@@ -9,7 +9,7 @@ module.exports = {
 
     data.forEach(async permission => {        
       const { name, description } = permission;
-      permissions.push({ name });
+      permissions.push({ name, defined_by_system: true});
       permissionDescriptions.push({ permission_name: name, description });
     });
 

@@ -14,10 +14,10 @@ const queryService = new ModelQueryService()
 
 router.use(Middleware.AuthorizeJWT)
 
-router.route('/api/v1/admin/user/:uuid')
+router.route('/api/v1/admin/user/:client_side_uuid')
     /**
      * @openapi
-     * '/api/v1/admin/user/{uuid}':
+     * '/api/v1/admin/user/{client_side_uuid}':
      *  get:
      *     tags:
      *       - User Admin Controller
@@ -26,7 +26,7 @@ router.route('/api/v1/admin/user/:uuid')
      *      - bearerAuth: []
      *     parameters:
      *      - in: path
-     *        name: uuid
+     *        name: client_side_uuid
      *        required: true
      *        schema:
      *         type: string
@@ -39,7 +39,11 @@ router.route('/api/v1/admin/user/:uuid')
      *           schema:
      *             type: object
      *             properties:
-     *               uuid:
+     *               client_side_uuid:
+     *                 type: string
+     *               first_name:
+     *                 type: string
+     *               last_name:
      *                 type: string
      *               email:
      *                 type: string
@@ -47,7 +51,7 @@ router.route('/api/v1/admin/user/:uuid')
      *                 type: string
      *               updated_at:
      *                 type: string
-     *               role_name:
+     *               role_client_side_uuid:
      *                 type: string
      *      400:
      *        description: Bad Request
@@ -73,10 +77,10 @@ router.route('/api/v1/admin/user/:uuid')
         }
     })
 
-router.route('/api/v1/admin/user/:uuid/permissions')
+router.route('/api/v1/admin/user/:client_side_uuid/permissions')
     /**
      * @openapi
-     * '/api/v1/admin/user/{uuid}/permissions':
+     * '/api/v1/admin/user/{client_side_uuid}/permissions':
      *  get:
      *     tags:
      *       - User Admin Controller
@@ -85,7 +89,7 @@ router.route('/api/v1/admin/user/:uuid/permissions')
      *      - bearerAuth: []
      *     parameters:
      *      - in: path
-     *        name: uuid
+     *        name: client_side_uuid
      *        required: true
      *        schema:
      *         type: string
@@ -99,6 +103,8 @@ router.route('/api/v1/admin/user/:uuid/permissions')
      *             type: array
      *             items:
      *              properties:
+     *               client_side_uuid:
+     *                 type: string
      *               name:
      *                 type: string
      *               description:
@@ -163,15 +169,19 @@ router.route('/api/v1/admin/users')
     *               items:
     *                type: object
     *                properties:
-    *                 uuid:
+    *                 client_side_uuid:
     *                  type: string
     *                 email:
+    *                  type: string
+    *                 first_name:
+    *                  type: string
+    *                 last_name:
     *                  type: string
     *                 created_at:
     *                  type: string
     *                 updated_at:
     *                  type: string
-    *                 role_name:
+    *                 role_client_side_uuid:
     *                  type: string
     *             
     *      400:
@@ -209,19 +219,31 @@ router.route('/api/v1/admin/users')
     *        schema:
     *         type: object
     *         required:
+    *          - client_side_uuid
+    *          - first_name
+    *          - last_name
     *          - email
     *          - password
-    *          - role_name
+    *          - role_client_side_uuid
     *         properties:
+    *          client_side_uuid:
+    *           type: string
+    *           format: uuid
+    *           default: 123e4567-e89b-12d3-a456-426614174000
+    *          first_name:
+    *           type: string
+    *           default: John
+    *          last_name:
+    *           type: string
+    *           default: Doe
     *          email:
     *           type: string
     *           default: new_admin@example.com
     *          password:
     *           type: string
     *           default: 12345678
-    *          role_name:
+    *          role_client_side_uuid:
     *           type: string
-    *           default: admin
     *     responses:
     *      200:
     *        description: OK
@@ -230,7 +252,11 @@ router.route('/api/v1/admin/users')
     *           schema:
     *             type: object
     *             properties:
-    *               uuid:
+    *               client_side_uuid:
+    *                 type: string
+    *               first_name:
+    *                 type: string
+    *               last_name:
     *                 type: string
     *               email:
     *                 type: string
@@ -238,7 +264,7 @@ router.route('/api/v1/admin/users')
     *                 type: string
     *               updated_at:
     *                 type: string
-    *               role_name:
+    *               role_client_side_uuid:
     *                 type: string
     *      400:
     *        description: Bad Request
@@ -280,23 +306,31 @@ router.route('/api/v1/admin/users')
     *        schema:
     *         type: object
     *         required:
-    *          - uuid
+    *          - client_side_uuid
+    *          - first_name
+    *          - last_name
     *          - email
     *          - password
-    *          - role_name
+    *          - role_client_side_uuid
     *         properties:
-    *          uuid:
+    *          client_side_uuid:
     *           type: string
     *           format: uuid
+    *           default: 123e4567-e89b-12d3-a456-426614174000
+    *          first_name:
+    *           type: string
+    *           default: John
+    *          last_name:
+    *           type: string
+    *           default: Doe
     *          email:
     *           type: string
     *           default: new_admin2@example.com
     *          password:
     *           type: string
     *           default: 12345678
-    *          role_name:
+    *          role_client_side_uuid:
     *           type: string
-    *           default: member
     *     responses:
     *      200:
     *        description: OK
@@ -305,7 +339,11 @@ router.route('/api/v1/admin/users')
     *           schema:
     *             type: object
     *             properties:
-    *               uuid:
+    *               client_side_uuid:
+    *                 type: string
+    *               first_name:
+    *                 type: string
+    *               last_name:
     *                 type: string
     *               email:
     *                 type: string
@@ -313,7 +351,7 @@ router.route('/api/v1/admin/users')
     *                 type: string
     *               updated_at:
     *                 type: string
-    *               role_name:
+    *               role_client_side_uuid:
     *                 type: string
     *      400:
     *        description: Bad Request
@@ -355,9 +393,9 @@ router.route('/api/v1/admin/users')
     *        schema:
     *         type: object
     *         required:
-    *          - uuid
+    *          - client_side_uuid
     *         properties:
-    *          uuid:
+    *          client_side_uuid:
     *           type: string
     *           format: uuid
     *     responses:

@@ -19,6 +19,12 @@ module.exports = {
         type: Sequelize.DATE,
         field: 'updated_at',
         defaultValue: Sequelize.fn('now')
+      },
+      definedBySystem: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        field: 'defined_by_system',
+        defaultValue: false
       }
     });
   },

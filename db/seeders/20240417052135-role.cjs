@@ -28,7 +28,7 @@ module.exports = {
         });
       });
 
-      roles.push({ client_side_uuid });
+      roles.push({ client_side_uuid, defined_by_system: true });
       roleDescriptions.push({ role_client_side_uuid: client_side_uuid, name, description });      
     });
 

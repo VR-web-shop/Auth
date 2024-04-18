@@ -6,7 +6,6 @@ import DeleteCommand from "../../../commands/Role/DeleteCommand.js";
 import ModelCommandService from "../../../services/ModelCommandService.js";
 import ModelQueryService from "../../../services/ModelQueryService.js";
 import Middleware from "../../../jwt/MiddlewareJWT.js";
-import { PERMISSIONS } from "../../../models/Permission.js";
 import express from 'express';
 
 const router = express.Router()
@@ -15,19 +14,19 @@ const queryService = new ModelQueryService()
 
 router.use(Middleware.AuthorizeJWT)
 
-router.route('/api/v1/admin/role/:name')
+router.route('/api/v1/admin/role/:client_side_uuid')
     /**
      * @openapi
-     * '/api/v1/admin/role/{name}':
+     * '/api/v1/admin/role/{client_side_uuid}':
      *  get:
      *     tags:
      *       - Role Admin Controller
-     *     summary: Fetch a role by name
+     *     summary: Fetch a role by client_side_uuid
      *     security:
      *      - bearerAuth: []
      *     parameters:
      *      - in: path
-     *        name: name
+     *        name: client_side_uuid
      *        required: true
      *        schema:
      *         type: string
@@ -39,10 +38,14 @@ router.route('/api/v1/admin/role/:name')
      *           schema:
      *             type: object
      *             properties:
+     *               client_side_uuid:
+     *                 type: string
      *               name:
      *                 type: string
      *               description:
      *                 type: string
+     *               defined_by_system:
+     *                 type: boolean
      *      400:
      *        description: Bad Request
      *      404:
@@ -67,19 +70,19 @@ router.route('/api/v1/admin/role/:name')
         }
     })
 
-    router.route('/api/v1/admin/role/:name/permissions')
+    router.route('/api/v1/admin/role/:client_side_uuid/permissions')
     /**
      * @openapi
-     * '/api/v1/admin/role/{name}/permissions':
+     * '/api/v1/admin/role/{client_side_uuid}/permissions':
      *  get:
      *     tags:
      *       - Role Admin Controller
-     *     summary: Fetch a role's permissions by name
+     *     summary: Fetch a role's permissions by client_side_uuid
      *     security:
      *      - bearerAuth: []
      *     parameters:
      *      - in: path
-     *        name: name
+     *        name: client_side_uuid
      *        required: true
      *        schema:
      *         type: string
@@ -92,11 +95,13 @@ router.route('/api/v1/admin/role/:name')
      *             type: array
      *             items:
      *              properties:
+     *               client_side_uuid:
+     *                 type: string
      *               name:
      *                 type: string
      *               description:
      *                 type: string
-     *               is_user_defined:
+     *               defined_by_system:
      *                 type: boolean
      *      400:
      *        description: Bad Request
@@ -153,11 +158,13 @@ router.route('/api/v1/admin/roles')
      *             items:
      *              type: object
      *              properties:
+     *               client_side_uuid:
+     *                type: string
      *               name:
      *                type: string
      *               description:
      *                type: string
-     *               is_user_defined:
+     *               defined_by_system:
      *                 type: boolean
      *      404:
      *        description: Not Found
@@ -192,17 +199,16 @@ router.route('/api/v1/admin/roles')
     *        schema:
     *         type: object
     *         required:
+    *          - client_side_uuid
     *          - name
     *          - description
     *         properties:
+    *          client_side_uuid:
+    *           type: string
     *          name:
     *           type: string
     *          description:
     *           type: string
-    *          permissionNames:
-    *           type: array
-    *           items:
-    *            type: string
     *     responses:
     *      200:
     *        description: OK
@@ -211,11 +217,13 @@ router.route('/api/v1/admin/roles')
     *           schema:
     *             type: object
     *             properties:
+    *               client_side_uuid:
+    *                 type: string
     *               name:
     *                 type: string
     *               description:
     *                 type: string
-    *               is_user_defined:
+    *               defined_by_system:
     *                 type: boolean
     *      400:
     *        description: Bad Request
@@ -257,17 +265,16 @@ router.route('/api/v1/admin/roles')
     *        schema:
     *         type: object
     *         required:
+    *          - client_side_uuid
     *          - name
     *          - description
     *         properties:
+    *          client_side_uuid:
+    *           type: string
     *          name:
     *           type: string
     *          description:
     *           type: string
-    *          permissionNames:
-    *           type: array
-    *           items:
-    *            type: string
     *     responses:
     *      200:
     *        description: OK
@@ -276,11 +283,13 @@ router.route('/api/v1/admin/roles')
     *           schema:
     *             type: object
     *             properties:
+    *               client_side_uuid:
+    *                 type: string
     *               name:
     *                 type: string
     *               description:
     *                 type: string
-    *               is_user_defined:
+    *               defined_by_system:
     *                 type: boolean
     *      400:
     *        description: Bad Request
@@ -322,9 +331,9 @@ router.route('/api/v1/admin/roles')
     *        schema:
     *         type: object
     *         required:
-    *          - name
+    *          - client_side_uuid
     *         properties:
-    *          name:
+    *          client_side_uuid:
     *           type: string
     *     responses:
     *      204:

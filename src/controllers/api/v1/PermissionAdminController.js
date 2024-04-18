@@ -42,7 +42,7 @@ router.route('/api/v1/admin/permission/:name')
      *                 type: string
      *               description:
      *                 type: string
-     *               is_user_defined:
+     *               defined_by_system:
      *                 type: boolean
      *      400:
      *        description: Bad Request
@@ -103,7 +103,7 @@ router.route('/api/v1/admin/permissions')
      *                type: string
      *               description:
      *                type: string
-     *               is_user_defined:
+     *               defined_by_system:
      *                type: boolean
      *      404:
      *        description: Not Found
@@ -157,7 +157,7 @@ router.route('/api/v1/admin/permissions')
     *                 type: string
     *               description:
     *                 type: string
-    *               is_user_defined:
+    *               defined_by_system:
     *                 type: boolean
     *      400:
     *        description: Bad Request
@@ -218,7 +218,7 @@ router.route('/api/v1/admin/permissions')
     *                 type: string
     *               description:
     *                 type: string
-    *               is_user_defined:
+    *               defined_by_system:
     *                 type: boolean
     *      400:
     *        description: Bad Request

@@ -20,6 +20,12 @@ module.exports = {
         field: 'updated_at',
         defaultValue: Sequelize.fn('now')
       },
+      definedBySystem: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        field: 'defined_by_system',
+        defaultValue: false
+      }
     });
   },
   async down(queryInterface, Sequelize) {

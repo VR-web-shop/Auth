@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
       });
       models.RolePermission.hasMany(models.RolePermissionRemoved, {
         foreignKey: 'role_permission_client_side_uuid',
-        sourceKey: 'client_side_uuid',
+        targetKey: 'client_side_uuid'
       });
     }
   }

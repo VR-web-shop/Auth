@@ -13,7 +13,8 @@ export default function RoleDTO(description, entity) {
         name: description.name,
         description: description.description,
         created_at: entity.createdAt,
-        updated_at: description.createdAt
+        updated_at: description.createdAt,
+        definedBySystem: entity.defined_by_system
     }
 }
  

@@ -1,5 +1,5 @@
 import ModelCommand from "../abstractions/ModelCommand.js";
-import RequestError from "../../schemas/RequestError/RequestError.js";
+import APIActorError from "../../controllers/api/errors/APIActorError.js";
 
 export default class DeleteCommand extends ModelCommand {
     constructor(pk, pkName, fkName, modelName, tombstoneName) {

@@ -10,24 +10,27 @@ import PermissionResponse from "../dtos/PermissionResponse.js";
 
 import AuthJWT from "../jwt/AuthenticateJWT.js";
 import AuthRequest from "../dtos/AuthRequest.js";
-import AuthResponse from "../dtos/AuthResponse.js";
+import AuthResponse from "../dtos/Auth.js";
 
 /**
  * @function create
  * @description Create a new authentication
- * @param {AuthRequest.CreateRequest} createRequest
+ * @param {string} email
+ * @param {string} password
  * @returns {Promise<Object>} response, refresh_token
- * @throws {ServiceArgumentError} If createRequest is not an instance of AuthRequest.CreateRequest
+ * @throws {ServiceArgumentError} If email or password is not a string
  * @throws {ServiceEntityNotFoundError} If user not found
  * @throws {ServiceIncorectPasswordError} If password is incorrect
  */
-async function create(createRequest) {
-    console.log('createRequest', typeof createRequest)
-    if (!(createRequest instanceof AuthRequest.CreateRequest)) {
-        throw new ServiceArgumentError('Invalid request')
+async function create(email, password) {
+    if (typeof email !== 'string') {
+        throw new ServiceArgumentError('Email must be a string')
+    }
+    
+    if (typeof password !== 'string') {
+        throw new ServiceArgumentError('Password must be a string')
     }
 
-    const { email, password } = createRequest
     const user = await User.findOne({ where: { email }, include: Role })
     
     if (!user) {
@@ -54,7 +57,7 @@ async function create(createRequest) {
  * @throws {ServiceArgumentError} If refreshRequest is not an instance of AuthRequest.RefreshRequest
  * @throws {AuthJWT.InvalidRefreshTokenError} If the refresh token is invalid
  */
-async function refresh(refreshRequest) {
+async function refresh(refresh_token) {
     if (!(refreshRequest instanceof AuthRequest.RefreshRequest)) {
         throw new ServiceArgumentError('Invalid request')
     }

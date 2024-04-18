@@ -11,8 +11,8 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       models.RolePermissionRemoved.belongsTo(models.RolePermission, {
-        foreignKey: 'role_permission_id',
-        targetKey: 'id'
+        foreignKey: 'role_permission_client_side_uuid',
+        targetKey: 'clientSideUUID'
       });
     }
   }
@@ -38,10 +38,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATE,
       field: 'updated_at',
     },
-    role_permission_id: {
-      type: DataTypes.INTEGER,
+    role_permission_client_side_uuid: {
+      type: DataTypes.UUID,
       allowNull: false,
-      field: 'role_permission_id',
+      field: 'role_permission_client_side_uuid',
     }
   }, {
     sequelize,

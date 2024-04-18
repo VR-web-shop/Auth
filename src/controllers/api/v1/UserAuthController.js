@@ -29,16 +29,27 @@ router.route('/api/v1/user')
      *           schema:
      *             type: object
      *             properties:
-     *               uuid:
+     *               client_side_uuid:
      *                 type: string
+     *                 default: aaa-bbb-ccc
+     *               first_name:
+     *                 type: string
+     *                 default: John
+     *               last_name:
+     *                 type: string
+     *                 default: Doe
      *               email:
      *                 type: string
+     *                 default: test@test.com
     *               created_at:
     *                 type: string
+    *                 default: 2022-01-01T00:00:00.000Z
     *               updated_at:
     *                 type: string
-    *               role_name:
+    *                 default: 2022-01-01T00:00:00.000Z
+    *               role_client_side_uuid:
     *                 type: string
+    *                 default: aaa-bbb-ccc
      *      404:
      *        description: Not Found
      *      401:
@@ -77,9 +88,21 @@ router.route('/api/v1/users')
     *           schema:
     *            type: object
     *            required:
+    *              - client_side_uuid
+    *              - first_name
+    *              - last_name
     *              - email
     *              - password
     *            properties:
+    *              client_side_uuid:
+    *                type: string
+    *                default: aaa-bbb-ccc
+    *              first_name:
+    *                type: string
+    *                default: John
+    *              last_name:
+    *                type: string
+    *                default: Doe
     *              email:
     *                type: string
     *                default: test@example.com
@@ -107,6 +130,7 @@ router.route('/api/v1/users')
     */
     .post(async (req, res) => {
         try {
+            const { client_side_uuid, email, password, new_password, first_name, last_name } = req.body
             const request = new UserAuthService.UserRequest.CreateRequest(req.body)
             const { response, refresh_token } = await UserAuthService.create(request)
 
@@ -137,8 +161,17 @@ router.route('/api/v1/users')
     *           schema:
     *            type: object
     *            required:
+    *              - email
     *              - password
+    *              - first_name
+    *              - last_name
     *            properties:
+    *              first_name:
+    *                type: string
+    *                default: John
+    *              last_name:
+    *                type: string
+    *                default: Doe
     *              email:
     *                type: string
     *                default: test@example.com
@@ -156,7 +189,11 @@ router.route('/api/v1/users')
     *           schema:
     *             type: object
     *             properties:
-    *               uuid:
+    *               client_side_uuid:
+    *                 type: string
+    *               first_name:
+    *                 type: string
+    *               last_name:
     *                 type: string
     *               email:
     *                 type: string
@@ -164,7 +201,7 @@ router.route('/api/v1/users')
     *                 type: string
     *               updated_at:
     *                 type: string
-    *               role_name:
+    *               role_client_side_uuid:
     *                 type: string
     *      400:
     *        description: Bad Request
@@ -178,8 +215,8 @@ router.route('/api/v1/users')
     .put(Middleware.AuthorizeJWT, Middleware.AuthorizePermissionJWT("auth:users:put"), async (req, res) => {
         try {
             const { sub } = req.user
-            const { email, password, first_name, last_name } = req.body
-            await commandService.invoke(new PutCommand({ client_side_uuid: sub, email, password, first_name, last_name }))
+            const { email, password, new_password, first_name, last_name } = req.body
+            await commandService.invoke(new PutCommand({ client_side_uuid: sub, email, password, new_password, first_name, last_name }))
             const response = await queryService.invoke(new ReadOneQuery(client_side_uuid))
             res.send(response)
         } catch (error) {
@@ -226,8 +263,9 @@ router.route('/api/v1/users')
     */
     .delete(Middleware.AuthorizeJWT, Middleware.AuthorizePermissionJWT("auth:users:delete"), async (req, res) => {
         try {
+            const { password } = req.body
             const { sub } = req.user
-            await commandService.invoke(new DeleteCommand(sub))
+            await commandService.invoke(new DeleteCommand(sub, password))
             res.sendStatus(204)
         } catch (error) {
             if (error instanceof APIActorError) {

@@ -22,6 +22,10 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'role_client_side_uuid',
         sourceKey: 'client_side_uuid',
       });
+      models.Role.hasMany(models.RolePermission, {
+        foreignKey: 'role_client_side_uuid',
+        sourceKey: 'client_side_uuid',
+      });
     }
   }
   Role.init({
@@ -37,6 +41,11 @@ module.exports = (sequelize, DataTypes) => {
     updatedAt: {
       type: DataTypes.DATE,
       field: 'updated_at',
+    },
+    definedBySystem: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      field: 'defined_by_system'
     }
   }, {
     sequelize,

@@ -33,6 +33,11 @@ module.exports = (sequelize, DataTypes) => {
     updatedAt: {
       type: DataTypes.DATE,
       field: 'updated_at',
+    },
+    definedBySystem: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      field: 'defined_by_system'
     }
   }, {
     sequelize,
