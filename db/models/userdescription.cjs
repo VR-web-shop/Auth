@@ -1,7 +1,6 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const bcrypt = require('bcrypt');
+const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class UserDescription extends Model {
     /**
@@ -27,30 +26,36 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       type: DataTypes.INTEGER
     },
-    firstName: {
+    first_name: {
       type: DataTypes.STRING,
       allowNull: false,
       field: 'first_name'
     },
-    lastName: {
+    last_name: {
       type: DataTypes.STRING,
       allowNull: false,
       field: 'last_name'
     },
+    active_email: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      unique: true,
+      field: 'active_email'
+    },
     email: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: true
     },
     password: {
       type: DataTypes.STRING,
       allowNull: false
     },
-    createdAt: {
+    created_at: {
       allowNull: false,
       type: DataTypes.DATE,
       field: 'created_at',
     },
-    updatedAt: {
+    updated_at: {
       allowNull: false,
       type: DataTypes.DATE,
       field: 'updated_at',
@@ -58,14 +63,35 @@ module.exports = (sequelize, DataTypes) => {
     user_client_side_uuid: {
       type: DataTypes.UUID,
       allowNull: false,
+      unique: false
     },
     role_client_side_uuid: {
       type: DataTypes.UUID,
       allowNull: false,
+      unique: false,
     },
   }, {
     sequelize,
     modelName: 'UserDescription',
+    hooks: {
+      beforeCreate: async (userDescription) => {
+        userDescription.password = await bcrypt.hash(userDescription.password, 10);
+      },
+      beforeUpdate: async (userDescription) => {
+        if (userDescription.changed('password')) {
+          userDescription.password = await bcrypt.hash(userDescription.password, 10);
+        }
+      }
+    }
   });
+
+  UserDescription.verifyPassword = async (user, password) => {
+    if (!password) throw new Error('Password is required');    
+    if (!user) throw new Error('User is required');
+    if (!user.password) throw new Error('User.password is missing');
+
+    return await bcrypt.compare(password, user.password);
+  }
+
   return UserDescription;
 };

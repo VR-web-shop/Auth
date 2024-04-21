@@ -1,9 +1,11 @@
 import APIActorError from "../errors/APIActorError.js";
 import ReadOneQuery from "../../../queries/User/ReadOneQuery.js";
+import CreateCommand from "../../../commands/User/CreateCommand.js";
 import PutCommand from "../../../commands/User/PutCommand.js";
 import DeleteCommand from "../../../commands/User/DeleteCommand.js";
 import ModelCommandService from "../../../services/ModelCommandService.js";
 import ModelQueryService from "../../../services/ModelQueryService.js";
+import AuthService from "../../../services/AuthService.js";
 import Middleware from "../../../jwt/MiddlewareJWT.js";
 import express from 'express';
 
@@ -130,12 +132,18 @@ router.route('/api/v1/users')
     */
     .post(async (req, res) => {
         try {
-            const { client_side_uuid, email, password, new_password, first_name, last_name } = req.body
-            const request = new UserAuthService.UserRequest.CreateRequest(req.body)
-            const { response, refresh_token } = await UserAuthService.create(request)
-
+            const { client_side_uuid, email, password, first_name, last_name } = req.body
+            /**
+             * Why not use the PutCommand for creating a new user?
+             * Because the PutCommand is idempotent, it will either add or update an user,
+             * and we want to ensure that we are only adding a new user, when a user
+             * signs up for the first time. The Create command is designed to only create
+             * a new user, and will throw an error if the user already exists.
+             */
+            await commandService.invoke(new CreateCommand(client_side_uuid, { email, password, first_name, last_name }))
+            const { access_token, refresh_token } = await AuthService.create(email, password)
             res.cookie('refresh_token', refresh_token, { httpOnly: true })
-            res.send(response)
+            res.send({ access_token })
         } catch (error) {
             if (error instanceof APIActorError) {
                 return res.status(error.statusCode).send({ message: error.message })

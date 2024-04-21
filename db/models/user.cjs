@@ -13,10 +13,17 @@ module.exports = (sequelize, DataTypes) => {
       models.User.hasMany(models.UserDescription, {
         foreignKey: 'user_client_side_uuid',
         sourceKey: 'client_side_uuid',
+        unique: false,
       });
       models.User.hasMany(models.UserRemoved, {
         foreignKey: 'user_client_side_uuid',
         sourceKey: 'client_side_uuid',
+      });
+      models.User.belongsToMany(models.Role, {
+        through: models.UserDescription,
+        foreignKey: 'user_client_side_uuid',
+        otherKey: 'role_client_side_uuid',
+        as: 'roles',
       });
     }
   }
@@ -26,11 +33,11 @@ module.exports = (sequelize, DataTypes) => {
       field: 'client_side_uuid',
       primaryKey: true,
     },
-    createdAt: {
+    created_at: {
       type: DataTypes.DATE,
       field: 'created_at',
     },
-    updatedAt: {
+    updated_at: {
       type: DataTypes.DATE,
       field: 'updated_at',
     }

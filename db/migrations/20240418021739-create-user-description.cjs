@@ -19,9 +19,15 @@ module.exports = {
         allowNull: false,
         field: 'last_name'
       },
+      active_email: {
+        type: Sequelize.STRING,
+        allowNull: true,
+        unique: true,
+        field: 'active_email'
+      },
       email: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: true
       },
       password: {
         type: Sequelize.STRING,
@@ -42,6 +48,7 @@ module.exports = {
       userClientSideUUID: {
         type: Sequelize.UUID,
         allowNull: false,
+        unique: false,
         field: 'user_client_side_uuid',
         references: {
           model: 'Users',
@@ -51,6 +58,7 @@ module.exports = {
       roleClientSideUUID: {
         type: Sequelize.UUID,
         allowNull: false,
+        unique: false,
         field: 'role_client_side_uuid',
         references: {
           model: 'Roles',

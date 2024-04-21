@@ -1,5 +1,5 @@
 import ModelCommand from "../abstractions/ModelCommand.js";
-
+import APIActorError from "../../controllers/api/errors/APIActorError.js";
 
 export default class PutCommand extends ModelCommand {
     constructor(pk, params, pkName, fkName, casKeys, modelName, snapshotName, tombstoneName) {
@@ -46,9 +46,13 @@ export default class PutCommand extends ModelCommand {
         this.tombstoneName = tombstoneName;
     }
 
-    async execute(db) {
+    async execute(db, options={}) {
         if (!db || typeof db !== "object") {
             throw new Error("db is required and must be an object");
+        }
+
+        if (!options || typeof options !== "object") {
+            throw new Error("options is required and must be an object");
         }
 
         const pk = this.pk;
@@ -59,6 +63,10 @@ export default class PutCommand extends ModelCommand {
         const modelName = this.modelName;
         const snapshotName = this.snapshotName;
         const tombstoneName = this.tombstoneName;
+        const time = {
+            created_at: new Date(),
+            updated_at: new Date(),
+        }
 
         try {
             await db.sequelize.transaction(async t => {
@@ -104,14 +112,30 @@ export default class PutCommand extends ModelCommand {
                     if (currentCAS === inputCAS) return; // No changes
                 }
 
+                if (options.beforeTransactions) {
+                    for (const transaction of options.beforeTransactions) {
+                        await transaction(t);
+                    }
+                }
+
                 await db[snapshotName].create(
-                    { [fkName]: pk, ...params }, 
+                    { [fkName]: pk, ...params, ...time }, 
                     { transaction: t }
                 );
             });
         } catch (error) {
             console.log(error)
-            throw new Error("Error in put");
+
+            if (error instanceof APIActorError) {
+                throw error;
+            }
+
+            if (error.name === "SequelizeUniqueConstraintError") {
+                const paths = error.errors.map(e => e.path).join(", ");
+                throw new APIActorError(`The following fields must be unique: ${paths}`, 400);
+            }
+
+            throw new APIActorError("An error occurred while putting an entity", 500);
         }
     }
 

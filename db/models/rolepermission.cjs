@@ -12,40 +12,40 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       models.RolePermission.belongsTo(models.Role, {
         foreignKey: 'role_client_side_uuid',
-        targetKey: 'client_side_uuid'
+        targetKey: 'client_side_uuid',
       });
       models.RolePermission.belongsTo(models.Permission, {
         foreignKey: 'permission_name',
-        targetKey: 'name'
+        targetKey: 'name',
       });
       models.RolePermission.hasMany(models.RolePermissionRemoved, {
         foreignKey: 'role_permission_client_side_uuid',
-        targetKey: 'client_side_uuid'
+        targetKey: 'client_side_uuid',
       });
     }
   }
   RolePermission.init({
-    clientSideUUID: {
+    client_side_uuid: {
       type: DataTypes.UUID,
       field: 'client_side_uuid',
       primaryKey: true
     },
-    createdAt: {
+    created_at: {
       allowNull: false,
       type: DataTypes.DATE,
       field: 'created_at',
     },
-    updatedAt: {
+    updated_at: {
       allowNull: false,
       type: DataTypes.DATE,
       field: 'updated_at',
     },
-    roleClientSideUUID: {
+    role_client_side_uuid: {
       type: DataTypes.UUID,
       allowNull: false,
       field: 'role_client_side_uuid',
     },
-    permissionName: {
+    permission_name: {
       type: DataTypes.STRING,
       allowNull: false,
       field: 'permission_name',

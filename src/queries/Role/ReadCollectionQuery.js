@@ -8,7 +8,10 @@ export default class ReadCollectionQuery extends _ReadCollectionQuery {
             RoleDTO, 
             "Role", 
             "RoleDescription", 
-            "RoleRemoved"
+            "RoleRemoved",
+            null,
+            "role_client_side_uuid",
+            "client_side_uuid"
         );
     }
 }

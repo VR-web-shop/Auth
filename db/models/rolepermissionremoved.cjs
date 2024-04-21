@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       models.RolePermissionRemoved.belongsTo(models.RolePermission, {
         foreignKey: 'role_permission_client_side_uuid',
-        targetKey: 'clientSideUUID'
+        targetKey: 'client_side_uuid',
       });
     }
   }
@@ -23,17 +23,17 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       type: DataTypes.INTEGER
     },
-    deletedAt: {
+    deleted_at: {
       allowNull: false,
       type: DataTypes.DATE,
       field: 'deleted_at',
     },
-    createdAt: {
+    created_at: {
       allowNull: false,
       type: DataTypes.DATE,
       field: 'created_at',
     },
-    updatedAt: {
+    updated_at: {
       allowNull: false,
       type: DataTypes.DATE,
       field: 'updated_at',

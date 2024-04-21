@@ -1,9 +1,20 @@
 import ModelQuery from "./ModelQuery.js";
 import APIActorError from "../../controllers/api/errors/APIActorError.js";
+import { Op, QueryTypes } from "sequelize";
 
 export default class ReadOneQuery extends ModelQuery {
-    constructor(pk, pkName, dto, modelName, snapshotName = null, tombstoneName = null) {
+    constructor(
+        pk, 
+        pkName, 
+        dto, 
+        modelName, 
+        snapshotName = null, 
+        tombstoneName = null,
+        fkName = null,
+        additionalParams = {}
+    ) {
         super();
+
         if (!pk || typeof pk !== "string") {
             throw new Error("pk is required and must be a string");
         }
@@ -21,11 +32,19 @@ export default class ReadOneQuery extends ModelQuery {
         }
 
         if (snapshotName && typeof snapshotName !== "string") {
-            throw new Error("if using snapshots, snapshotName is required and must be a string");
+            throw new Error("if using snapshots, snapshotName must be a string");
         }
 
         if (tombstoneName && typeof tombstoneName !== "string") {
-            throw new Error("if using tombstones, tombstoneName is required and must be a string");
+            throw new Error("if using tombstones, tombstoneName must be a string");
+        }
+
+        if (tombstoneName && !fkName) {
+            throw new Error("if using tombstones, fkName is required");
+        }
+
+        if (additionalParams && typeof additionalParams !== "object") {
+            throw new Error("additionalParams must be an object");
         }
 
         this.pk = pk;
@@ -34,6 +53,8 @@ export default class ReadOneQuery extends ModelQuery {
         this.modelName = modelName;
         this.snapshotName = snapshotName;
         this.tombstoneName = tombstoneName;
+        this.fkName = fkName;
+        this.additionalParams = additionalParams;
     }
 
     async execute(db) {
@@ -41,48 +62,61 @@ export default class ReadOneQuery extends ModelQuery {
             throw new Error("db is required and must be an object");
         }
 
-        const pk = this.pk;
-        const pkName = this.pkName;
+        const options = this.additionalParams;
         const dto = this.dto;
-        const modelName = this.modelName;
-        const snapshotName = this.snapshotName;
-        const tombstoneName = this.tombstoneName;
-        const params = { where: { [pkName]: pk }, include: [] };
+        const mTable = `${this.modelName}s`;
+        const sTable = this.snapshotName ? `${this.snapshotName}s` : null;
+        const tTable = this.tombstoneName ? `${this.tombstoneName}s` : null;
+        const fkName = this.fkName;
+        const pkName = this.pkName;
+        const pk = this.pk;
 
-        if (snapshotName) {
-            params.include.push({
-                model: db[snapshotName],
-                order: [["created_at", "DESC"]],
-                limit: 1
-            });
-        }
-
-        if (tombstoneName) {
-            params.include.push({
-                model: db[tombstoneName],
-                order: [["created_at", "DESC"]],
-                limit: 1
-            });
-        }
-
-        const entity = await db[modelName].findOne(params);
-
-        if (!entity) {
+        const sql = `
+            SELECT * FROM ${mTable}
+            ${
+                // Left join the latest created snapshot
+                sTable 
+                ? ` LEFT JOIN ${sTable} ON ${sTable}.${fkName} = ${mTable}.${pkName}`
+                : ""
+            }
+            ${
+                // Left join the latest created tombstone
+                tTable 
+                ? ` LEFT JOIN ${tTable} ON ${tTable}.${fkName} = ${mTable}.${pkName}`
+                : ""
+            }
+            ${
+                // Left join any other models
+                options.include 
+                ? options.include.map(include => {
+                    return ` LEFT JOIN ${include.model} ON ${include.model}.${include.fk} = ${mTable}.${pkName}` 
+                }).join(" ") 
+                : ""
+            }
+            WHERE ${mTable}.${pkName} = '${pk}'
+            ${
+                sTable
+                ? ` AND ${sTable}.created_at = (SELECT MAX(created_at) FROM ${sTable} WHERE ${sTable}.${fkName} = ${mTable}.${pkName})`
+                : ""
+            }
+            ${
+                tTable 
+                ? ` AND ${tTable}.${fkName} IS NULL`
+                : ""
+            }
+            ${
+                options.where 
+                ? ` AND ${options.where}`
+                : ""
+            }
+            LIMIT 1
+        `;
+        const entity = await db.sequelize.query(sql, { type: QueryTypes.SELECT });
+            console.log(entity)
+        if (entity.length === 0) {
             throw new APIActorError(404, "No Entity found");
         }
 
-        if (tombstoneName) {
-            const hasTombstone = entity[`${tombstoneName}s`] && entity[`${tombstoneName}s`].length > 0;
-            if (hasTombstone) {
-                throw new APIActorError(404, "No Entity found");
-            }
-        }
-
-        if (snapshotName) {
-            const snapshot = entity[`${snapshotName}s`][0];
-            return dto(snapshot, entity);
-        } else {
-            return dto(entity);
-        }
+        return dto(entity[0]);
     }
 }

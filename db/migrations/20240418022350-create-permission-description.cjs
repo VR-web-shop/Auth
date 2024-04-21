@@ -28,12 +28,13 @@ module.exports = {
       permissionName: {
         type: Sequelize.STRING,
         allowNull: false,
+        unique: false,
         field: 'permission_name',
         references: {
           model: 'Permissions',
           key: 'name'
         }
-      }
+      },
     });
   },
   async down(queryInterface, Sequelize) {

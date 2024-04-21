@@ -1,8 +1,19 @@
 import ModelQuery from "./ModelQuery.js";
+import { Op, QueryTypes } from "sequelize";
 
 export default class ReadCollectionQuery extends ModelQuery {
-    constructor(options = {}, dto, modelName, snapshotName = null, tombstoneName = null) {
+    constructor(
+        options = {}, 
+        dto, 
+        modelName, 
+        snapshotName = null, 
+        tombstoneName = null,
+        snapshotOptions = {},
+        fkName = null,
+        pkName = null
+    ) {
         super();
+        
         if (typeof options !== "object") {
             throw new Error("Options must be an object");
         }
@@ -28,6 +39,9 @@ export default class ReadCollectionQuery extends ModelQuery {
         this.modelName = modelName;
         this.snapshotName = snapshotName;
         this.tombstoneName = tombstoneName;
+        this.snapshotOptions = snapshotOptions;
+        this.fkName = fkName;
+        this.pkName = pkName;
     }
 
     async execute(db) {
@@ -37,56 +51,66 @@ export default class ReadCollectionQuery extends ModelQuery {
 
         const options = this.options;
         const dto = this.dto;
-        const modelName = this.modelName;
-        const snapshotName = this.snapshotName;
-        const tombstoneName = this.tombstoneName;
 
         const limit = options.limit || 10;
         const page = options.page || 1;
         const offset = (page - 1) * limit;
 
-        const where = options.where || {};
-        const params = { limit, offset, where, include: [] };
+        const mTable = `${this.modelName}s`;
+        const sTable = this.snapshotName ? `${this.snapshotName}s` : null;
+        const tTable = this.tombstoneName ? `${this.tombstoneName}s` : null;
+        const fkName = this.fkName;
+        const pkName = this.pkName;
 
-        const countAll = await db[modelName].count({ where });
-        let countTombstones = 0;
-
-        if (snapshotName) {
-            params.include.push({
-                model: db[snapshotName],
-                order: [["created_at", "DESC"]],
-                limit: 1
-            });
-        }
-
-        if (tombstoneName) {
-            params.include.push({
-                model: db[tombstoneName],
-                order: [["created_at", "DESC"]],
-                limit: 1
-            });
-
-            countTombstones = await db[tombstoneName].count({ where });
-        }
-        
-        const entities = await db[modelName].findAll(params);
-        const rows = [];
-        entities.forEach(entity => {
-            if (tombstoneName) {
-                const hasTombstone = entity[`${tombstoneName}s`] && entity[`${tombstoneName}s`].length > 0;
-                if (hasTombstone) return;
+        const sqlOptions = (prefix) => `
+            ${prefix} FROM ${mTable}
+            ${
+                // Left join the latest created snapshot
+                sTable 
+                ? ` LEFT JOIN ${sTable} ON ${sTable}.${fkName} = ${mTable}.${pkName}`
+                : ""
             }
-            
-            if (snapshotName) {
-                const snapshot = entity[`${snapshotName}s`][0];
-                rows.push(dto(snapshot, entity));
-            } else {
-                rows.push(dto(entity));
+            ${
+                // Left join the latest created tombstone
+                tTable 
+                ? ` LEFT JOIN ${tTable} ON ${tTable}.${fkName} = ${mTable}.${pkName}`
+                : ""
             }
-        });
+            ${
+                // Left join any other models
+                options.include 
+                ? options.include.map(include => {
+                    return ` ${include}` 
+                }).join(" ") 
+                : ""
+            }
+            ${
+                sTable
+                ? ` WHERE ${sTable}.created_at = (SELECT MAX(created_at) FROM ${sTable} WHERE ${sTable}.${fkName} = ${mTable}.${pkName})`
+                : ""
+            }
+            ${
+                tTable 
+                ? ` ${sTable ? "AND" : "WHERE"} ${tTable}.${fkName} IS NULL`
+                : ""
+            }
+            ${
+                options.where 
+                ? ` ${tTable || sTable ? "AND" : "WHERE"} ${options.where}`
+                : ""
+            }
 
-        const count = countAll - countTombstones;
+            ORDER BY ${mTable}.created_at DESC
+            LIMIT ${limit} OFFSET ${offset} 
+        `;
+
+        const entities = await db.sequelize.query(`${sqlOptions("SELECT *")}`, { type: QueryTypes.SELECT });
+        const countRes = await db.sequelize.query(`${sqlOptions("SELECT COUNT(*)")}`, { type: QueryTypes.SELECT });
+        //console.log(entities, countRes);
+
+        const count = countRes[0]["COUNT(*)"];
         const pages = Math.ceil(count / limit);
+        const rows = entities.map(entity => dto(entity));
 
         return { rows, pages, count };
     }

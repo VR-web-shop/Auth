@@ -10,9 +10,9 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      models.UserDescription.belongsTo(models.User, {
+      models.UserRemoved.belongsTo(models.User, {
         foreignKey: 'user_client_side_uuid',
-        targetKey: 'client_side_uuid'
+        targetKey: 'client_side_uuid',
       });
     }
   }
@@ -23,17 +23,17 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       type: DataTypes.INTEGER
     },
-    deletedAt: {
+    deleted_at: {
       allowNull: false,
       type: DataTypes.DATE,
       field: 'deleted_at',
     },
-    createdAt: {
+    created_at: {
       allowNull: false,
       type: DataTypes.DATE,
       field: 'created_at',
     },
-    updatedAt: {
+    updated_at: {
       allowNull: false,
       type: DataTypes.DATE,
       field: 'updated_at',

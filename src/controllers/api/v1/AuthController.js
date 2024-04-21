@@ -49,11 +49,11 @@ router.route('/api/v1/auth')
      */
     .post(async (req, res) => {
         try {
-            const request = new AuthService.AuthRequest.CreateRequest(req.body)
-            const { response, refresh_token } = await AuthService.create(request)
+            const { email, password } = req.body
+            const { access_token, refresh_token } = await AuthService.create(email, password)
 
             res.cookie('refresh_token', refresh_token, { httpOnly: true })
-            res.send(response)
+            res.send({ access_token })
         } catch (error) {
             if (error instanceof APIActorError) {
                 return res.status(error.statusCode).send({ message: error.message })
@@ -94,8 +94,8 @@ router.route('/api/v1/auth')
      */
     .put(async (req, res) => {
         try {
-            const request = new AuthService.AuthRequest.RefreshRequest(req.cookies)
-            const response = await AuthService.refresh(request)
+            const { refresh_token } = req.cookies
+            const response = await AuthService.refresh(refresh_token)
             res.send(response)
         } catch (error) {
             if (error instanceof APIActorError) {

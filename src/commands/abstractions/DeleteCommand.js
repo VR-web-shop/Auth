@@ -42,10 +42,14 @@ export default class DeleteCommand extends ModelCommand {
         const fkName = this.fkName;
         const modelName = this.modelName;
         const tombstoneName = this.tombstoneName;
+        const time = {
+            deleted_at: new Date(),
+            created_at: new Date(),
+            updated_at: new Date(),
+        }
 
         try {
             await db.sequelize.transaction(async t => {
-
                 const entity = await db[modelName].findOne(
                     { 
                         where: { [pkName]: pk },
@@ -59,14 +63,18 @@ export default class DeleteCommand extends ModelCommand {
                 }
 
                 await db[tombstoneName].create(
-                    { [fkName]: pk },
+                    { [fkName]: pk, ...time },
                     { transaction: t }
                 );
-
             });
         } catch (error) {
             console.log(error)
-            throw new Error("Error in remove");
+            
+            if (error instanceof APIActorError) {
+                throw error;
+            }
+
+            throw new APIActorError("An error occurred while deleting the entity", 500);
         }
     }
 }

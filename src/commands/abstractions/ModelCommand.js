@@ -1,6 +1,6 @@
 
 export default class ModelCommand {
-    async execute(db) {
+    async execute(db, options={}) {
         throw new Error("Method not implemented");
     }
 }

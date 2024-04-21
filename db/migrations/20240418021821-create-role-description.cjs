@@ -33,11 +33,12 @@ module.exports = {
         type: Sequelize.UUID,
         allowNull: false,
         field: 'role_client_side_uuid',
+        unique: false,
         references: {
           model: 'Roles',
           key: 'client_side_uuid'
         },
-      }
+      },
     });
   },
   async down(queryInterface, Sequelize) {

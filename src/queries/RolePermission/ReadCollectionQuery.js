@@ -8,7 +8,10 @@ export default class ReadCollectionQuery extends _ReadCollectionQuery {
             RolePermissionDTO, 
             "RolePermission", 
             null, 
-            "RolePermissionRemoved"
+            "RolePermissionRemoved",
+            null,
+            "role_permission_client_side_uuid",
+            "client_side_uuid"
         );
     }
 }

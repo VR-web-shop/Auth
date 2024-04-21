@@ -114,8 +114,18 @@ router.route('/api/v1/admin/role/:client_side_uuid')
      */
     .get(Middleware.AuthorizePermissionJWT("roles:show:permissions"), async (req, res) => {
         try {
-            const request = new RoleAdminService.RoleRequest.AdminFindRequest(req.params)
-            const response = await RoleAdminService.findPermissions(request)
+            const { client_side_uuid } = req.params
+            const response = await queryService.invoke(new ReadOneQuery(client_side_uuid, {
+                include: [{ 
+                    model: 'Permission', 
+                    as: 'permissions',
+                    include: [{
+                        model: 'PermissionDescription',
+                        order: [['created_at', 'DESC']],
+                        limit: 1
+                    }] 
+                }]
+            }))
             res.send(response)
         } catch (error) {
             if (error instanceof APIActorError) {

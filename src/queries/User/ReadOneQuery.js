@@ -2,14 +2,16 @@ import _ReadOneQuery from "../abstractions/ReadOneQuery.js";
 import UserDTO from "../../dtos/User.js";
 
 export default class ReadOneQuery extends _ReadOneQuery {
-    constructor(clientSideUUID) {
+    constructor(clientSideUUID, additionalParams = {}, includePassword=false) {
         super(
             clientSideUUID, 
             "client_side_uuid",
-            UserDTO, 
+            (entity) => UserDTO(entity, includePassword),
             "User", 
             "UserDescription", 
-            "UserRemoved"
+            "UserRemoved",
+            "user_client_side_uuid",
+            additionalParams
         );
     }
 }

@@ -1,15 +1,17 @@
 import _ReadOneQuery from "../abstractions/ReadOneQuery.js";
-import RolePermissionDTO from "../../dtos/RolePermission.js";
+import RoleDTO from "../../dtos/Role.js";
 
 export default class ReadOneQuery extends _ReadOneQuery {
-    constructor(id) {
+    constructor(clientSideUUID, additionalParams = {}) {
         super(
-            id, 
-            "id",
-            RolePermissionDTO, 
-            "RolePermission", 
-            null, 
-            "RolePermissionRemoved"
+            clientSideUUID, 
+            "client_side_uuid",
+            RoleDTO, 
+            "Role", 
+            "RoleDescription", 
+            "RoleRemoved",
+            "role_client_side_uuid",
+            additionalParams
         );
     }
 }

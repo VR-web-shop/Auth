@@ -18,6 +18,12 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'permission_name',
         sourceKey: 'name',
       });
+      models.Permission.belongsToMany(models.Role, {
+        through: models.RolePermission,
+        foreignKey: 'permission_name',
+        otherKey: 'role_client_side_uuid',
+        as: 'roles',
+      });
     }
   }
   Permission.init({
@@ -26,17 +32,18 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       allowNull: false,
     },
-    createdAt: {
+    created_at: {
       type: DataTypes.DATE,
       field: 'created_at',
     },
-    updatedAt: {
+    updated_at: {
       type: DataTypes.DATE,
       field: 'updated_at',
     },
-    definedBySystem: {
+    defined_by_system: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
+      defaultValue: false,
       field: 'defined_by_system'
     }
   }, {

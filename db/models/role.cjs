@@ -26,6 +26,18 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'role_client_side_uuid',
         sourceKey: 'client_side_uuid',
       });
+      models.Role.belongsToMany(models.User, {
+        through: models.UserDescription,
+        foreignKey: 'role_client_side_uuid',
+        otherKey: 'user_client_side_uuid',
+        as: 'users',
+      });
+      models.Role.belongsToMany(models.Permission, {
+        through: models.RolePermission,
+        foreignKey: 'role_client_side_uuid',
+        otherKey: 'permission_name',
+        as: 'permissions',
+      });
     }
   }
   Role.init({
@@ -34,17 +46,18 @@ module.exports = (sequelize, DataTypes) => {
       field: 'client_side_uuid',
       primaryKey: true,
     },
-    createdAt: {
+    created_at: {
       type: DataTypes.DATE,
       field: 'created_at',
     },
-    updatedAt: {
+    updated_at: {
       type: DataTypes.DATE,
       field: 'updated_at',
     },
-    definedBySystem: {
+    defined_by_system: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
+      defaultValue: false,
       field: 'defined_by_system'
     }
   }, {

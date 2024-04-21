@@ -120,8 +120,10 @@ router.route('/api/v1/admin/user/:client_side_uuid/permissions')
      */
     .get(Middleware.AuthorizePermissionJWT("users:show:permissions"), async (req, res) => {
         try {
-            const request = new UserAdminService.UserRequest.AdminFindRequest(req.params)
-            const response = await UserAdminService.findPermissions(request)
+            const { client_side_uuid } = req.params
+            const response = await queryService.invoke(new ReadOneQuery(client_side_uuid, {
+                include: [{ model: 'Permission' }]
+            }))
             res.send(response)
         } catch (error) {
             if (error instanceof APIActorError) {

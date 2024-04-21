@@ -8,7 +8,10 @@ export default class ReadCollectionQuery extends _ReadCollectionQuery {
             PermissionDTO, 
             "Permission", 
             "PermissionDescription", 
-            "PermissionRemoved"
+            "PermissionRemoved",
+            null,
+            "permission_name",
+            "name"
         );
     }
 }

@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       models.PermissionDescription.belongsTo(models.Permission, {
         foreignKey: 'permission_name',
-        targetKey: 'name'
+        targetKey: 'name',
       });
     }
   }
@@ -27,17 +27,17 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false
     },
-    createdAt: {
+    created_at: {
       allowNull: false,
       type: DataTypes.DATE,
       field: 'created_at',
     },
-    updatedAt: {
+    updated_at: {
       allowNull: false,
       type: DataTypes.DATE,
       field: 'updated_at',
     },
-    permissionName: {
+    permission_name: {
       type: DataTypes.STRING,
       allowNull: false,
       field: 'permission_name',
