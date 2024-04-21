@@ -101,7 +101,7 @@ function getPermissions() {
 function hasPermission(permissionName) {
     const permissions = getPermissions();
     for (const permission of permissions) {
-        if (permission === permissionName) {
+        if (permission.name === permissionName) {
             return true;
         }
     }
