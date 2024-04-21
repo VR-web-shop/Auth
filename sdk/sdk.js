@@ -72,9 +72,6 @@ const SDK = function(serverURL, APIVersion = 'v1', options={}) {
     this.errors = {
         SDKFetchError,
         SDKFetchMissingTokenError,
-        DTOArgumentError,
-        DTORequestParameterError,
-        DTOResponseParameterError
     }
 }
 
