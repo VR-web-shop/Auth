@@ -70,10 +70,21 @@
      { "name": "valuta-settings:put", "description": "Put valuta settings" },
      { "name": "valuta-settings:delete", "description": "Delete valuta settings" },
 
-     { "name": "shopping-cart:carts:index", "description": "List all carts in shopping cart system" },
-     { "name": "shopping-cart:carts:delete", "description": "Delete a cart in shopping cart system" },
+     { "name": "carts:index", "description": "List all carts in shopping cart system" },
+     { "name": "carts:show", "description": "Show a cart in shopping cart system" },
+     { "name": "carts:put", "description": "Put a cart in shopping cart system" },
+     { "name": "carts:delete", "description": "Delete a cart in shopping cart system" },
+
+     { "name": "cart-product-entities:index", "description": "List all cart product entities in shopping cart system" },
+     { "name": "cart-product-entities:show", "description": "Show a cart product entity in shopping cart system" },
+     { "name": "cart-product-entities:put", "description": "Put a cart product entity in shopping cart system" },
+     { "name": "cart-product-entities:delete", "description": "Delete a cart product entity in shopping cart system" },
+
+     { "name": "cart-states:index", "description": "List all cart states in shopping cart system" },
+     { "name": "cart-states:show", "description": "Show a cart state in shopping cart system" },
+     { "name": "cart-states:put", "description": "Put a cart state in shopping cart system" },
+     { "name": "cart-states:delete", "description": "Delete a cart state in shopping cart system" },
 
      { "name": "admin-client:access", "description": "Access the admin client" },
      { "name": "scenes-editor:client:access", "description": "Access the scenes editor client" }
 ]
- 

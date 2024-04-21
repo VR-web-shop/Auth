@@ -54,7 +54,7 @@ export default class ReadCollectionQuery extends ModelQuery {
         let limit, page, offset;
 
         if (options.limit) {
-            limit = options.limit;
+            limit = parseInt(options.limit);
 
             if (limit < 1) {
                 throw new APIActorError("limit must be greater than 0", 400);
@@ -62,7 +62,7 @@ export default class ReadCollectionQuery extends ModelQuery {
         }
 
         if (options.page) {
-            page = options.page;
+            page = parseInt(options.page);
             
             if (page < 1) {
                 throw new APIActorError("page must be greater than 0", 400);
@@ -93,6 +93,15 @@ export default class ReadCollectionQuery extends ModelQuery {
             pkName, 
         }
 
+        const countOptions = {
+            mTable, 
+            sTable, 
+            tTable, 
+            where, 
+            fkName, 
+            pkName, 
+        }
+
         const replacements = {
             limit, 
             offset, 
@@ -107,7 +116,7 @@ export default class ReadCollectionQuery extends ModelQuery {
         }
 
         const selectSQL = ModelQuery.getSql({ prefix: "SELECT *", ...queryOptions });
-        const countSQL = ModelQuery.getSql({ prefix: "SELECT COUNT(*)", ...queryOptions });
+        const countSQL = ModelQuery.getSql({ prefix: "SELECT COUNT(*)", ...countOptions });
         const queryOpt = { type: QueryTypes.SELECT, replacements };
 
         const entities = await db.sequelize.query(selectSQL, queryOpt);

@@ -14,7 +14,7 @@ const queryService = new ModelQueryService()
 
 router.use(Middleware.AuthorizeJWT)
 
-router.route('/api/v1/admin/role_permission/:client_side_uuid')
+router.route('/api/v1/admin/role_permissions/:client_side_uuid')
     /**
      * @openapi
      * '/api/v1/admin/role_permission/{client_side_uuid}':

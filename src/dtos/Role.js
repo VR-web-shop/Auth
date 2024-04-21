@@ -9,8 +9,8 @@ export default function RoleDTO(entity) {
         client_side_uuid: entity.client_side_uuid,
         name: entity.name,
         description: entity.description,
-        created_at: entity.createdAt,
-        updated_at: entity.createdAt,
+        created_at: entity.created_at,
+        updated_at: entity.updated_at,
         defined_by_system: entity.defined_by_system
     }
 

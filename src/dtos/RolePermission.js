@@ -1,5 +1,5 @@
 
-export default function RoleDTO(entity) {
+export default function RolePermissionDTO(entity) {
     if (!entity || typeof entity !== "object") {
         throw new Error("description is required and must be an object");
     }
