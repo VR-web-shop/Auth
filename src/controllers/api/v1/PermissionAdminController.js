@@ -1,10 +1,16 @@
 import APIActorError from "../errors/APIActorError.js";
-import PermissionAdminService from "../../../services/PermissionAdminService.js";
+import ReadOneQuery from "../../../queries/Permission/ReadOneQuery.js";
+import ReadCollectionQuery from "../../../queries/Permission/ReadCollectionQuery.js";
+import PutCommand from "../../../commands/Permission/PutCommand.js";
+import DeleteCommand from "../../../commands/Permission/DeleteCommand.js";
+import ModelCommandService from "../../../services/ModelCommandService.js";
+import ModelQueryService from "../../../services/ModelQueryService.js";
 import Middleware from "../../../jwt/MiddlewareJWT.js";
-import { PERMISSIONS } from "../../../models/Permission.js";
 import express from 'express';
 
 const router = express.Router()
+const commandService = new ModelCommandService()
+const queryService = new ModelQueryService()
 
 router.use(Middleware.AuthorizeJWT)
 
@@ -36,7 +42,7 @@ router.route('/api/v1/admin/permission/:name')
      *                 type: string
      *               description:
      *                 type: string
-     *               is_user_defined:
+     *               defined_by_system:
      *                 type: boolean
      *      400:
      *        description: Bad Request
@@ -47,10 +53,10 @@ router.route('/api/v1/admin/permission/:name')
      *      500:
      *        description: Internal Server Error
      */
-    .get(Middleware.AuthorizePermissionJWT(PERMISSIONS.PERMISSIONS.SHOW.name), async (req, res) => {
+    .get(Middleware.AuthorizePermissionJWT("permissions:show"), async (req, res) => {
         try {
-            const request = new PermissionAdminService.PermissionRequest.FindRequest(req.params)
-            const response = await PermissionAdminService.find(request)
+            const { name } = req.params
+            const response = await queryService.invoke(new ReadOneQuery(name))
             res.send(response)
         } catch (error) {
             if (error instanceof APIActorError) {
@@ -97,7 +103,7 @@ router.route('/api/v1/admin/permissions')
      *                type: string
      *               description:
      *                type: string
-     *               is_user_defined:
+     *               defined_by_system:
      *                type: boolean
      *      404:
      *        description: Not Found
@@ -106,11 +112,11 @@ router.route('/api/v1/admin/permissions')
      *      500:
      *        description: Internal Server Error
      */
-    .get(Middleware.AuthorizePermissionJWT(PERMISSIONS.PERMISSIONS.INDEX.name), async (req, res) => {
+    .get(Middleware.AuthorizePermissionJWT("permissions:index"), async (req, res) => {
         try {
-            const request = new PermissionAdminService.PermissionRequest.FindAllRequest(req.query)
-            const { permissions, pages } = await PermissionAdminService.findAll(request)
-            res.send({ permissions, pages })
+            const { limit, page } = req.query
+            const { rows, count, pages } = await queryService.invoke(new ReadCollectionQuery({limit, page}))
+            res.send({ rows, count, pages })
         } catch (error) {
             console.error(error)
             return res.status(500).send({ message: 'Internal Server Error' })
@@ -151,7 +157,7 @@ router.route('/api/v1/admin/permissions')
     *                 type: string
     *               description:
     *                 type: string
-    *               is_user_defined:
+    *               defined_by_system:
     *                 type: boolean
     *      400:
     *        description: Bad Request
@@ -162,10 +168,11 @@ router.route('/api/v1/admin/permissions')
     *      500:
     *        description: Internal Server Error
     */
-    .post(Middleware.AuthorizePermissionJWT(PERMISSIONS.PERMISSIONS.CREATE.name), async (req, res) => {
+    .post(Middleware.AuthorizePermissionJWT("permissions:put"), async (req, res) => {
         try {
-            const request = new PermissionAdminService.PermissionRequest.CreateRequest(req.body)
-            const response = await PermissionAdminService.create(request)
+            const { name, description } = req.body
+            await commandService.invoke(new PutCommand(name, { description }))
+            const response = await queryService.invoke(new ReadOneQuery(name))
             res.send(response)
         } catch (error) {
             if (error instanceof APIActorError) {
@@ -211,7 +218,7 @@ router.route('/api/v1/admin/permissions')
     *                 type: string
     *               description:
     *                 type: string
-    *               is_user_defined:
+    *               defined_by_system:
     *                 type: boolean
     *      400:
     *        description: Bad Request
@@ -222,10 +229,11 @@ router.route('/api/v1/admin/permissions')
     *      500:
     *        description: Internal Server Error
     */
-    .put(Middleware.AuthorizePermissionJWT(PERMISSIONS.PERMISSIONS.UPDATE.name), async (req, res) => {
+    .put(Middleware.AuthorizePermissionJWT("permissions:put"), async (req, res) => {
         try {
-            const request = new PermissionAdminService.PermissionRequest.UpdateRequest(req.body)
-            const response = await PermissionAdminService.update(request)
+            const { name, description } = req.body
+            await commandService.invoke(new PutCommand(name, { description }))
+            const response = await queryService.invoke(new ReadOneQuery(name))
             res.send(response)
         } catch (error) {
             if (error instanceof APIActorError) {
@@ -268,10 +276,10 @@ router.route('/api/v1/admin/permissions')
     *      500:
     *        description: Internal Server Error
     */
-    .delete(Middleware.AuthorizePermissionJWT(PERMISSIONS.PERMISSIONS.DELETE.name), async (req, res) => {
+    .delete(Middleware.AuthorizePermissionJWT("permissions:delete"), async (req, res) => {
         try {
-            const request = new PermissionAdminService.PermissionRequest.DeleteRequest(req.body)
-            await PermissionAdminService.destroy(request)
+            const { name } = req.body
+            await commandService.invoke(new DeleteCommand(name))
             res.sendStatus(204)
         } catch (error) {
             if (error instanceof APIActorError) {

@@ -8,6 +8,7 @@ import AuthController from './src/controllers/api/v1/AuthController.js'
 import UserAuthController from './src/controllers/api/v1/UserAuthController.js'
 import UserAdminController from './src/controllers/api/v1/UserAdminController.js'
 import RoleAdminController from './src/controllers/api/v1/RoleAdminController.js'
+import RolePermissionController from './src/controllers/api/v1/RolePermissionController.js'
 import PermissionAdminController from './src/controllers/api/v1/PermissionAdminController.js'
 import SwaggerController from './src/controllers/SwaggerController.js'
 
@@ -28,6 +29,7 @@ app.use(AuthController)
 app.use(UserAuthController)
 app.use(UserAdminController)
 app.use(RoleAdminController)
+app.use(RolePermissionController)
 app.use(PermissionAdminController)
 
 app.listen(port, () => console.log(`Server is running on port ${port}`));

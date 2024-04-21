@@ -1,17 +1,23 @@
 import APIActorError from "../errors/APIActorError.js";
-import UserAdminService from "../../../services/UserAdminService.js";
+import ReadOneQuery from "../../../queries/User/ReadOneQuery.js";
+import ReadCollectionQuery from "../../../queries/User/ReadCollectionQuery.js";
+import PutCommand from "../../../commands/User/PutCommand.js";
+import DeleteCommand from "../../../commands/User/DeleteCommand.js";
+import ModelCommandService from "../../../services/ModelCommandService.js";
+import ModelQueryService from "../../../services/ModelQueryService.js";
 import Middleware from "../../../jwt/MiddlewareJWT.js";
-import { PERMISSIONS } from "../../../models/Permission.js";
 import express from 'express';
 
 const router = express.Router()
+const commandService = new ModelCommandService()
+const queryService = new ModelQueryService()
 
 router.use(Middleware.AuthorizeJWT)
 
-router.route('/api/v1/admin/user/:uuid')
+router.route('/api/v1/admin/user/:client_side_uuid')
     /**
      * @openapi
-     * '/api/v1/admin/user/{uuid}':
+     * '/api/v1/admin/user/{client_side_uuid}':
      *  get:
      *     tags:
      *       - User Admin Controller
@@ -20,11 +26,10 @@ router.route('/api/v1/admin/user/:uuid')
      *      - bearerAuth: []
      *     parameters:
      *      - in: path
-     *        name: uuid
+     *        name: client_side_uuid
      *        required: true
      *        schema:
      *         type: string
-     *         format: uuid
      *     responses:
      *      200:
      *        description: OK
@@ -33,7 +38,11 @@ router.route('/api/v1/admin/user/:uuid')
      *           schema:
      *             type: object
      *             properties:
-     *               uuid:
+     *               client_side_uuid:
+     *                 type: string
+     *               first_name:
+     *                 type: string
+     *               last_name:
      *                 type: string
      *               email:
      *                 type: string
@@ -41,7 +50,7 @@ router.route('/api/v1/admin/user/:uuid')
      *                 type: string
      *               updated_at:
      *                 type: string
-     *               role_name:
+     *               role_client_side_uuid:
      *                 type: string
      *      400:
      *        description: Bad Request
@@ -52,64 +61,10 @@ router.route('/api/v1/admin/user/:uuid')
      *      500:
      *        description: Internal Server Error
      */
-    .get(Middleware.AuthorizePermissionJWT(PERMISSIONS.USERS.SHOW.name), async (req, res) => {
+    .get(Middleware.AuthorizePermissionJWT("users:show"), async (req, res) => {
         try {
-            const request = new UserAdminService.UserRequest.AdminFindRequest(req.params)
-            const response = await UserAdminService.find(request)
-            res.send(response)
-        } catch (error) {
-            if (error instanceof APIActorError) {
-                return res.status(error.statusCode).send({ message: error.message })
-            }
-
-            console.error(error)
-            return res.status(500).send({ message: 'Internal Server Error' })
-        }
-    })
-
-router.route('/api/v1/admin/user/:uuid/permissions')
-    /**
-     * @openapi
-     * '/api/v1/admin/user/{uuid}/permissions':
-     *  get:
-     *     tags:
-     *       - User Admin Controller
-     *     summary: Fetch a user's permissions by UUID
-     *     security:
-     *      - bearerAuth: []
-     *     parameters:
-     *      - in: path
-     *        name: uuid
-     *        required: true
-     *        schema:
-     *         type: string
-     *         format: uuid
-     *     responses:
-     *      200:
-     *        description: OK
-     *        content:
-     *         application/json:
-     *           schema:
-     *             type: array
-     *             items:
-     *              properties:
-     *               name:
-     *                 type: string
-     *               description:
-     *                 type: string
-     *      400:
-     *        description: Bad Request
-     *      404:
-     *        description: Not Found
-     *      401:
-     *        description: Unauthorized
-     *      500:
-     *        description: Internal Server Error
-     */
-    .get(Middleware.AuthorizePermissionJWT(PERMISSIONS.USERS.SHOW_PERMISSIONS.name), async (req, res) => {
-        try {
-            const request = new UserAdminService.UserRequest.AdminFindRequest(req.params)
-            const response = await UserAdminService.findPermissions(request)
+            const { client_side_uuid } = req.params
+            const response = await queryService.invoke(new ReadOneQuery(client_side_uuid))
             res.send(response)
         } catch (error) {
             if (error instanceof APIActorError) {
@@ -157,15 +112,19 @@ router.route('/api/v1/admin/users')
     *               items:
     *                type: object
     *                properties:
-    *                 uuid:
+    *                 client_side_uuid:
     *                  type: string
     *                 email:
+    *                  type: string
+    *                 first_name:
+    *                  type: string
+    *                 last_name:
     *                  type: string
     *                 created_at:
     *                  type: string
     *                 updated_at:
     *                  type: string
-    *                 role_name:
+    *                 role_client_side_uuid:
     *                  type: string
     *             
     *      400:
@@ -177,11 +136,11 @@ router.route('/api/v1/admin/users')
     *      500:
     *        description: Internal Server Error
     */
-    .get(Middleware.AuthorizePermissionJWT(PERMISSIONS.USERS.INDEX.name), async (req, res) => {
+    .get(Middleware.AuthorizePermissionJWT("users:index"), async (req, res) => {
         try {
-            const request = new UserAdminService.UserRequest.AdminFindAllRequest(req.query)
-            const { users, pages } = await UserAdminService.findAll(request)
-            res.send({ users, pages })
+            const { limit, page } = req.query
+            const { rows, count, pages } = await queryService.invoke(new ReadCollectionQuery({limit, page}))
+            res.send({ rows, count, pages })
         } catch (error) {
             console.error(error)
             return res.status(500).send({ message: 'Internal Server Error' })
@@ -203,19 +162,31 @@ router.route('/api/v1/admin/users')
     *        schema:
     *         type: object
     *         required:
+    *          - client_side_uuid
+    *          - first_name
+    *          - last_name
     *          - email
     *          - password
-    *          - role_name
+    *          - role_client_side_uuid
     *         properties:
+    *          client_side_uuid:
+    *           type: string
+    *           default: 123e4567-e89b-12d3-a456-426614174000
+    *          first_name:
+    *           type: string
+    *           default: John
+    *          last_name:
+    *           type: string
+    *           default: Doe
     *          email:
     *           type: string
     *           default: new_admin@example.com
     *          password:
     *           type: string
     *           default: 12345678
-    *          role_name:
+    *          role_client_side_uuid:
     *           type: string
-    *           default: admin
+    *           default: aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa
     *     responses:
     *      200:
     *        description: OK
@@ -224,7 +195,11 @@ router.route('/api/v1/admin/users')
     *           schema:
     *             type: object
     *             properties:
-    *               uuid:
+    *               client_side_uuid:
+    *                 type: string
+    *               first_name:
+    *                 type: string
+    *               last_name:
     *                 type: string
     *               email:
     *                 type: string
@@ -232,7 +207,7 @@ router.route('/api/v1/admin/users')
     *                 type: string
     *               updated_at:
     *                 type: string
-    *               role_name:
+    *               role_client_side_uuid:
     *                 type: string
     *      400:
     *        description: Bad Request
@@ -243,10 +218,11 @@ router.route('/api/v1/admin/users')
     *      500:
     *        description: Internal Server Error
     */
-    .post(Middleware.AuthorizePermissionJWT(PERMISSIONS.USERS.CREATE.name), async (req, res) => {
+    .post(Middleware.AuthorizePermissionJWT("users:put"), async (req, res) => {
         try {
-            const request = new UserAdminService.UserRequest.AdminCreateRequest(req.body)
-            const response = await UserAdminService.create(request)
+            const { client_side_uuid, email, password, first_name, last_name, role_client_side_uuid } = req.body
+            await commandService.invoke(new PutCommand(client_side_uuid, { email, password, first_name, last_name, role_client_side_uuid }))
+            const response = await queryService.invoke(new ReadOneQuery(client_side_uuid))
             res.send(response)
         } catch (error) {
             if (error instanceof APIActorError) {
@@ -273,23 +249,31 @@ router.route('/api/v1/admin/users')
     *        schema:
     *         type: object
     *         required:
-    *          - uuid
+    *          - client_side_uuid
+    *          - first_name
+    *          - last_name
     *          - email
     *          - password
-    *          - role_name
+    *          - role_client_side_uuid
     *         properties:
-    *          uuid:
+    *          client_side_uuid:
     *           type: string
-    *           format: uuid
+    *           default: 123e4567-e89b-12d3-a456-426614174000
+    *          first_name:
+    *           type: string
+    *           default: John
+    *          last_name:
+    *           type: string
+    *           default: Doe
     *          email:
     *           type: string
     *           default: new_admin2@example.com
     *          password:
     *           type: string
     *           default: 12345678
-    *          role_name:
+    *          role_client_side_uuid:
     *           type: string
-    *           default: member
+    *           default: aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa
     *     responses:
     *      200:
     *        description: OK
@@ -298,7 +282,11 @@ router.route('/api/v1/admin/users')
     *           schema:
     *             type: object
     *             properties:
-    *               uuid:
+    *               client_side_uuid:
+    *                 type: string
+    *               first_name:
+    *                 type: string
+    *               last_name:
     *                 type: string
     *               email:
     *                 type: string
@@ -306,7 +294,7 @@ router.route('/api/v1/admin/users')
     *                 type: string
     *               updated_at:
     *                 type: string
-    *               role_name:
+    *               role_client_side_uuid:
     *                 type: string
     *      400:
     *        description: Bad Request
@@ -317,10 +305,11 @@ router.route('/api/v1/admin/users')
     *      500:
     *        description: Internal Server Error
     */
-    .put(Middleware.AuthorizePermissionJWT(PERMISSIONS.USERS.UPDATE.name), async (req, res) => {
+    .put(Middleware.AuthorizePermissionJWT("users:put"), async (req, res) => {
         try {
-            const request = new UserAdminService.UserRequest.AdminUpdateRequest(req.body)
-            const response = await UserAdminService.update(request)
+            const { client_side_uuid, email, password, first_name, last_name, role_client_side_uuid } = req.body
+            await commandService.invoke(new PutCommand(client_side_uuid, { email, password, first_name, last_name, role_client_side_uuid }))
+            const response = await queryService.invoke(new ReadOneQuery(client_side_uuid))
             res.send(response)
         } catch (error) {
             if (error instanceof APIActorError) {
@@ -347,11 +336,10 @@ router.route('/api/v1/admin/users')
     *        schema:
     *         type: object
     *         required:
-    *          - uuid
+    *          - client_side_uuid
     *         properties:
-    *          uuid:
+    *          client_side_uuid:
     *           type: string
-    *           format: uuid
     *     responses:
     *      204:
     *        description: No Content
@@ -364,10 +352,10 @@ router.route('/api/v1/admin/users')
     *      500:
     *        description: Internal Server Error
     */
-    .delete(Middleware.AuthorizePermissionJWT(PERMISSIONS.USERS.DELETE.name), async (req, res) => {
+    .delete(Middleware.AuthorizePermissionJWT("users:delete"), async (req, res) => {
         try {
-            const request = new UserAdminService.UserRequest.AdminDeleteRequest(req.body)
-            await UserAdminService.destroy(request)
+            const { client_side_uuid } = req.body
+            await commandService.invoke(new DeleteCommand(client_side_uuid))
             res.sendStatus(204)
         } catch (error) {
             if (error instanceof APIActorError) {

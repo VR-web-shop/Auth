@@ -1,0 +1,79 @@
+[
+     { "name": "auth:users:show", "description": "Show the authenticated user" },
+     { "name": "auth:users:put", "description": "Put the authenticated user" },
+     { "name": "auth:users:delete", "description": "Delete the authenticated user" },
+
+     { "name": "users:show", "description": "Show a user" },
+     { "name": "users:show:permissions", "description": "Show a user's permissions" },
+     { "name": "users:index", "description": "List all users" },
+     { "name": "users:put", "description": "Put a user" },
+     { "name": "users:delete", "description": "Delete a user" },
+
+     { "name": "roles:show", "description": "Show a role" },
+     { "name": "roles:show:permissions", "description": "Show a role's permissions" },
+     { "name": "roles:index", "description": "List all roles" },
+     { "name": "roles:put", "description": "Put a role" },
+     { "name": "roles:delete", "description": "Delete a role" },
+
+     { "name": "role-permissions:show", "description": "Show a role permission" },
+     { "name": "role-permissions:index", "description": "List all role permissions" },
+     { "name": "role-permissions:create", "description": "Create a role permission" },
+     { "name": "role-permissions:delete", "description": "Delete a role permission" },
+
+     { "name": "permissions:show", "description": "Show a permission" },
+     { "name": "permissions:index", "description": "List all permissions" },
+     { "name": "permissions:put", "description": "Put a permission" },
+     { "name": "permissions:delete", "description": "Delete a permission" },
+
+     { "name": "products:show", "description": "Show a product" },
+     { "name": "products:index", "description": "List all products" },
+     { "name": "products:put", "description": "Put a product" },
+     { "name": "products:delete", "description": "Delete a product" },
+
+     { "name": "product-entities:show", "description": "Show a product entity" },
+     { "name": "product-entities:index", "description": "List all product entities" },
+     { "name": "product-entities:put", "description": "Put a product entity" },
+     { "name": "product-entities:delete", "description": "Delete a product entity" },
+
+     { "name": "product-entity-states:show", "description": "Show a product entity state" },
+     { "name": "product-entity-states:index", "description": "List all product entity states" },
+     { "name": "product-entity-states:create", "description": "Create a product entity state" },
+     { "name": "product-entity-states:delete", "description": "Delete a product entity state" },
+
+     { "name": "product-orders:show", "description": "Show a product order" },
+     { "name": "product-orders:index", "description": "List all product orders" },
+     { "name": "product-orders:put", "description": "Put a product order" },
+     { "name": "product-orders:delete", "description": "Delete a product order" },
+
+     { "name": "product-order-entities:show", "description": "Show a product order entity" },
+     { "name": "product-order-entities:index", "description": "List all product order entities" },
+     { "name": "product-order-entities:put", "description": "Put a product order entity" },
+     { "name": "product-order-entities:delete", "description": "Delete a product order entity" },
+
+     { "name": "product-order-states:show", "description": "Show a product order state" },
+     { "name": "product-order-states:index", "description": "List all product order states" },
+     { "name": "product-order-states:create", "description": "Create a product order state" },
+     { "name": "product-order-states:delete", "description": "Delete a product order state" },
+
+     { "name": "deliver-options:show", "description": "Show a deliver option" },
+     { "name": "deliver-options:index", "description": "List all deliver options" },
+     { "name": "deliver-options:put", "description": "Put a deliver option" },
+     { "name": "deliver-options:delete", "description": "Delete a deliver option" },
+
+     { "name": "payment-options:show", "description": "Show a payment option" },
+     { "name": "payment-options:index", "description": "List all payment options" },
+     { "name": "payment-options:put", "description": "Put a payment option" },
+     { "name": "payment-options:delete", "description": "Delete a payment option" },
+
+     { "name": "valuta-settings:show", "description": "Show valuta settings" },
+     { "name": "valuta-settings:index", "description": "List all valuta settings" },
+     { "name": "valuta-settings:put", "description": "Put valuta settings" },
+     { "name": "valuta-settings:delete", "description": "Delete valuta settings" },
+
+     { "name": "shopping-cart:carts:index", "description": "List all carts in shopping cart system" },
+     { "name": "shopping-cart:carts:delete", "description": "Delete a cart in shopping cart system" },
+
+     { "name": "admin-client:access", "description": "Access the admin client" },
+     { "name": "scenes-editor:client:access", "description": "Access the scenes editor client" }
+]
+ 

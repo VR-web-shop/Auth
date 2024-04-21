@@ -1,26 +1,32 @@
 import APIActorError from "../errors/APIActorError.js";
-import RoleAdminService from "../../../services/RoleAdminService.js";
+import ReadOneQuery from "../../../queries/Role/ReadOneQuery.js";
+import ReadCollectionQuery from "../../../queries/Role/ReadCollectionQuery.js";
+import PutCommand from "../../../commands/Role/PutCommand.js";
+import DeleteCommand from "../../../commands/Role/DeleteCommand.js";
+import ModelCommandService from "../../../services/ModelCommandService.js";
+import ModelQueryService from "../../../services/ModelQueryService.js";
 import Middleware from "../../../jwt/MiddlewareJWT.js";
-import { PERMISSIONS } from "../../../models/Permission.js";
 import express from 'express';
 
 const router = express.Router()
+const commandService = new ModelCommandService()
+const queryService = new ModelQueryService()
 
 router.use(Middleware.AuthorizeJWT)
 
-router.route('/api/v1/admin/role/:name')
+router.route('/api/v1/admin/role/:client_side_uuid')
     /**
      * @openapi
-     * '/api/v1/admin/role/{name}':
+     * '/api/v1/admin/role/{client_side_uuid}':
      *  get:
      *     tags:
      *       - Role Admin Controller
-     *     summary: Fetch a role by name
+     *     summary: Fetch a role by client_side_uuid
      *     security:
      *      - bearerAuth: []
      *     parameters:
      *      - in: path
-     *        name: name
+     *        name: client_side_uuid
      *        required: true
      *        schema:
      *         type: string
@@ -32,64 +38,13 @@ router.route('/api/v1/admin/role/:name')
      *           schema:
      *             type: object
      *             properties:
+     *               client_side_uuid:
+     *                 type: string
      *               name:
      *                 type: string
      *               description:
      *                 type: string
-     *      400:
-     *        description: Bad Request
-     *      404:
-     *        description: Not Found
-     *      401:
-     *        description: Unauthorized
-     *      500:
-     *        description: Internal Server Error
-     */
-    .get(Middleware.AuthorizePermissionJWT(PERMISSIONS.ROLES.SHOW.name), async (req, res) => {
-        try {
-            const request = new RoleAdminService.RoleRequest.AdminFindRequest(req.params)
-            const response = await RoleAdminService.find(request)
-            res.send(response)
-        } catch (error) {
-            if (error instanceof APIActorError) {
-                return res.status(error.statusCode).send({ message: error.message })
-            }
-
-            console.error(error)
-            return res.status(500).send({ message: 'Internal Server Error' })
-        }
-    })
-
-    router.route('/api/v1/admin/role/:name/permissions')
-    /**
-     * @openapi
-     * '/api/v1/admin/role/{name}/permissions':
-     *  get:
-     *     tags:
-     *       - Role Admin Controller
-     *     summary: Fetch a role's permissions by name
-     *     security:
-     *      - bearerAuth: []
-     *     parameters:
-     *      - in: path
-     *        name: name
-     *        required: true
-     *        schema:
-     *         type: string
-     *     responses:
-     *      200:
-     *        description: OK
-     *        content:
-     *         application/json:
-     *           schema:
-     *             type: array
-     *             items:
-     *              properties:
-     *               name:
-     *                 type: string
-     *               description:
-     *                 type: string
-     *               is_user_defined:
+     *               defined_by_system:
      *                 type: boolean
      *      400:
      *        description: Bad Request
@@ -100,10 +55,10 @@ router.route('/api/v1/admin/role/:name')
      *      500:
      *        description: Internal Server Error
      */
-    .get(Middleware.AuthorizePermissionJWT(PERMISSIONS.ROLES.SHOW_PERMISSIONS.name), async (req, res) => {
+    .get(Middleware.AuthorizePermissionJWT("roles:show"), async (req, res) => {
         try {
-            const request = new RoleAdminService.RoleRequest.AdminFindRequest(req.params)
-            const response = await RoleAdminService.findPermissions(request)
+            const { client_side_uuid } = req.params
+            const response = await queryService.invoke(new ReadOneQuery(client_side_uuid))
             res.send(response)
         } catch (error) {
             if (error instanceof APIActorError) {
@@ -114,6 +69,8 @@ router.route('/api/v1/admin/role/:name')
             return res.status(500).send({ message: 'Internal Server Error' })
         }
     })
+
+
 
 router.route('/api/v1/admin/roles')
     /**
@@ -146,11 +103,13 @@ router.route('/api/v1/admin/roles')
      *             items:
      *              type: object
      *              properties:
+     *               client_side_uuid:
+     *                type: string
      *               name:
      *                type: string
      *               description:
      *                type: string
-     *               is_user_defined:
+     *               defined_by_system:
      *                 type: boolean
      *      404:
      *        description: Not Found
@@ -159,11 +118,11 @@ router.route('/api/v1/admin/roles')
      *      500:
      *        description: Internal Server Error
      */
-    .get(Middleware.AuthorizePermissionJWT(PERMISSIONS.ROLES.INDEX.name), async (req, res) => {
+    .get(Middleware.AuthorizePermissionJWT("roles:index"), async (req, res) => {
         try {
-            const request = new RoleAdminService.RoleRequest.AdminFindAllRequest(req.query)
-            const { roles, pages } = await RoleAdminService.findAll(request)
-            res.send({ roles, pages })
+            const { limit, page } = req.query
+            const { rows, count, pages } = await queryService.invoke(new ReadCollectionQuery({limit, page}))
+            res.send({ rows, count, pages })
         } catch (error) {
             console.error(error)
             return res.status(500).send({ message: 'Internal Server Error' })
@@ -185,17 +144,16 @@ router.route('/api/v1/admin/roles')
     *        schema:
     *         type: object
     *         required:
+    *          - client_side_uuid
     *          - name
     *          - description
     *         properties:
+    *          client_side_uuid:
+    *           type: string
     *          name:
     *           type: string
     *          description:
     *           type: string
-    *          permissionNames:
-    *           type: array
-    *           items:
-    *            type: string
     *     responses:
     *      200:
     *        description: OK
@@ -204,11 +162,13 @@ router.route('/api/v1/admin/roles')
     *           schema:
     *             type: object
     *             properties:
+    *               client_side_uuid:
+    *                 type: string
     *               name:
     *                 type: string
     *               description:
     *                 type: string
-    *               is_user_defined:
+    *               defined_by_system:
     *                 type: boolean
     *      400:
     *        description: Bad Request
@@ -219,10 +179,11 @@ router.route('/api/v1/admin/roles')
     *      500:
     *        description: Internal Server Error
     */
-    .post(Middleware.AuthorizePermissionJWT(PERMISSIONS.ROLES.CREATE.name), async (req, res) => {
+    .post(Middleware.AuthorizePermissionJWT("roles:put"), async (req, res) => {
         try {
-            const request = new RoleAdminService.RoleRequest.AdminCreateRequest(req.body)
-            const response = await RoleAdminService.create(request)
+            const { client_side_uuid, name, description } = req.body
+            await commandService.invoke(new PutCommand(client_side_uuid, { name, description }))
+            const response = await queryService.invoke(new ReadOneQuery(client_side_uuid))
             res.send(response)
         } catch (error) {
             if (error instanceof APIActorError) {
@@ -249,17 +210,16 @@ router.route('/api/v1/admin/roles')
     *        schema:
     *         type: object
     *         required:
+    *          - client_side_uuid
     *          - name
     *          - description
     *         properties:
+    *          client_side_uuid:
+    *           type: string
     *          name:
     *           type: string
     *          description:
     *           type: string
-    *          permissionNames:
-    *           type: array
-    *           items:
-    *            type: string
     *     responses:
     *      200:
     *        description: OK
@@ -268,11 +228,13 @@ router.route('/api/v1/admin/roles')
     *           schema:
     *             type: object
     *             properties:
+    *               client_side_uuid:
+    *                 type: string
     *               name:
     *                 type: string
     *               description:
     *                 type: string
-    *               is_user_defined:
+    *               defined_by_system:
     *                 type: boolean
     *      400:
     *        description: Bad Request
@@ -283,10 +245,11 @@ router.route('/api/v1/admin/roles')
     *      500:
     *        description: Internal Server Error
     */
-    .put(Middleware.AuthorizePermissionJWT(PERMISSIONS.ROLES.UPDATE.name), async (req, res) => {
+    .put(Middleware.AuthorizePermissionJWT("roles:put"), async (req, res) => {
         try {
-            const request = new RoleAdminService.RoleRequest.AdminUpdateRequest(req.body)
-            const response = await RoleAdminService.update(request)
+            const { client_side_uuid, name, description } = req.body
+            await commandService.invoke(new PutCommand(client_side_uuid, { name, description }))
+            const response = await queryService.invoke(new ReadOneQuery(client_side_uuid))
             res.send(response)
         } catch (error) {
             if (error instanceof APIActorError) {
@@ -313,9 +276,9 @@ router.route('/api/v1/admin/roles')
     *        schema:
     *         type: object
     *         required:
-    *          - name
+    *          - client_side_uuid
     *         properties:
-    *          name:
+    *          client_side_uuid:
     *           type: string
     *     responses:
     *      204:
@@ -329,10 +292,10 @@ router.route('/api/v1/admin/roles')
     *      500:
     *        description: Internal Server Error
     */
-    .delete(Middleware.AuthorizePermissionJWT(PERMISSIONS.ROLES.DELETE.name), async (req, res) => {
+    .delete(Middleware.AuthorizePermissionJWT("roles:delete"), async (req, res) => {
         try {
-            const request = new RoleAdminService.RoleRequest.AdminDeleteRequest(req.body)
-            await RoleAdminService.destroy(request)
+            const { client_side_uuid } = req.body
+            await commandService.invoke(new DeleteCommand(client_side_uuid))
             res.sendStatus(204)
         } catch (error) {
             if (error instanceof APIActorError) {
