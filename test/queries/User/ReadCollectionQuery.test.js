@@ -12,8 +12,16 @@ beforeAll(async () => {
 });
 
 test('ReadCollectionQuery should read all users', async () => {
-    const { rows, pages, count} = await queryService.invoke(new ReadCollectionQuery());
-    console.log(rows);
+  const { rows, count } = await queryService.invoke(new ReadCollectionQuery());
+  expect(rows).toHaveLength(2);
+  expect(rows[0].client_side_uuid).toBe('aaa-bbb-ccc');
+  expect(rows[1].client_side_uuid).toBe('aaa-bbb-ccc2');
+  expect(count).toBe(2);
+});
+
+test('ReadCollectionQuery should be able to paginate users if page and limit is provided', async () => {
+    const { rows, pages, count } = await queryService.invoke(new ReadCollectionQuery({ page: 1, limit: 10 }));
+
     expect(rows).toHaveLength(2);
     expect(rows[0].client_side_uuid).toBe('aaa-bbb-ccc');
     expect(rows[1].client_side_uuid).toBe('aaa-bbb-ccc2');

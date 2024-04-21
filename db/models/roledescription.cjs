@@ -49,6 +49,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'RoleDescription',
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
   });
   return RoleDescription;
 };

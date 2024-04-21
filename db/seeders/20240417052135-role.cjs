@@ -17,7 +17,7 @@ module.exports = {
         const prefix = permission.split('.')[0];        
         
         permissionData.forEach(p => {
-          const otherPrefix = p.name.split('.')[0];
+          const otherPrefix = p.name.split(':')[0];
           if (prefix === otherPrefix || prefix === '*') {
             rolePermissions.push({
               client_side_uuid: uuid.v4(),

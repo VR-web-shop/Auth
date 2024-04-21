@@ -114,14 +114,20 @@ export default class PutCommand extends ModelCommand {
 
                 if (options.beforeTransactions) {
                     for (const transaction of options.beforeTransactions) {
-                        await transaction(t);
+                        await transaction(t, entity, params);
                     }
                 }
 
-                await db[snapshotName].create(
+                const snapshot = await db[snapshotName].create(
                     { [fkName]: pk, ...params, ...time }, 
                     { transaction: t }
                 );
+
+                if (options.afterTransactions) {
+                    for (const transaction of options.afterTransactions) {
+                        await transaction(t, entity, snapshot);
+                    }
+                }
             });
         } catch (error) {
             console.log(error)

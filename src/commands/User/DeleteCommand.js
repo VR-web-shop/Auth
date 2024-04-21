@@ -10,4 +10,8 @@ export default class DeleteCommand extends _DeleteCommand {
             "UserRemoved"
         );
     }
+    
+    async execute(db, afterTransactions=[]) {
+        await super.execute(db, { afterTransactions })
+    }
 }

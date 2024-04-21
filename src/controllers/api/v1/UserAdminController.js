@@ -30,7 +30,6 @@ router.route('/api/v1/admin/user/:client_side_uuid')
      *        required: true
      *        schema:
      *         type: string
-     *         format: uuid
      *     responses:
      *      200:
      *        description: OK
@@ -66,64 +65,6 @@ router.route('/api/v1/admin/user/:client_side_uuid')
         try {
             const { client_side_uuid } = req.params
             const response = await queryService.invoke(new ReadOneQuery(client_side_uuid))
-            res.send(response)
-        } catch (error) {
-            if (error instanceof APIActorError) {
-                return res.status(error.statusCode).send({ message: error.message })
-            }
-
-            console.error(error)
-            return res.status(500).send({ message: 'Internal Server Error' })
-        }
-    })
-
-router.route('/api/v1/admin/user/:client_side_uuid/permissions')
-    /**
-     * @openapi
-     * '/api/v1/admin/user/{client_side_uuid}/permissions':
-     *  get:
-     *     tags:
-     *       - User Admin Controller
-     *     summary: Fetch a user's permissions by UUID
-     *     security:
-     *      - bearerAuth: []
-     *     parameters:
-     *      - in: path
-     *        name: client_side_uuid
-     *        required: true
-     *        schema:
-     *         type: string
-     *         format: uuid
-     *     responses:
-     *      200:
-     *        description: OK
-     *        content:
-     *         application/json:
-     *           schema:
-     *             type: array
-     *             items:
-     *              properties:
-     *               client_side_uuid:
-     *                 type: string
-     *               name:
-     *                 type: string
-     *               description:
-     *                 type: string
-     *      400:
-     *        description: Bad Request
-     *      404:
-     *        description: Not Found
-     *      401:
-     *        description: Unauthorized
-     *      500:
-     *        description: Internal Server Error
-     */
-    .get(Middleware.AuthorizePermissionJWT("users:show:permissions"), async (req, res) => {
-        try {
-            const { client_side_uuid } = req.params
-            const response = await queryService.invoke(new ReadOneQuery(client_side_uuid, {
-                include: [{ model: 'Permission' }]
-            }))
             res.send(response)
         } catch (error) {
             if (error instanceof APIActorError) {
@@ -230,7 +171,6 @@ router.route('/api/v1/admin/users')
     *         properties:
     *          client_side_uuid:
     *           type: string
-    *           format: uuid
     *           default: 123e4567-e89b-12d3-a456-426614174000
     *          first_name:
     *           type: string
@@ -246,6 +186,7 @@ router.route('/api/v1/admin/users')
     *           default: 12345678
     *          role_client_side_uuid:
     *           type: string
+    *           default: aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa
     *     responses:
     *      200:
     *        description: OK
@@ -279,8 +220,8 @@ router.route('/api/v1/admin/users')
     */
     .post(Middleware.AuthorizePermissionJWT("users:put"), async (req, res) => {
         try {
-            const { client_side_uuid, email, password, first_name, last_name } = req.body
-            await commandService.invoke(new PutCommand({ client_side_uuid, email, password, first_name, last_name }))
+            const { client_side_uuid, email, password, first_name, last_name, role_client_side_uuid } = req.body
+            await commandService.invoke(new PutCommand(client_side_uuid, { email, password, first_name, last_name, role_client_side_uuid }))
             const response = await queryService.invoke(new ReadOneQuery(client_side_uuid))
             res.send(response)
         } catch (error) {
@@ -317,7 +258,6 @@ router.route('/api/v1/admin/users')
     *         properties:
     *          client_side_uuid:
     *           type: string
-    *           format: uuid
     *           default: 123e4567-e89b-12d3-a456-426614174000
     *          first_name:
     *           type: string
@@ -333,6 +273,7 @@ router.route('/api/v1/admin/users')
     *           default: 12345678
     *          role_client_side_uuid:
     *           type: string
+    *           default: aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa
     *     responses:
     *      200:
     *        description: OK
@@ -366,8 +307,8 @@ router.route('/api/v1/admin/users')
     */
     .put(Middleware.AuthorizePermissionJWT("users:put"), async (req, res) => {
         try {
-            const { client_side_uuid, email, password, first_name, last_name } = req.body
-            await commandService.invoke(new PutCommand({ client_side_uuid, email, password, first_name, last_name }))
+            const { client_side_uuid, email, password, first_name, last_name, role_client_side_uuid } = req.body
+            await commandService.invoke(new PutCommand(client_side_uuid, { email, password, first_name, last_name, role_client_side_uuid }))
             const response = await queryService.invoke(new ReadOneQuery(client_side_uuid))
             res.send(response)
         } catch (error) {
@@ -399,7 +340,6 @@ router.route('/api/v1/admin/users')
     *         properties:
     *          client_side_uuid:
     *           type: string
-    *           format: uuid
     *     responses:
     *      204:
     *        description: No Content

@@ -70,72 +70,7 @@ router.route('/api/v1/admin/role/:client_side_uuid')
         }
     })
 
-    router.route('/api/v1/admin/role/:client_side_uuid/permissions')
-    /**
-     * @openapi
-     * '/api/v1/admin/role/{client_side_uuid}/permissions':
-     *  get:
-     *     tags:
-     *       - Role Admin Controller
-     *     summary: Fetch a role's permissions by client_side_uuid
-     *     security:
-     *      - bearerAuth: []
-     *     parameters:
-     *      - in: path
-     *        name: client_side_uuid
-     *        required: true
-     *        schema:
-     *         type: string
-     *     responses:
-     *      200:
-     *        description: OK
-     *        content:
-     *         application/json:
-     *           schema:
-     *             type: array
-     *             items:
-     *              properties:
-     *               client_side_uuid:
-     *                 type: string
-     *               name:
-     *                 type: string
-     *               description:
-     *                 type: string
-     *               defined_by_system:
-     *                 type: boolean
-     *      400:
-     *        description: Bad Request
-     *      404:
-     *        description: Not Found
-     *      401:
-     *        description: Unauthorized
-     *      500:
-     *        description: Internal Server Error
-     */
-    .get(Middleware.AuthorizePermissionJWT("roles:show:permissions"), async (req, res) => {
-        try {
-            const { client_side_uuid } = req.params
-            const response = await queryService.invoke(new ReadOneQuery(client_side_uuid, {
-                include: [{ 
-                    model: 'Permission', 
-                    as: 'permissions',
-                    include: [{
-                        model: 'PermissionDescription',
-                        order: [['created_at', 'DESC']],
-                        limit: 1
-                    }] 
-                }]
-            }))
-            res.send(response)
-        } catch (error) {
-            if (error instanceof APIActorError) {
-                return res.status(error.statusCode).send({ message: error.message })
-            }
 
-            console.error(error)
-            return res.status(500).send({ message: 'Internal Server Error' })
-        }
-    })
 
 router.route('/api/v1/admin/roles')
     /**
@@ -248,7 +183,7 @@ router.route('/api/v1/admin/roles')
         try {
             const { client_side_uuid, name, description } = req.body
             await commandService.invoke(new PutCommand(client_side_uuid, { name, description }))
-            const response = await queryService.invoke(new ReadOneQuery(name))
+            const response = await queryService.invoke(new ReadOneQuery(client_side_uuid))
             res.send(response)
         } catch (error) {
             if (error instanceof APIActorError) {
@@ -314,7 +249,7 @@ router.route('/api/v1/admin/roles')
         try {
             const { client_side_uuid, name, description } = req.body
             await commandService.invoke(new PutCommand(client_side_uuid, { name, description }))
-            const response = await queryService.invoke(new ReadOneQuery(name))
+            const response = await queryService.invoke(new ReadOneQuery(client_side_uuid))
             res.send(response)
         } catch (error) {
             if (error instanceof APIActorError) {

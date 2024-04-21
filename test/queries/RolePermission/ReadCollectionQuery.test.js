@@ -12,11 +12,21 @@ beforeAll(async () => {
 });
 
 test('ReadCollectionQuery should read all role permissions', async () => {
-    const { rows, pages, count} = await queryService.invoke(new ReadCollectionQuery());
-    expect(rows).toHaveLength(1);
-    expect(rows[0].client_side_uuid).toBe('aaa-bbb-ccc');
-    expect(rows[0].role_client_side_uuid).toBe('aaa-bbb-ccc');
-    expect(rows[0].permission_name).toBe('users:delete');
-    expect(pages).toBe(1);
-    expect(count).toBe(1);
+  const { rows, count } = await queryService.invoke(new ReadCollectionQuery());
+  expect(rows).toHaveLength(1);
+  expect(rows[0].client_side_uuid).toBe('aaa-bbb-ccc');
+  expect(rows[0].role_client_side_uuid).toBe('aaa-bbb-ccc');
+  expect(rows[0].permission_name).toBe('users:delete');
+  expect(count).toBe(1);
+});
+
+test('ReadCollectionQuery should be able to paginate role permissions if page and limit is provided', async () => {
+  const { rows, pages, count } = await queryService.invoke(new ReadCollectionQuery({ page: 1, limit: 10 }));
+
+  expect(rows).toHaveLength(1);
+  expect(rows[0].client_side_uuid).toBe('aaa-bbb-ccc');
+  expect(rows[0].role_client_side_uuid).toBe('aaa-bbb-ccc');
+  expect(rows[0].permission_name).toBe('users:delete');
+  expect(pages).toBe(1);
+  expect(count).toBe(1);
 });

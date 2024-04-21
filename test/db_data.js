@@ -7,9 +7,10 @@ const password = await bcrypt.hash('12345678', 10);
 
 export default {
     permissions: [
-        { name: 'users:delete' },
-        { name: 'users:put' },
-        { name: 'users:create' }
+        { name: 'users:delete', defined_by_system: true },
+        { name: 'users:put', defined_by_system: true },
+        { name: 'users:create', defined_by_system: true },
+        { name: 'custom:permission', defined_by_system: false }
     ],
     permissionDescriptions: [
         {
@@ -46,6 +47,13 @@ export default {
             description: 'eee',
             created_at: yesterday,
             updated_at: yesterday
+        },
+        {
+            id: 6,
+            permission_name: 'custom:permission',
+            description: 'eee',
+            created_at: yesterday,
+            updated_at: yesterday
         }
     ],
     permissionRemoved: [
@@ -66,9 +74,10 @@ export default {
     ],
 
     roles: [
-        { client_side_uuid: 'aaa-bbb-ccc' },
-        { client_side_uuid: 'ddd-eee-fff' },
-        { client_side_uuid: 'ggg-hhh-iii' }
+        { client_side_uuid: 'aaa-bbb-ccc', defined_by_system: true },
+        { client_side_uuid: 'ddd-eee-fff', defined_by_system: true },
+        { client_side_uuid: 'ggg-hhh-iii', defined_by_system: true },
+        { client_side_uuid: 'm1m-hhh-iii', defined_by_system: false }
     ],
     roleDescriptions: [
         {
@@ -103,6 +112,13 @@ export default {
             role_client_side_uuid: 'ggg-hhh-iii',
             name: 'guest',
             description: 'Guest',
+            created_at: today,
+            updated_at: today
+        },
+        {
+            role_client_side_uuid: 'm1m-hhh-iii',
+            name: 'custom Role',
+            description: 'custom Role',
             created_at: today,
             updated_at: today
         }

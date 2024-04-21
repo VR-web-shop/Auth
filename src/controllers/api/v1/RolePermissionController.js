@@ -174,7 +174,7 @@ router.route('/api/v1/admin/role_permissions')
     .post(Middleware.AuthorizePermissionJWT("role-permissions:create"), async (req, res) => {
         try {
             const { client_side_uuid, role_client_side_uuid, permission_name } = req.body
-            await commandService.invoke(new CreateCommand(client_side_uuid, role_client_side_uuid, permission_name))
+            await commandService.invoke(new CreateCommand(client_side_uuid, { role_client_side_uuid, permission_name }))
             const response = await queryService.invoke(new ReadOneQuery(client_side_uuid))
             res.send(response)
         } catch (error) {

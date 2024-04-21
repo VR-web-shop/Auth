@@ -52,9 +52,28 @@ export default class ReadCollectionQuery extends ModelQuery {
         const options = this.options;
         const dto = this.dto;
 
-        const limit = options.limit || 10;
-        const page = options.page || 1;
-        const offset = (page - 1) * limit;
+        let limit, page, offset;
+        if (options.limit) {
+            limit = options.limit;
+
+            if (limit < 1) {
+                throw new APIActorError("limit must be greater than 0", 400);
+            }
+        }
+
+        if (options.page) {
+            page = options.page;
+            
+            if (page < 1) {
+                throw new APIActorError("page must be greater than 0", 400);
+            }
+
+            if (!limit) {
+                throw new APIActorError("limit is required when using page", 400);
+            }
+
+            offset = (page - 1) * limit;
+        }
 
         const mTable = `${this.modelName}s`;
         const sTable = this.snapshotName ? `${this.snapshotName}s` : null;
@@ -101,17 +120,22 @@ export default class ReadCollectionQuery extends ModelQuery {
             }
 
             ORDER BY ${mTable}.created_at DESC
-            LIMIT ${limit} OFFSET ${offset} 
+            ${limit ? ` LIMIT ${limit}` : ""}
+            ${offset ? ` OFFSET ${offset}` : ""}
         `;
 
         const entities = await db.sequelize.query(`${sqlOptions("SELECT *")}`, { type: QueryTypes.SELECT });
         const countRes = await db.sequelize.query(`${sqlOptions("SELECT COUNT(*)")}`, { type: QueryTypes.SELECT });
-        //console.log(entities, countRes);
 
         const count = countRes[0]["COUNT(*)"];
-        const pages = Math.ceil(count / limit);
         const rows = entities.map(entity => dto(entity));
+        const result = { rows, count };
 
-        return { rows, pages, count };
+        if (page) {
+            const pages = Math.ceil(count / limit);
+            result.pages = pages;
+        }
+
+        return result;
     }
 }

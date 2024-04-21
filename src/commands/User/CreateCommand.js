@@ -12,14 +12,7 @@ export default class CreateCommand extends _CreateCommand {
             "UserDescription",
             snapshotParams
         );
-
-        this.clientSideUUID = clientSideUUID;
-    }
-
-    async execute(db) {        
         // Ensure to set the active email used to enforce unique constraint
         this.snapshotParams.active_email = this.snapshotParams.email;
-
-        await super.execute(db)
     }
 }

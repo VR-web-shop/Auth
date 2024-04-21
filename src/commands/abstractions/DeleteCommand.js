@@ -32,7 +32,7 @@ export default class DeleteCommand extends ModelCommand {
         this.tombstoneName = tombstoneName;
     }
 
-    async execute(db) {
+    async execute(db, options={}) {
         if (!db || typeof db !== "object") {
             throw new Error("db is required and must be an object");
         }
@@ -57,15 +57,21 @@ export default class DeleteCommand extends ModelCommand {
                     },
                     { transaction: t }
                 );
-
+    
                 if (!entity || entity[`${tombstoneName}s`].length > 0) {
-                    throw new APIActorError("No entity found");
+                    throw new APIActorError("No entity found", 404);
                 }
 
                 await db[tombstoneName].create(
                     { [fkName]: pk, ...time },
                     { transaction: t }
                 );
+
+                if (options.afterTransactions) {
+                    for (const transaction of options.afterTransactions) {
+                        await transaction(t, entity);
+                    }
+                }
             });
         } catch (error) {
             console.log(error)

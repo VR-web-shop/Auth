@@ -82,14 +82,15 @@ module.exports = (sequelize, DataTypes) => {
           userDescription.password = await bcrypt.hash(userDescription.password, 10);
         }
       }
-    }
+    },
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
   });
 
   UserDescription.verifyPassword = async (user, password) => {
     if (!password) throw new Error('Password is required');    
     if (!user) throw new Error('User is required');
     if (!user.password) throw new Error('User.password is missing');
-
     return await bcrypt.compare(password, user.password);
   }
 

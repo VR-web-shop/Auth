@@ -46,6 +46,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'PermissionRemoved',
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
   });
   return PermissionRemoved;
 };

@@ -1,4 +1,4 @@
-import RoleDTO from "./Role";
+import RoleDTO from "./Role.js";
 
 export default function PermissionDTO(entity) {
     if (!entity || typeof entity !== "object") {

@@ -73,7 +73,7 @@
      { "name": "shopping-cart:carts:index", "description": "List all carts in shopping cart system" },
      { "name": "shopping-cart:carts:delete", "description": "Delete a cart in shopping cart system" },
 
-     { "name": "admin:client:access", "description": "Access the admin client" },
+     { "name": "admin-client:access", "description": "Access the admin client" },
      { "name": "scenes-editor:client:access", "description": "Access the scenes editor client" }
 ]
  

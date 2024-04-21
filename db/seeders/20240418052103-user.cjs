@@ -14,7 +14,8 @@ module.exports = {
     await queryInterface.bulkInsert('UserDescriptions', [
       { 
         id: 1,
-        email: 'userAdmin@example.com', 
+        email: 'userAdmin@example.com',
+        active_email: 'userAdmin@example.com',
         password,
         first_name: 'John',
         last_name: 'Doe',
@@ -23,7 +24,8 @@ module.exports = {
       },
       { 
         id: 2,
-        email: 'member@example.com', 
+        email: 'member@example.com',
+        active_email: 'member@example.com', 
         password, 
         first_name: 'Jane',
         last_name: 'Doe',
@@ -33,6 +35,7 @@ module.exports = {
       { 
         id: 3,
         email: 'productManager@example.com', 
+        active_email: 'productManager@example.com', 
         password, 
         first_name: 'John',
         last_name: 'Doe',
@@ -41,7 +44,8 @@ module.exports = {
       },
       { 
         id: 4,
-        email: 'productManager@example.com', 
+        email: 'productMember@example.com',
+        active_email: 'productMember@example.com',  
         password, 
         first_name: 'Jane',
         last_name: 'Doe',

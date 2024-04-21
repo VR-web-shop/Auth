@@ -13,7 +13,6 @@ module.exports = (sequelize, DataTypes) => {
       models.User.hasMany(models.UserDescription, {
         foreignKey: 'user_client_side_uuid',
         sourceKey: 'client_side_uuid',
-        unique: false,
       });
       models.User.hasMany(models.UserRemoved, {
         foreignKey: 'user_client_side_uuid',
@@ -44,6 +43,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'User',
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
   });
   return User;
 };

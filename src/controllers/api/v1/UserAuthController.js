@@ -1,8 +1,8 @@
 import APIActorError from "../errors/APIActorError.js";
 import ReadOneQuery from "../../../queries/User/ReadOneQuery.js";
 import CreateCommand from "../../../commands/User/CreateCommand.js";
-import PutCommand from "../../../commands/User/PutCommand.js";
-import DeleteCommand from "../../../commands/User/DeleteCommand.js";
+import ProtectedPutCommand from "../../../commands/User/ProtectedPutCommand.js";
+import ProtectedDeleteCommand from "../../../commands/User/ProtectedDeleteCommand.js";
 import ModelCommandService from "../../../services/ModelCommandService.js";
 import ModelQueryService from "../../../services/ModelQueryService.js";
 import AuthService from "../../../services/AuthService.js";
@@ -133,6 +133,7 @@ router.route('/api/v1/users')
     .post(async (req, res) => {
         try {
             const { client_side_uuid, email, password, first_name, last_name } = req.body
+            const role_client_side_uuid = 'dddddddd-dddd-dddd-dddd-dddddddddddd';
             /**
              * Why not use the PutCommand for creating a new user?
              * Because the PutCommand is idempotent, it will either add or update an user,
@@ -140,7 +141,7 @@ router.route('/api/v1/users')
              * signs up for the first time. The Create command is designed to only create
              * a new user, and will throw an error if the user already exists.
              */
-            await commandService.invoke(new CreateCommand(client_side_uuid, { email, password, first_name, last_name }))
+            await commandService.invoke(new CreateCommand(client_side_uuid, { email, password, first_name, last_name, role_client_side_uuid }))
             const { access_token, refresh_token } = await AuthService.create(email, password)
             res.cookie('refresh_token', refresh_token, { httpOnly: true })
             res.send({ access_token })
@@ -186,7 +187,7 @@ router.route('/api/v1/users')
     *              password:
     *                type: string
     *                default: 12345678
-    *              new_password:
+    *              verifyPassword:
     *                type: string
     *                default: 12345678
     *     responses:
@@ -223,9 +224,9 @@ router.route('/api/v1/users')
     .put(Middleware.AuthorizeJWT, Middleware.AuthorizePermissionJWT("auth:users:put"), async (req, res) => {
         try {
             const { sub } = req.user
-            const { email, password, new_password, first_name, last_name } = req.body
-            await commandService.invoke(new PutCommand({ client_side_uuid: sub, email, password, new_password, first_name, last_name }))
-            const response = await queryService.invoke(new ReadOneQuery(client_side_uuid))
+            const { email, password, verifyPassword, first_name, last_name } = req.body
+            await commandService.invoke(new ProtectedPutCommand(sub, { email, password, verifyPassword, first_name, last_name }))
+            const response = await queryService.invoke(new ReadOneQuery(sub))
             res.send(response)
         } catch (error) {
             if (error instanceof APIActorError) {
@@ -252,9 +253,9 @@ router.route('/api/v1/users')
     *           schema:
     *            type: object
     *            required:
-    *              - password
+    *              - verifyPassword
     *            properties:
-    *              password:
+    *              verifyPassword:
     *                type: string
     *                default: 12345678
     *     responses:
@@ -271,9 +272,9 @@ router.route('/api/v1/users')
     */
     .delete(Middleware.AuthorizeJWT, Middleware.AuthorizePermissionJWT("auth:users:delete"), async (req, res) => {
         try {
-            const { password } = req.body
+            const { verifyPassword } = req.body
             const { sub } = req.user
-            await commandService.invoke(new DeleteCommand(sub, password))
+            await commandService.invoke(new ProtectedDeleteCommand(sub, verifyPassword))
             res.sendStatus(204)
         } catch (error) {
             if (error instanceof APIActorError) {

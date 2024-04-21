@@ -112,9 +112,9 @@ export default class ReadOneQuery extends ModelQuery {
             LIMIT 1
         `;
         const entity = await db.sequelize.query(sql, { type: QueryTypes.SELECT });
-            console.log(entity)
+
         if (entity.length === 0) {
-            throw new APIActorError(404, "No Entity found");
+            throw new APIActorError("No Entity found", 404);
         }
 
         return dto(entity[0]);

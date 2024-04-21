@@ -14,15 +14,15 @@ export default class PutCommand extends _PutCommand {
             "UserRemoved"
         );
 
+        // Ensure to set the active email used to enforce unique constraint
+        this.params.active_email = this.params.email;
         this.clientSideUUID = clientSideUUID;
     }
 
-    async execute(db) {
-        // Ensure to set the active email used to enforce unique constraint
-        this.params.active_email = this.params.email;
-
-        await super.execute(db, { 
+    async execute(db, beforeTransactions=[], afterTransactions=[]) {
+        await super.execute(db, {
             beforeTransactions: [
+                ...beforeTransactions,
                 /**
                  * The idea here is that a user description's active email should be unique.
                  * However, since a single user can have multiple user descriptions, 
@@ -40,7 +40,8 @@ export default class PutCommand extends _PutCommand {
                         { transaction: t }
                     );
                 }
-            ]
+            ],
+            afterTransactions
         })
     }
 }
