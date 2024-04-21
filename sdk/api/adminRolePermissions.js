@@ -67,7 +67,6 @@ async function destroy(deleteRequest) {
 
 export default {
     find,
-    findPermissions,
     findAll,
     create,
     update,
