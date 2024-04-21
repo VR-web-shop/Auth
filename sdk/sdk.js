@@ -1,24 +1,13 @@
 import fetchAPI from './fetchAPI.js'
 
-import DTOArgumentError from '../src/dtos/errors/DTOArgumentError.js'
-import DTORequestParameterError from '../src/dtos/errors/DTORequestParameterError.js'
-import DTOResponseParameterError from '../src/dtos/errors/DTOResponseParameterError.js'
 import SDKFetchMissingTokenError from './errors/SDKFetchMissingTokenError.js'
 import SDKFetchError from './errors/SDKFetchError.js'
-
-import AuthRequest from '../src/dtos/AuthRequest.js'
-import AuthResponse from '../src/dtos/AuthResponse.js'
-import RoleRequest from '../src/dtos/RoleRequest.js'
-import RoleResponse from '../src/dtos/RoleResponse.js'
-import UserRequest from '../src/dtos/UserRequest.js'
-import UserResponse from '../src/dtos/UserResponse.js'
-import PermissionRequest from '../src/dtos/PermissionRequest.js'
-import PermissionResponse from '../src/dtos/PermissionResponse.js'
 
 import users from './api/users.js'
 import authentication from './api/authentication.js'
 import adminUsers from './api/adminUsers.js'
 import adminRoles from './api/adminRoles.js'
+import adminRolePermissions from './api/adminRolePermissions.js'
 import adminPermissions from './api/adminPermissions.js'
 
 /**
@@ -73,27 +62,8 @@ const SDK = function(serverURL, APIVersion = 'v1', options={}) {
         authentication,
         adminUsers,
         adminRoles,
+        adminRolePermissions,
         adminPermissions
-    }
-
-    /**
-     * @property {object} requests The SDK API requests
-     */
-    this.requests = {
-        AuthRequest,
-        UserRequest,
-        RoleRequest,
-        PermissionRequest
-    }
-
-    /**
-     * @property {object} responses The SDK API responses
-     */
-    this.responses = {
-        AuthResponse,
-        RoleResponse,
-        UserResponse,
-        PermissionResponse
     }
 
     /**

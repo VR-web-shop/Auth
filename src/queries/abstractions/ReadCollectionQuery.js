@@ -50,9 +50,9 @@ export default class ReadCollectionQuery extends ModelQuery {
         }
 
         const options = this.options;
-        const dto = this.dto;
 
         let limit, page, offset;
+
         if (options.limit) {
             limit = options.limit;
 
@@ -80,55 +80,41 @@ export default class ReadCollectionQuery extends ModelQuery {
         const tTable = this.tombstoneName ? `${this.tombstoneName}s` : null;
         const fkName = this.fkName;
         const pkName = this.pkName;
+        const where = options.where;
 
-        const sqlOptions = (prefix) => `
-            ${prefix} FROM ${mTable}
-            ${
-                // Left join the latest created snapshot
-                sTable 
-                ? ` LEFT JOIN ${sTable} ON ${sTable}.${fkName} = ${mTable}.${pkName}`
-                : ""
-            }
-            ${
-                // Left join the latest created tombstone
-                tTable 
-                ? ` LEFT JOIN ${tTable} ON ${tTable}.${fkName} = ${mTable}.${pkName}`
-                : ""
-            }
-            ${
-                // Left join any other models
-                options.include 
-                ? options.include.map(include => {
-                    return ` ${include}` 
-                }).join(" ") 
-                : ""
-            }
-            ${
-                sTable
-                ? ` WHERE ${sTable}.created_at = (SELECT MAX(created_at) FROM ${sTable} WHERE ${sTable}.${fkName} = ${mTable}.${pkName})`
-                : ""
-            }
-            ${
-                tTable 
-                ? ` ${sTable ? "AND" : "WHERE"} ${tTable}.${fkName} IS NULL`
-                : ""
-            }
-            ${
-                options.where 
-                ? ` ${tTable || sTable ? "AND" : "WHERE"} ${options.where}`
-                : ""
-            }
+        const queryOptions = {
+            limit, 
+            offset, 
+            mTable, 
+            sTable, 
+            tTable, 
+            where, 
+            fkName, 
+            pkName, 
+        }
 
-            ORDER BY ${mTable}.created_at DESC
-            ${limit ? ` LIMIT ${limit}` : ""}
-            ${offset ? ` OFFSET ${offset}` : ""}
-        `;
+        const replacements = {
+            limit, 
+            offset, 
+        };
 
-        const entities = await db.sequelize.query(`${sqlOptions("SELECT *")}`, { type: QueryTypes.SELECT });
-        const countRes = await db.sequelize.query(`${sqlOptions("SELECT COUNT(*)")}`, { type: QueryTypes.SELECT });
+        if (options.where) {
+            options.where.forEach(w => {
+                replacements[w.table] = w.table;
+                replacements[w.column] = w.column;
+                replacements[w.key] = w.value;
+            });
+        }
+
+        const selectSQL = ModelQuery.getSql({ prefix: "SELECT *", ...queryOptions });
+        const countSQL = ModelQuery.getSql({ prefix: "SELECT COUNT(*)", ...queryOptions });
+        const queryOpt = { type: QueryTypes.SELECT, replacements };
+
+        const entities = await db.sequelize.query(selectSQL, queryOpt);
+        const countRes = await db.sequelize.query(countSQL, queryOpt);
 
         const count = countRes[0]["COUNT(*)"];
-        const rows = entities.map(entity => dto(entity));
+        const rows = entities.map(entity => this.dto(entity));
         const result = { rows, count };
 
         if (page) {

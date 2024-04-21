@@ -1,11 +1,16 @@
-import AuthRequest from '../../src/dtos/AuthRequest.js'
-import AuthResponse from '../../src/dtos/AuthResponse.js'
 import fetchAPI from '../fetchAPI.js'
 
+/**
+ * @function login
+ * @description Logs in a user.
+ * @param {Object} authCreateRequest The login request.
+ * @returns {Promise<Object>} The user.
+ * @throws {Error} If authCreateRequest is not provided.
+ */
 async function login(authCreateRequest) {
-    if (!(authCreateRequest instanceof AuthRequest.CreateRequest)) {
-        throw new Error('authCreateRequest must be an instance of AuthRequest.CreateRequest');
-    }
+    if (typeof authCreateRequest !== 'object') {
+        throw new Error('authCreateRequest must be an object');
+    } 
 
     const response = await fetchAPI.request('auth', {
         method: 'POST',
@@ -14,12 +19,16 @@ async function login(authCreateRequest) {
     });
 
     const data = await response.json();
-    const res = new AuthResponse(data);
-    fetchAPI.setAuthToken(res.access_token);
+    fetchAPI.setAuthToken(data.access_token);
 
-    return res;
+    return data;
 }
 
+/**
+ * @function refresh
+ * @description Refreshes a user's token.
+ * @returns {Promise<Object>} The user.
+ */
 async function refresh() {
     const response = await fetchAPI.request('auth', {
         method: 'PUT',
@@ -27,10 +36,9 @@ async function refresh() {
     });
 
     const data = await response.json();
-    const res = new AuthResponse(data);
-    fetchAPI.setAuthToken(res.access_token);
+    fetchAPI.setAuthToken(data.access_token);
 
-    return res;
+    return data;
 }
 
 export default {

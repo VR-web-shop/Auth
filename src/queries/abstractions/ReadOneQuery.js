@@ -62,61 +62,48 @@ export default class ReadOneQuery extends ModelQuery {
             throw new Error("db is required and must be an object");
         }
 
-        const options = this.additionalParams;
-        const dto = this.dto;
         const mTable = `${this.modelName}s`;
         const sTable = this.snapshotName ? `${this.snapshotName}s` : null;
         const tTable = this.tombstoneName ? `${this.tombstoneName}s` : null;
         const fkName = this.fkName;
         const pkName = this.pkName;
-        const pk = this.pk;
+        const limit = 1;
+        const where = [{ 
+            table: mTable, 
+            column: pkName, 
+            operator: Op.eq, 
+            key: 'pk'
+        }]
 
-        const sql = `
-            SELECT * FROM ${mTable}
-            ${
-                // Left join the latest created snapshot
-                sTable 
-                ? ` LEFT JOIN ${sTable} ON ${sTable}.${fkName} = ${mTable}.${pkName}`
-                : ""
-            }
-            ${
-                // Left join the latest created tombstone
-                tTable 
-                ? ` LEFT JOIN ${tTable} ON ${tTable}.${fkName} = ${mTable}.${pkName}`
-                : ""
-            }
-            ${
-                // Left join any other models
-                options.include 
-                ? options.include.map(include => {
-                    return ` LEFT JOIN ${include.model} ON ${include.model}.${include.fk} = ${mTable}.${pkName}` 
-                }).join(" ") 
-                : ""
-            }
-            WHERE ${mTable}.${pkName} = '${pk}'
-            ${
-                sTable
-                ? ` AND ${sTable}.created_at = (SELECT MAX(created_at) FROM ${sTable} WHERE ${sTable}.${fkName} = ${mTable}.${pkName})`
-                : ""
-            }
-            ${
-                tTable 
-                ? ` AND ${tTable}.${fkName} IS NULL`
-                : ""
-            }
-            ${
-                options.where 
-                ? ` AND ${options.where}`
-                : ""
-            }
-            LIMIT 1
-        `;
-        const entity = await db.sequelize.query(sql, { type: QueryTypes.SELECT });
+        const queryOptions = {
+            mTable,
+            sTable, 
+            tTable, 
+            fkName, 
+            pkName, 
+            limit,
+            where
+        }
+
+        if (this.additionalParams.where) {
+            this.additionalParams.where.forEach(w => {
+                replacements[w.table] = w.table;
+                replacements[w.column] = w.column;
+                replacements[w.key] = w.value;
+                queryOptions.where.push(w);
+            });
+        }
+
+        const replacements = { pk: this.pk, limit: 1 };
+        const selectSQL = ModelQuery.getSql({ prefix: "SELECT *", ...queryOptions });
+        const selectOpt = { type: QueryTypes.SELECT, replacements }
+
+        const entity = await db.sequelize.query(selectSQL, selectOpt);
 
         if (entity.length === 0) {
             throw new APIActorError("No Entity found", 404);
         }
 
-        return dto(entity[0]);
+        return this.dto(entity[0]);
     }
 }
