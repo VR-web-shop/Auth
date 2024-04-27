@@ -23,7 +23,7 @@ async function create(email, password) {
         // Note: active_email has a unique contraint, where email does not
         // because it is only to record the email that has been used for the account.
         where: [{
-            table: 'userdescriptions',
+            table: 'UserDescriptions',
             column: 'active_email',
             operator: Op.eq,
             key: 'active_email_value',
@@ -41,7 +41,7 @@ async function create(email, password) {
 
     const { rows: permissionRows } = await queryService.invoke(new ReadRolePermissionCollectionQuery({
         where: [{
-            table: 'rolepermissions',
+            table: 'RolePermissions',
             column: 'role_client_side_uuid',
             operator: Op.eq,
             key: 'role_client_side_uuid_value',
