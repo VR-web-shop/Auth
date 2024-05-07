@@ -1,3 +1,8 @@
+/**
+ * @module jwt/errors/InvalidRefreshTokenError
+ * @description Custom error for invalid refresh token errors
+ * @requires module:jwt/errors/APIActorError
+ */
 import APIActorError from "../../controllers/api/errors/APIActorError.js";
 
 /**

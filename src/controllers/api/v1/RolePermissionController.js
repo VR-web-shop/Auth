@@ -1,3 +1,16 @@
+/**
+ * @module controllers/api/v1/RolePermissionController
+ * @description A module that provides a controller for role permissions
+ * @requires module:express
+ * @requires module:jwt/MiddlewareJWT
+ * @requires module:controllers/api/errors/APIActorError
+ * @requires module:queries/RolePermission/ReadOneQuery
+ * @requires module:queries/RolePermission/ReadCollectionQuery
+ * @requires module:commands/RolePermission/CreateCommand
+ * @requires module:commands/RolePermission/DeleteCommand
+ * @requires module:services/ModelCommandService
+ * @requires module:services/ModelQueryService
+ */
 import APIActorError from "../errors/APIActorError.js";
 import ReadOneQuery from "../../../queries/RolePermission/ReadOneQuery.js";
 import ReadCollectionQuery from "../../../queries/RolePermission/ReadCollectionQuery.js";

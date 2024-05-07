@@ -1,3 +1,17 @@
+/**
+ * @module controllers/api/v1/PermissionAdminController
+ * @description A module that provides a controller for managing permissions
+ * @requires module:express
+ * @requires module:services/ModelCommandService
+ * @requires module:services/ModelQueryService
+ * @requires module:commands/Permission/PutCommand
+ * @requires module:commands/Permission/DeleteCommand
+ * @requires module:queries/Permission/ReadOneQuery
+ * @requires module:queries/Permission/ReadCollectionQuery
+ * @requires module:jwt/MiddlewareJWT
+ * @requires module:controllers/api/errors/APIActorError
+ */
+
 import APIActorError from "../errors/APIActorError.js";
 import ReadOneQuery from "../../../queries/Permission/ReadOneQuery.js";
 import ReadCollectionQuery from "../../../queries/Permission/ReadCollectionQuery.js";

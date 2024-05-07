@@ -1,3 +1,11 @@
+/**
+ * @module controllers/api/SwaggerController
+ * @description A module that provides the Swagger API documentation
+ * @requires module:express
+ * @requires module:swagger-ui-express
+ * @requires module:swagger-jsdoc
+ * @requires module:path
+ */
 import swaggerUi from 'swagger-ui-express';
 import swaggerJsdoc from 'swagger-jsdoc';
 import dir from 'path';

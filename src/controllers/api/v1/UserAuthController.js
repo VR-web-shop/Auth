@@ -1,3 +1,17 @@
+/**
+ * @module controllers/api/v1/UserAuthController
+ * @description A module that provides a user authentication controller
+ * @requires module:express
+ * @requires module:jwt/MiddlewareJWT
+ * @requires module:controllers/api/errors/APIActorError
+ * @requires module:queries/User/ReadOneQuery
+ * @requires module:commands/User/CreateCommand
+ * @requires module:commands/User/ProtectedPutCommand
+ * @requires module:commands/User/ProtectedDeleteCommand
+ * @requires module:services/ModelCommandService
+ * @requires module:services/ModelQueryService
+ * @requires module:services/AuthService
+ */
 import APIActorError from "../errors/APIActorError.js";
 import ReadOneQuery from "../../../queries/User/ReadOneQuery.js";
 import CreateCommand from "../../../commands/User/CreateCommand.js";

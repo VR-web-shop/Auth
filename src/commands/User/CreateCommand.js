@@ -1,7 +1,22 @@
+/**
+ * @module commands/User/CreateCommand
+ * @description A module that provides the command for creating a user
+ * @requires module:commands/abstractions/CreateCommand
+ */
 import _CreateCommand from "../abstractions/CreateCommand.js";
-import { Op } from "sequelize";
 
+/**
+ * @class CreateCommand
+ * @classdesc A command for creating a user
+ * @extends commands/abstractions/CreateCommand
+ */
 export default class CreateCommand extends _CreateCommand {
+
+    /**
+     * @constructor
+     * @param {string} clientSideUUID - The client side UUID
+     * @param {object} snapshotParams - The user snapshot parameters
+     */
     constructor(clientSideUUID, snapshotParams) {
         super(
             clientSideUUID, 

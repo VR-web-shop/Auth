@@ -1,7 +1,37 @@
+/**
+ * @module commands/abstractions/CreateCommand
+ * @description A module that provides a command for creating a model instance
+ * @requires module:commands/abstractions/ModelCommand
+ * @requires module:controllers/api/errors/APIActorError
+ */
 import ModelCommand from "../abstractions/ModelCommand.js";
 import APIActorError from "../../controllers/api/errors/APIActorError.js";
 
+/**
+ * @class CreateCommand
+ * @classdesc A command for creating a model instance
+ * @extends commands/abstractions/ModelCommand
+ */
 export default class CreateCommand extends ModelCommand {
+
+    /**
+     * @constructor
+     * @param {string} pk - The primary key value
+     * @param {object} params - The model instance parameters
+     * @param {string} pkName - The primary key name
+     * @param {string} modelName - The model name
+     * @param {string} [fkName=null] - The foreign key name
+     * @param {string} [snapshotName=null] - The snapshot model name
+     * @param {object} [snapshotParams=null] - The snapshot model parameters
+     * @throws {Error} If pk is not provided or not a string
+     * @throws {Error} If params is not provided or not an object
+     * @throws {Error} If pkName is not provided or not a string
+     * @throws {Error} If modelName is not provided or not a string
+     * @throws {Error} If fkName is provided and not a string
+     * @throws {Error} If snapshotName is provided and not a string
+     * @throws {Error} If snapshotName is provided and fkName is not provided
+     * @throws {Error} If snapshotName is provided and snapshotParams is not provided
+     */
     constructor(pk, params, pkName, modelName, fkName = null, snapshotName = null, snapshotParams = null) {
         super();
         if (!pk || typeof pk !== "string") {
@@ -45,6 +75,17 @@ export default class CreateCommand extends ModelCommand {
         this.snapshotParams = snapshotParams;
     }
 
+    /**
+     * @function execute
+     * @description Creates a model instance
+     * @param {object} db - The database connection
+     * @throws {Error} If db is not provided or not an object
+     * @throws {APIActorError} If the entity already exists
+     * @throws {APIActorError} If an error occurs while creating the entity
+     * @returns {Promise<void>} The result of the command
+     * @async
+     * @override
+     */
     async execute(db) {
         if (!db || typeof db !== "object") {
             throw new Error("db is required and must be an object");

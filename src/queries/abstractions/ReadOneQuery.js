@@ -1,7 +1,35 @@
+/**
+ * @module queries/abstractions/ReadOneQuery
+ * @description A module that provides a query for reading a single entity
+ * @requires module:sequelize
+ * @requires module:queries/abstractions/ModelQuery
+ * @requires module:controllers/api/errors/APIActorError
+ */
 import ModelQuery from "./ModelQuery.js";
 import APIActorError from "../../controllers/api/errors/APIActorError.js";
 import { Op, QueryTypes } from "sequelize";
 
+/**
+ * @class ReadOneQuery
+ * @classdesc A query for reading a single entity
+ * @extends ModelQuery
+ * @param {string} pk - The primary key value
+ * @param {string} pkName - The primary key name
+ * @param {function} dto - The data transfer object
+ * @param {string} modelName - The model name
+ * @param {string} [snapshotName=null] - The snapshot name
+ * @param {string} [tombstoneName=null] - The tombstone name
+ * @param {string} [fkName=null] - The foreign key name
+ * @param {object} [additionalParams={}] - Additional query parameters
+ * @throws {Error} pk is required and must be a string
+ * @throws {Error} pkName is required and must be a string
+ * @throws {Error} dto is required and must be a function
+ * @throws {Error} modelName is required and must be a string
+ * @throws {Error} if using snapshots, snapshotName must be a string
+ * @throws {Error} if using tombstones, tombstoneName must be a string
+ * @throws {Error} if using tombstones, fkName is required
+ * @throws {Error} additionalParams must be an object
+ */
 export default class ReadOneQuery extends ModelQuery {
     constructor(
         pk, 
@@ -57,6 +85,16 @@ export default class ReadOneQuery extends ModelQuery {
         this.additionalParams = additionalParams;
     }
 
+    /**
+     * @function execute
+     * @description Executes the query
+     * @param {object} db - The database connection
+     * @returns {Promise<object>} - The result of the query
+     * @throws {Error} db is required and must be an object
+     * @throws {APIActorError} No Entity found
+     * @async
+     * @override
+     */
     async execute(db) {
         if (!db || typeof db !== "object") {
             throw new Error("db is required and must be an object");
@@ -99,7 +137,7 @@ export default class ReadOneQuery extends ModelQuery {
         const selectOpt = { type: QueryTypes.SELECT, replacements }
 
         const entity = await db.sequelize.query(selectSQL, selectOpt);
-        console.log(entity);
+
         if (entity.length === 0) {
             throw new APIActorError("No Entity found", 404);
         }

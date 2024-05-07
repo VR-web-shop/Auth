@@ -12,7 +12,12 @@ $ npm install
 $ cp .env.example .env
 ```
 
-3. Seed Database
+3. Migrate Database
+```
+$ npm run migrate
+```
+
+4. Seed Database
 ```
 $ npm run seed
 ```
@@ -23,9 +28,22 @@ Execute the following command:
 $ npm start
 ```
 
+## Test
+Execute the following command:
+```
+$ npm run test
+```
+
 ## API Documentation
-1. Start Server
+1. Start Server: `$ npm start`
 2. Visit [localhost:3000/api/v1/documentation](http://localhost:3000/api/v1/documentation) for Swagger UI
+
+## JSDoc
+1. Execute the following command:
+```
+$ npm run jsdoc
+```
+2. Visit `./docs/index.html` to view the documentation
 
 ## SDK Package
 [![Node.js Package Publish](https://github.com/VR-web-shop/Auth/actions/workflows/npm-publish-github-packages.yml/badge.svg?branch=sdk-release)](https://github.com/VR-web-shop/Auth/actions/workflows/npm-publish-github-packages.yml)

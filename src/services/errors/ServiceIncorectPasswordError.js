@@ -1,3 +1,8 @@
+/**
+ * @module services/errors/ServiceIncorectPasswordError
+ * @description Custom error for service incorrect password errors
+ * @requires module:services/errors/APIActorError
+ */
 import APIActorError from "../../controllers/api/errors/APIActorError.js";
 
 /**

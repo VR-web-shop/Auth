@@ -1,7 +1,24 @@
+/**
+ * @module commands/User/PutCommand
+ * @description A module that provides a command for updating a user
+ * @requires module:commands/abstractions/PutCommand
+ * @requires module:sequelize
+ */
 import _PutCommand from "../abstractions/PutCommand.js";
 import { Op } from "sequelize";
 
+/**
+ * @class PutCommand
+ * @classdesc A command for updating a user
+ * @extends commands/abstractions/PutCommand
+ */
 export default class PutCommand extends _PutCommand {
+
+    /**
+     * @constructor
+     * @param {string} clientSideUUID - The client side UUID
+     * @param {object} params - The user parameters
+     */
     constructor(clientSideUUID, params) {
         super(
             clientSideUUID, 
@@ -19,6 +36,16 @@ export default class PutCommand extends _PutCommand {
         this.clientSideUUID = clientSideUUID;
     }
 
+    /**
+     * @method execute
+     * @description The method that executes the command
+     * @param {object} db - The database models
+     * @param {array} beforeTransactions - The before transactions
+     * @param {array} afterTransactions - The after transactions
+     * @returns {Promise<void>} - The result of the command
+     * @override
+     * @async
+     */
     async execute(db, beforeTransactions=[], afterTransactions=[]) {
         await super.execute(db, {
             beforeTransactions: [

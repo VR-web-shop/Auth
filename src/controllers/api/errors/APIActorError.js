@@ -1,3 +1,7 @@
+/**
+ * @module controllers/api/errors/APIActorError
+ * @description Custom error for API actor errors
+ */
 
 /**
  * @class APIActorError
@@ -9,10 +13,14 @@
  * - Lookups for non existing entities
  * - Provided the wrong password in a login request
  * @extends Error
- * @param {string} msg - The error message
- * @param {number} statusCode - The HTTP status code to be sent back to the API actor
  */
 class APIActorError extends Error {
+
+    /**
+     * @constructor
+     * @param {string} msg - The error message
+     * @param {number} statusCode - The HTTP status code to be sent back to the API actor
+     */
     constructor(msg, statusCode) {
         super(msg)
         this.name = 'APIActorError'

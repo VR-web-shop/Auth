@@ -1,3 +1,8 @@
+/**
+ * @module services/errors/ServiceEntityNotDeletableError
+ * @description Custom error for service entity not deletable errors
+ * @requires module:errors/APIActorError
+ */
 import APIActorError from "../../controllers/api/errors/APIActorError.js";
 
 /**

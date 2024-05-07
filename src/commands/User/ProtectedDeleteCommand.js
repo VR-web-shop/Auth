@@ -1,7 +1,25 @@
+/**
+ * @module commands/User/ProtectedDeleteCommand
+ * @description A module that provides the command for deleting a user with password verification
+ * @requires module:commands/User/DeleteCommand
+ * @requires module:controllers/api/errors/APIActorError
+ */
 import _DeleteCommand from "./DeleteCommand.js";
 import APIActorError from "../../controllers/api/errors/APIActorError.js";
 
+/**
+ * @class ProtectedDeleteCommand
+ * @classdesc A command for deleting a user with password verification
+ * @extends commands/User/DeleteCommand
+ */
 export default class ProtectedDeleteCommand extends _DeleteCommand {
+
+    /**
+     * @constructor
+     * @param {string} clientSideUUID - The client side UUID
+     * @param {string} verifyPassword - The password to verify
+     * @throws Will throw an error if verifyPassword is not provided
+     */
     constructor(clientSideUUID, verifyPassword) {
         super(clientSideUUID);
 
@@ -12,9 +30,18 @@ export default class ProtectedDeleteCommand extends _DeleteCommand {
         this.verifyPassword = verifyPassword;
     }
 
+    /**
+     * @method execute
+     * @description Deletes a user with password verification
+     * @param {object} db - The database
+     * @returns {Promise<void>} - The result of the command
+     * @throws {APIActorError} If the password is incorrect
+     * @override
+     * @async
+     */
     async execute(db) {
         const verifyPassword = this.verifyPassword;
-        console.log("ProtectedDeleteCommand", verifyPassword);
+
         await super.execute(db, [
             async (t, entity) => {
                 const snapshot = await db.UserDescription.findOne({

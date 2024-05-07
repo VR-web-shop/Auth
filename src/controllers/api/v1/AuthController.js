@@ -1,3 +1,11 @@
+/**
+ * @module controllers/api/v1/AuthController
+ * @description Auth Controller
+ * @requires module:express
+ * @requires module:services/AuthService
+ * @requires module:controllers/api/errors/APIActorError
+ */
+
 import APIActorError from "../errors/APIActorError.js";
 import AuthService from "../../../services/AuthService.js";
 import express from 'express';

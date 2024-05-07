@@ -1,3 +1,8 @@
+/**
+ * @module jwt/MiddlewareJWT
+ * @description Middleware functions for JSON Web Token
+ * @requires module:jsonwebtoken
+ */
 import Jwt from 'jsonwebtoken';
 
 /**

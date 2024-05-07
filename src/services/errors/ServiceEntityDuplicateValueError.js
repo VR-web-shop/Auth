@@ -1,3 +1,8 @@
+/**
+ * @module services/errors/ServiceEntityDuplicateValueError
+ * @description Custom error for service entity duplicate value errors
+ * @requires module:services/errors/APIActorError
+ */
 import APIActorError from "../../controllers/api/errors/APIActorError.js";
 
 /**

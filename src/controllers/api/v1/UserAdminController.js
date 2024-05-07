@@ -1,3 +1,16 @@
+/**
+ * @module controllers/api/v1/UserAdminController
+ * @description A module that provides a controller for user administration
+ * @requires module:express
+ * @requires module:jwt/MiddlewareJWT
+ * @requires module:controllers/api/errors/APIActorError
+ * @requires module:queries/User/ReadOneQuery
+ * @requires module:queries/User/ReadCollectionQuery
+ * @requires module:commands/User/PutCommand
+ * @requires module:commands/User/DeleteCommand
+ * @requires module:services/ModelCommandService
+ * @requires module:services/ModelQueryService
+ */
 import APIActorError from "../errors/APIActorError.js";
 import ReadOneQuery from "../../../queries/User/ReadOneQuery.js";
 import ReadCollectionQuery from "../../../queries/User/ReadCollectionQuery.js";

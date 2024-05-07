@@ -1,5 +1,16 @@
+/**
+ * @module dtos/Permission
+ * @description DTO for permissions
+ * @requires module:dtos/Role
+ */
 import RoleDTO from "./Role.js";
 
+/**
+ * @function PermissionDTO
+ * @description DTO for permissions
+ * @param {object} entity - The permission entity
+ * @returns {object} The permission DTO
+ */
 export default function PermissionDTO(entity) {
     if (!entity || typeof entity !== "object") {
         throw new Error("description is required and must be an object");

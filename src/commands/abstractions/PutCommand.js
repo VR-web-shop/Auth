@@ -1,7 +1,38 @@
+/**
+ * @module commands/abstractions/PutCommand
+ * @description A module that provides a command for putting a model instance
+ * @requires module:commands/abstractions/ModelCommand
+ * @requires module:controllers/api/errors/APIActorError
+ */
 import ModelCommand from "../abstractions/ModelCommand.js";
 import APIActorError from "../../controllers/api/errors/APIActorError.js";
 
+/**
+ * @class PutCommand
+ * @classdesc A command for putting a model instance
+ * @extends commands/abstractions/ModelCommand
+ */
 export default class PutCommand extends ModelCommand {
+
+    /**
+     * @constructor
+     * @param {string} pk - The primary key value
+     * @param {object} params - The model instance parameters
+     * @param {string} pkName - The primary key name
+     * @param {string} fkName - The foreign key name
+     * @param {string[]} casKeys - The keys to use for CAS calculation
+     * @param {string} modelName - The model name
+     * @param {string} snapshotName - The snapshot model name
+     * @param {string} tombstoneName - The tombstone model name
+     * @throws {Error} If pk is not provided or not a string
+     * @throws {Error} If params is not provided or not an object
+     * @throws {Error} If pkName is not provided or not a string
+     * @throws {Error} If fkName is not provided or not a string
+     * @throws {Error} If casKeys is not provided or not an array
+     * @throws {Error} If modelName is not provided or not a string
+     * @throws {Error} If snapshotName is not provided or not a string
+     * @throws {Error} If tombstoneName is not provided or not a string
+     */
     constructor(pk, params, pkName, fkName, casKeys, modelName, snapshotName, tombstoneName) {
         super();
         if (!pk || typeof pk !== "string") {
@@ -46,6 +77,19 @@ export default class PutCommand extends ModelCommand {
         this.tombstoneName = tombstoneName;
     }
 
+    /**
+     * @function execute
+     * @description Puts a model instance
+     * @param {object} db - The database connection
+     * @param {object} [options={}] - The options for the command
+     * @param {object} [options.beforeTransactions] - The transactions to run before the main transaction
+     * @param {object} [options.afterTransactions] - The transactions to run after the main transaction
+     * @returns {Promise<void>} - The result of the command
+     * @throws {Error} If db is not provided or not an object
+     * @throws {APIActorError} If an error occurs while putting the entity
+     * @async
+     * @override
+     */
     async execute(db, options={}) {
         if (!db || typeof db !== "object") {
             throw new Error("db is required and must be an object");
@@ -145,6 +189,13 @@ export default class PutCommand extends ModelCommand {
         }
     }
 
+    /**
+     * @function calculateCAS
+     * @description Calculates the CAS value
+     * @param {object} params - The parameters to calculate the CAS value
+     * @returns {string} - The CAS value
+     * @static
+     */
     static calculateCAS = (params) => {
         const base64 = Buffer.from(`${params}`).toString("base64");
         return Buffer.from(base64).toString("base64");

@@ -1,7 +1,32 @@
+/**
+ * @module commands/abstractions/DeleteCommand
+ * @description A module that provides a command for deleting a model instance
+ * @requires module:commands/abstractions/ModelCommand
+ * @requires module:controllers/api/errors/APIActorError
+ */
 import ModelCommand from "../abstractions/ModelCommand.js";
 import APIActorError from "../../controllers/api/errors/APIActorError.js";
 
+/**
+ * @class DeleteCommand
+ * @classdesc A command for deleting a model instance
+ * @extends commands/abstractions/ModelCommand
+ */
 export default class DeleteCommand extends ModelCommand {
+
+    /**
+     * @constructor
+     * @param {string} pk - The primary key value
+     * @param {string} pkName - The primary key name
+     * @param {string} fkName - The foreign key name
+     * @param {string} modelName - The model name
+     * @param {string} tombstoneName - The tombstone model name
+     * @throws {Error} If pk is not provided or not a string
+     * @throws {Error} If pkName is not provided or not a string
+     * @throws {Error} If fkName is not provided or not a string
+     * @throws {Error} If modelName is not provided or not a string
+     * @throws {Error} If tombstoneName is not provided or not a string
+     */
     constructor(pk, pkName, fkName, modelName, tombstoneName) {
         super();
 
@@ -32,6 +57,20 @@ export default class DeleteCommand extends ModelCommand {
         this.tombstoneName = tombstoneName;
     }
 
+    /**
+     * @function execute
+     * @description Deletes a model instance
+     * @param {object} db - The database connection
+     * @param {object} [options={}] - The options for the command
+     * @param {Array<Function>} [options.afterTransactions] - The transactions to run after the main transaction
+     * @returns {Promise<void>} - A promise that resolves when the command is complete
+     * @throws {Error} If db is not provided or not an object
+     * @throws {APIActorError} If no entity is found
+     * @throws {APIActorError} If an error occurs while deleting the entity
+     * @returns {Promise<void>} The result of the command
+     * @async
+     * @override
+     */
     async execute(db, options={}) {
         if (!db || typeof db !== "object") {
             throw new Error("db is required and must be an object");

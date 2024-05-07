@@ -1,3 +1,10 @@
+/**
+ * @module jwt/AuthenticateJWT
+ * @description Provides services for JSON Web Token
+ * @requires module:jsonwebtoken
+ * @requires module:jwt/errors/AuthenticateJWTArgumentError
+ * @requires module:jwt/errors/InvalidRefreshTokenError
+ */
 import Jwt from 'jsonwebtoken';
 import InvalidRefreshTokenError from './errors/InvalidRefreshTokenError.js';
 import AuthenticateJWTArgumentError from './errors/AuthenticateJWTArgumentError.js';
@@ -10,7 +17,7 @@ const {
 /**
  * @function NewAuthentication
  * @description Generate a JSON Web Token and a Refresh Token
- * @param {number} userID
+ * @param {string} userID
  * @param {Array} permissions
  * @returns {Object} { access_token, refresh_token }
  * @throws {AuthenticateJWTArgumentError} if uuid is not a string

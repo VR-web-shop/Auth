@@ -1,4 +1,14 @@
+/**
+ * @module dtos/RolePermission
+ * @description DTO for role permissions
+ */
 
+/**
+ * @function RolePermissionDTO
+ * @description DTO for role permissions
+ * @param {object} entity - The role permission entity
+ * @returns {object} The role permission DTO
+ */
 export default function RolePermissionDTO(entity) {
     if (!entity || typeof entity !== "object") {
         throw new Error("description is required and must be an object");

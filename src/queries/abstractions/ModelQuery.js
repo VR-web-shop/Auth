@@ -1,10 +1,38 @@
+/**
+ * @module queries/abstractions/ModelQuery
+ * @description An abstraction for querying a model
+ * @requires module:sequelize
+ */
 import { Op } from "sequelize";
 
+/**
+ * @class
+ * @classdesc An abstraction for querying a model
+ * @abstract
+ */
 export default class ModelQuery {
+
+    /**
+     * @function execute
+     * @description Executes the query
+     * @param {object} db - The database connection
+     * @returns {Promise<object>} - The result of the query
+     * @abstract
+     * @async
+     * @throws {Error} Method not implemented
+     */
     async execute(db) {
         throw new Error("Method not implemented");
     }
 
+    /**
+     * @function getSqlOperator
+     * @description Gets the SQL operator
+     * @param {string} operator - The operator
+     * @returns {string} - The SQL operator
+     * @static
+     * @throws {Error} Operator not supported
+     */
     static getSqlOperator = (operator) => {
         let sqlOperator;
 
@@ -24,6 +52,13 @@ export default class ModelQuery {
         return sqlOperator;
     }
 
+    /**
+     * @function getSqlForWhereOption
+     * @description Gets the SQL for the where option
+     * @param {array} whereOption - The where option
+     * @returns {string} - The SQL for the where option
+     * @static
+     */
     static getSqlForWhereOption = (whereOption) => {
         return whereOption
             ? whereOption.map((where, index) => {
@@ -35,6 +70,22 @@ export default class ModelQuery {
             : ""
     }
 
+    /**
+     * @function getSql
+     * @description Gets the SQL for the query
+     * @param {object} options - The options for the query
+     * @param {number} options.limit - The limit for the query
+     * @param {number} options.offset - The offset for the query
+     * @param {string} options.mTable - The main table
+     * @param {string} options.sTable - The snapshot table
+     * @param {string} options.tTable - The tombstone table
+     * @param {array} options.where - The where option
+     * @param {string} options.fkName - The foreign key name
+     * @param {string} options.pkName - The primary key name
+     * @param {string} options.prefix - The prefix for the query
+     * @returns {string} - The SQL for the query
+     * @static
+     */
     static getSql = (options={}) => {
         let { limit, offset, mTable, sTable, tTable, where, fkName, pkName, prefix } = options;
 

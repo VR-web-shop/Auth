@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Module: jwt/MiddlewareJWT</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Module: jwt/MiddlewareJWT</h1>
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        
+            
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+            <div class="description">Middleware functions for JSON Web Token</div>
+        
+
+        
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="jwt_MiddlewareJWT.js.html">jwt/MiddlewareJWT.js</a>, <a href="jwt_MiddlewareJWT.js.html#line1">line 1</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    
+    </div>
+
+    
+
+    
+        <h3 class="subsection-title">Requires</h3>
+
+        <ul>
+            <li>module:jsonwebtoken</li>
+        </ul>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~AuthorizeJWT"><span class="type-signature">(inner) </span>AuthorizeJWT<span class="signature">(req, res, next)</span><span class="type-signature"> &rarr; {void}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    A middleware function to authenticate a JSON Web Token
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>req</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Request</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>res</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Response</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>next</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">NextFunction</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="jwt_MiddlewareJWT.js.html">jwt/MiddlewareJWT.js</a>, <a href="jwt_MiddlewareJWT.js.html#line8">line 8</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">void</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~AuthorizePermissionJWT"><span class="type-signature">(inner) </span>AuthorizePermissionJWT<span class="signature">(permissionName)</span><span class="type-signature"> &rarr; {void}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    A middleware function to authenticate a permission against JSON Web Token
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>permissionName</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="jwt_MiddlewareJWT.js.html">jwt/MiddlewareJWT.js</a>, <a href="jwt_MiddlewareJWT.js.html#line36">line 36</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">void</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-commands_Permission_DeleteCommand.html">commands/Permission/DeleteCommand</a></li><li><a href="module-commands_Permission_PutCommand.html">commands/Permission/PutCommand</a></li><li><a href="module-commands_Role_DeleteCommand.html">commands/Role/DeleteCommand</a></li><li><a href="module-commands_Role_PutCommand.html">commands/Role/PutCommand</a></li><li><a href="module-commands_RolePermission_CreateCommand.html">commands/RolePermission/CreateCommand</a></li><li><a href="module-commands_RolePermission_DeleteCommand.html">commands/RolePermission/DeleteCommand</a></li><li><a href="module-commands_User_CreateCommand.html">commands/User/CreateCommand</a></li><li><a href="module-commands_User_DeleteCommand.html">commands/User/DeleteCommand</a></li><li><a href="module-commands_User_ProtectedDeleteCommand.html">commands/User/ProtectedDeleteCommand</a></li><li><a href="module-commands_User_ProtectedPutCommand.html">commands/User/ProtectedPutCommand</a></li><li><a href="module-commands_User_PutCommand.html">commands/User/PutCommand</a></li><li><a href="module-commands_abstractions_CreateCommand.html">commands/abstractions/CreateCommand</a></li><li><a href="module-commands_abstractions_DeleteCommand.html">commands/abstractions/DeleteCommand</a></li><li><a href="module-commands_abstractions_ModelCommand.html">commands/abstractions/ModelCommand</a></li><li><a href="module-commands_abstractions_PutCommand.html">commands/abstractions/PutCommand</a></li><li><a href="module-controllers_api_SwaggerController.html">controllers/api/SwaggerController</a></li><li><a href="module-controllers_api_errors_APIActorError.html">controllers/api/errors/APIActorError</a></li><li><a href="module-controllers_api_v1_AuthController.html">controllers/api/v1/AuthController</a></li><li><a href="module-controllers_api_v1_PermissionAdminController.html">controllers/api/v1/PermissionAdminController</a></li><li><a href="module-controllers_api_v1_RoleAdminController.html">controllers/api/v1/RoleAdminController</a></li><li><a href="module-controllers_api_v1_RolePermissionController.html">controllers/api/v1/RolePermissionController</a></li><li><a href="module-controllers_api_v1_UserAdminController.html">controllers/api/v1/UserAdminController</a></li><li><a href="module-controllers_api_v1_UserAuthController.html">controllers/api/v1/UserAuthController</a></li><li><a href="module-dtos_Permission.html">dtos/Permission</a></li><li><a href="module-dtos_Role.html">dtos/Role</a></li><li><a href="module-dtos_RolePermission.html">dtos/RolePermission</a></li><li><a href="module-dtos_User.html">dtos/User</a></li><li><a href="module-jwt_AuthenticateJWT.html">jwt/AuthenticateJWT</a></li><li><a href="module-jwt_MiddlewareJWT.html">jwt/MiddlewareJWT</a></li><li><a href="module-jwt_errors_AuthenticateJWTArgumentError.html">jwt/errors/AuthenticateJWTArgumentError</a></li><li><a href="module-jwt_errors_InvalidRefreshTokenError.html">jwt/errors/InvalidRefreshTokenError</a></li><li><a href="module-queries_Permission_ReadCollectionQuery.html">queries/Permission/ReadCollectionQuery</a></li><li><a href="module-queries_Permission_ReadOneQuery.html">queries/Permission/ReadOneQuery</a></li><li><a href="module-queries_Role_ReadCollectionQuery.html">queries/Role/ReadCollectionQuery</a></li><li><a href="module-queries_Role_ReadOneQuery.html">queries/Role/ReadOneQuery</a></li><li><a href="module-queries_RolePermission_ReadCollectionQuery.html">queries/RolePermission/ReadCollectionQuery</a></li><li><a href="module-queries_RolePermission_ReadOneQuery.html">queries/RolePermission/ReadOneQuery</a></li><li><a href="module-queries_User_ReadCollectionQuery.html">queries/User/ReadCollectionQuery</a></li><li><a href="module-queries_User_ReadOneQuery.html">queries/User/ReadOneQuery</a></li><li><a href="module-queries_abstractions_ModelQuery.html">queries/abstractions/ModelQuery</a></li><li><a href="module-queries_abstractions_ReadCollectionQuery.html">queries/abstractions/ReadCollectionQuery</a></li><li><a href="module-queries_abstractions_ReadOneQuery.html">queries/abstractions/ReadOneQuery</a></li><li><a href="module-services_AuthService.html">services/AuthService</a></li><li><a href="module-services_ModelCommandService.html">services/ModelCommandService</a></li><li><a href="module-services_ModelQueryService.html">services/ModelQueryService</a></li><li><a href="module-services_errors_ServiceArgumentError.html">services/errors/ServiceArgumentError</a></li><li><a href="module-services_errors_ServiceEntityDuplicateValueError.html">services/errors/ServiceEntityDuplicateValueError</a></li><li><a href="module-services_errors_ServiceEntityNotDeletableError.html">services/errors/ServiceEntityNotDeletableError</a></li><li><a href="module-services_errors_ServiceEntityNotFoundError.html">services/errors/ServiceEntityNotFoundError</a></li><li><a href="module-services_errors_ServiceIncorectPasswordError.html">services/errors/ServiceIncorectPasswordError</a></li></ul><h3>Classes</h3><ul><li><a href="module-commands_Permission_DeleteCommand.html">commands/Permission/DeleteCommand</a></li><li><a href="module-commands_Permission_DeleteCommand-DeleteCommand.html">DeleteCommand</a></li><li><a href="module-commands_Permission_PutCommand.html">commands/Permission/PutCommand</a></li><li><a href="module-commands_Permission_PutCommand-PutCommand.html">PutCommand</a></li><li><a href="module-commands_Role_DeleteCommand.html">commands/Role/DeleteCommand</a></li><li><a href="module-commands_Role_DeleteCommand-DeleteCommand.html">DeleteCommand</a></li><li><a href="module-commands_Role_PutCommand-PutCommand.html">PutCommand</a></li><li><a href="module-commands_RolePermission_CreateCommand.html">commands/RolePermission/CreateCommand</a></li><li><a href="module-commands_RolePermission_CreateCommand-CreateCommand.html">CreateCommand</a></li><li><a href="module-commands_RolePermission_DeleteCommand.html">commands/RolePermission/DeleteCommand</a></li><li><a href="module-commands_RolePermission_DeleteCommand-DeleteCommand.html">DeleteCommand</a></li><li><a href="module-commands_User_CreateCommand.html">commands/User/CreateCommand</a></li><li><a href="module-commands_User_CreateCommand-CreateCommand.html">CreateCommand</a></li><li><a href="module-commands_User_DeleteCommand.html">commands/User/DeleteCommand</a></li><li><a href="module-commands_User_DeleteCommand-DeleteCommand.html">DeleteCommand</a></li><li><a href="module-commands_User_ProtectedDeleteCommand.html">commands/User/ProtectedDeleteCommand</a></li><li><a href="module-commands_User_ProtectedDeleteCommand-ProtectedDeleteCommand.html">ProtectedDeleteCommand</a></li><li><a href="module-commands_User_ProtectedPutCommand.html">commands/User/ProtectedPutCommand</a></li><li><a href="module-commands_User_ProtectedPutCommand-ProtectedPutCommand.html">ProtectedPutCommand</a></li><li><a href="module-commands_User_PutCommand.html">commands/User/PutCommand</a></li><li><a href="module-commands_User_PutCommand-PutCommand.html">PutCommand</a></li><li><a href="module-commands_abstractions_CreateCommand.html">commands/abstractions/CreateCommand</a></li><li><a href="module-commands_abstractions_CreateCommand-CreateCommand.html">CreateCommand</a></li><li><a href="module-commands_abstractions_DeleteCommand.html">commands/abstractions/DeleteCommand</a></li><li><a href="module-commands_abstractions_DeleteCommand-DeleteCommand.html">DeleteCommand</a></li><li><a href="module-commands_abstractions_ModelCommand-ModelCommand.html">ModelCommand</a></li><li><a href="module-commands_abstractions_PutCommand.html">commands/abstractions/PutCommand</a></li><li><a href="module-commands_abstractions_PutCommand-PutCommand.html">PutCommand</a></li><li><a href="module-controllers_api_errors_APIActorError-APIActorError.html">APIActorError</a></li><li><a href="module-jwt_errors_AuthenticateJWTArgumentError-AuthenticateJWTArgumentError.html">AuthenticateJWTArgumentError</a></li><li><a href="module-jwt_errors_InvalidRefreshTokenError-InvalidRefreshTokenError.html">InvalidRefreshTokenError</a></li><li><a href="module-queries_Permission_ReadCollectionQuery.html">queries/Permission/ReadCollectionQuery</a></li><li><a href="module-queries_Permission_ReadCollectionQuery-ReadCollectionQuery.html">ReadCollectionQuery</a></li><li><a href="module-queries_Permission_ReadOneQuery.html">queries/Permission/ReadOneQuery</a></li><li><a href="module-queries_Permission_ReadOneQuery-ReadOneQuery.html">ReadOneQuery</a></li><li><a href="module-queries_Role_ReadCollectionQuery.html">queries/Role/ReadCollectionQuery</a></li><li><a href="module-queries_Role_ReadCollectionQuery-ReadCollectionQuery.html">ReadCollectionQuery</a></li><li><a href="module-queries_Role_ReadOneQuery.html">queries/Role/ReadOneQuery</a></li><li><a href="module-queries_Role_ReadOneQuery-ReadOneQuery.html">ReadOneQuery</a></li><li><a href="module-queries_RolePermission_ReadCollectionQuery.html">queries/RolePermission/ReadCollectionQuery</a></li><li><a href="module-queries_RolePermission_ReadCollectionQuery-ReadCollectionQuery.html">ReadCollectionQuery</a></li><li><a href="module-queries_RolePermission_ReadOneQuery.html">queries/RolePermission/ReadOneQuery</a></li><li><a href="module-queries_RolePermission_ReadOneQuery-ReadOneQuery.html">ReadOneQuery</a></li><li><a href="module-queries_User_ReadCollectionQuery.html">queries/User/ReadCollectionQuery</a></li><li><a href="module-queries_User_ReadCollectionQuery-ReadCollectionQuery.html">ReadCollectionQuery</a></li><li><a href="module-queries_User_ReadOneQuery.html">queries/User/ReadOneQuery</a></li><li><a href="module-queries_User_ReadOneQuery-ReadOneQuery.html">ReadOneQuery</a></li><li><a href="module-queries_abstractions_ModelQuery.html">queries/abstractions/ModelQuery</a></li><li><a href="module-queries_abstractions_ReadCollectionQuery.html">queries/abstractions/ReadCollectionQuery</a></li><li><a href="module-queries_abstractions_ReadCollectionQuery-ReadCollectionQuery.html">ReadCollectionQuery</a></li><li><a href="module-queries_abstractions_ReadOneQuery-ReadOneQuery.html">ReadOneQuery</a></li><li><a href="module-services_ModelCommandService.ModelCommandService.html">ModelCommandService</a></li><li><a href="module-services_ModelQueryService.ModelQueryService.html">ModelQueryService</a></li><li><a href="module-services_errors_ServiceArgumentError-ServiceArgumentError.html">ServiceArgumentError</a></li><li><a href="module-services_errors_ServiceEntityDuplicateValueError-ServiceEntityDuplicateValueError.html">ServiceEntityDuplicateValueError</a></li><li><a href="module-services_errors_ServiceEntityNotDeletableError-ServiceEntityNotDeletableError.html">ServiceEntityNotDeletableError</a></li><li><a href="module-services_errors_ServiceEntityNotFoundError-ServiceEntityNotFoundError.html">ServiceEntityNotFoundError</a></li><li><a href="module-services_errors_ServiceIncorectPasswordError-ServiceIncorectPasswordError.html">ServiceIncorectPasswordError</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.3</a> on Tue May 07 2024 23:21:12 GMT+0200 (Centraleuropæisk sommertid)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,3 +1,17 @@
+/**
+ * @module services/AuthService
+ * @description Provides services for authentication
+ * @requires module:sequelize
+ * @requires module:db/models
+ * @requires module:jwt/AuthenticateJWT
+ * @requires module:services/ModelQueryService
+ * @requires module:queries/User/ReadCollectionQuery
+ * @requires module:queries/RolePermission/ReadCollectionQuery
+ * @requires module:services/errors/ServiceArgumentError
+ * @requires module:services/errors/ServiceIncorectPasswordError
+ * @requires module:services/errors/ServiceEntityNotFoundError
+ */
+
 import ServiceArgumentError from "./errors/ServiceArgumentError.js";
 import ServiceIncorectPasswordError from "./errors/ServiceIncorectPasswordError.js";
 import ServiceEntityNotFoundError from "./errors/ServiceEntityNotFoundError.js";
@@ -10,6 +24,17 @@ import { Op } from "sequelize";
 
 const queryService = new ModelQueryService()
 
+/**
+ * @function create
+ * @description Creates a new authentication token
+ * @param {string} email - The email address of the user
+ * @param {string} password - The password of the user
+ * @returns {object} - The new authentication token
+ * @throws {ServiceArgumentError} - If the email or password is not a string
+ * @throws {ServiceEntityNotFoundError} - If the user is not found
+ * @throws {ServiceIncorectPasswordError} - If the password is incorrect
+ * @throws {Error} - If multiple users are found
+ */
 async function create(email, password) {
     if (typeof email !== 'string') {
         throw new ServiceArgumentError('Email must be a string')
@@ -59,9 +84,14 @@ async function create(email, password) {
     return AuthJWT.NewAuthentication(entity.client_side_uuid, permissionNames)
 }
 
+/**
+ * @function refresh
+ * @description Refreshes the authentication token
+ * @param {string} refresh_token - The refresh token
+ * @returns {object} - The new access token
+ */
 async function refresh(refresh_token) {
     const access_token = await AuthJWT.RefreshAuthentication(refresh_token)
-    console.log(await AuthJWT.RefreshAuthentication(refresh_token))
     return { access_token }
 }
 

@@ -1,5 +1,17 @@
+/**
+ * @module dtos/User
+ * @description DTO for users
+ * @requires module:dtos/Role
+ */
 import RoleDTO from "./Role.js";
 
+/**
+ * @function UserDTO
+ * @description DTO for users
+ * @param {object} entity - The user entity
+ * @param {boolean} includePassword - Whether to include the password in the DTO
+ * @returns {object} The user DTO
+ */
 export default function UserDTO(entity, includePassword=false) {
     if (!entity || typeof entity !== "object") {
         throw new Error("description is required and must be an object");

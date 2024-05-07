@@ -1,3 +1,8 @@
+/**
+ * @module services/errors/ServiceEntityNotFoundError
+ * @description Custom error for service entity not found errors
+ * @requires module:services/errors/APIActorError
+ */
 import APIActorError from "../../controllers/api/errors/APIActorError.js";
 
 /**

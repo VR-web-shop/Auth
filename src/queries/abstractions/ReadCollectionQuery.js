@@ -1,7 +1,36 @@
+/**
+ * @module queries/abstractions/ReadCollectionQuery
+ * @description An abstraction for reading a collection of entities
+ * @requires module:sequelize
+ * @requires module:queries/abstractions/ModelQuery
+ */
 import ModelQuery from "./ModelQuery.js";
-import { Op, QueryTypes } from "sequelize";
+import { QueryTypes } from "sequelize";
 
+/**
+ * @class ReadCollectionQuery
+ * @classdesc An abstraction for reading a collection of entities
+ * @extends queries/abstractions/ModelQuery
+ */
 export default class ReadCollectionQuery extends ModelQuery {
+
+    /**
+     * @constructor
+     * @param {object} options - The query options
+     * @param {function} dto - The data transfer object
+     * @param {string} modelName - The model name
+     * @param {string} [snapshotName=null] - The snapshot name
+     * @param {string} [tombstoneName=null] - The tombstone name
+     * @param {object} [snapshotOptions={}] - The snapshot options
+     * @param {string} [fkName=null] - The foreign key name
+     * @param {string} [pkName=null] - The primary key name
+     * @throws {Error} Options must be an object
+     * @throws {Error} dto is required and must be a function
+     * @throws {Error} modelName is required and must be a string
+     * @throws {Error} if using snapshots, snapshotName is required and must be a string
+     * @throws {Error} if using tombstones, tombstoneName is required and must be a string
+     * @throws {Error} db is required and must be an object
+     */
     constructor(
         options = {}, 
         dto, 
@@ -44,6 +73,18 @@ export default class ReadCollectionQuery extends ModelQuery {
         this.pkName = pkName;
     }
 
+    /**
+     * @function execute
+     * @description Executes the query
+     * @param {object} db - The database connection
+     * @returns {Promise<object>} The result of the query
+     * @throws {Error} db is required and must be an object
+     * @throws {APIActorError} limit must be greater than 0
+     * @throws {APIActorError} page must be greater than 0
+     * @throws {APIActorError} limit is required when using page
+     * @async
+     * @override
+     */
     async execute(db) {
         if (!db || typeof db !== "object") {
             throw new Error("db is required and must be an object");

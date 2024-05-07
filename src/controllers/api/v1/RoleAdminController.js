@@ -1,3 +1,16 @@
+/**
+ * @module controllers/api/v1/RoleAdminController
+ * @description A module that provides a controller for role administration
+ * @requires module:express
+ * @requires module:jwt/MiddlewareJWT
+ * @requires module:queries/Role/ReadOneQuery
+ * @requires module:queries/Role/ReadCollectionQuery
+ * @requires module:commands/Role/PutCommand
+ * @requires module:commands/Role/DeleteCommand
+ * @requires module:services/ModelCommandService
+ * @requires module:services/ModelQueryService
+ * @requires module:controllers/api/errors/APIActorError
+ */
 import APIActorError from "../errors/APIActorError.js";
 import ReadOneQuery from "../../../queries/Role/ReadOneQuery.js";
 import ReadCollectionQuery from "../../../queries/Role/ReadCollectionQuery.js";

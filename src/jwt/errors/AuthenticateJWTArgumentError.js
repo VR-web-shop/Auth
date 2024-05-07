@@ -1,8 +1,11 @@
+/**
+ * @module jwt/errors/AuthenticateJWTArgumentError
+ * @description Custom error for AuthenticateJWT argument errors
+ */
 
 /**
  * @class AuthenticateJWTArgumentError
- * @description An error indicating that the arguments provided to a 
- * AuthenticateJWT function are invalid.
+ * @description An error indicating that the arguments provided to a AuthenticateJWT function are invalid.
  * @extends Error
  */
 class AuthenticateJWTArgumentError extends Error {
