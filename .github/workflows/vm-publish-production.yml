@@ -35,6 +35,8 @@ jobs:
       - test
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
       - name: SSH and SCP
         uses: appleboy/ssh-action@master
         with:
