@@ -54,6 +54,6 @@ jobs:
         username: ${{ secrets.SERVER_USERNAME }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          cd ${{ secrets.SERVER_LOCATION }}
+          cd ${{ secrets.SERVER_LOCATION }}/github/workspace
           docker build -t ${{ secrets.IMAGE_NAME }}:${{ secrets.IMAGE_TAG }} .
       
