@@ -42,6 +42,6 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            scp -r "${{ github.workspace }}" user@server:${{ secrets.SERVER_LOCATION }}
-            ssh user@server "cd ${{ secrets.SERVER_LOCATION }} && docker build -t ${{ secrets.IMAGE_NAME }}:${{ secrets.IMAGE_TAG }} ."
+            scp -r "${{ github.workspace }}" ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }}:${{ secrets.SERVER_LOCATION }}
+            ssh ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }} "cd ${{ secrets.SERVER_LOCATION }} && docker build -t ${{ secrets.IMAGE_NAME }}:${{ secrets.IMAGE_TAG }} ."
       
