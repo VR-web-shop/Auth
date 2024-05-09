@@ -23,9 +23,12 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
+      - name: Create .env file
+        run: echo "${{ secrets.ENV_FILE }}" > .env    
       - run: npm ci
       - run: npm test
-
+      - name: Remove .env file
+        run: rm .env
   deploy:
     needs: 
       - build
