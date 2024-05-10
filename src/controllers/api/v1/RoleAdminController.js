@@ -316,6 +316,12 @@ router.route('/api/v1/admin/role/:client_side_uuid')
     *     summary: Update a role
     *     security:
     *      - bearerAuth: []
+    *     parameters:
+    *     - in: path
+    *       name: client_side_uuid
+    *       required: true
+    *       schema:
+    *        type: string
     *     requestBody:
     *      required: true
     *      content:
@@ -323,12 +329,9 @@ router.route('/api/v1/admin/role/:client_side_uuid')
     *        schema:
     *         type: object
     *         required:
-    *          - client_side_uuid
     *          - name
     *          - description
     *         properties:
-    *          client_side_uuid:
-    *           type: string
     *          name:
     *           type: string
     *          description:
@@ -384,7 +387,8 @@ router.route('/api/v1/admin/role/:client_side_uuid')
     */
     .patch(Middleware.AuthorizePermissionJWT("roles:put"), async (req, res) => {
         try {
-            const { client_side_uuid, name, description } = req.body
+            const { client_side_uuid } = req.params
+            const { name, description } = req.body
             await commandService.invoke(new PutCommand(client_side_uuid, { name, description }))
             const response = await queryService.invoke(new ReadOneQuery(client_side_uuid))
             res.send({
@@ -413,17 +417,12 @@ router.route('/api/v1/admin/role/:client_side_uuid')
     *     summary: Delete a role
     *     security:
     *      - bearerAuth: []
-    *     requestBody:
-    *      required: true
-    *      content:
-    *       application/json:
-    *        schema:
-    *         type: object
-    *         required:
-    *          - client_side_uuid
-    *         properties:
-    *          client_side_uuid:
-    *           type: string
+    *     parameters:
+    *     - in: path
+    *       name: client_side_uuid
+    *       required: true
+    *       schema:
+    *        type: string
     *     responses:
     *      204:
     *        description: No Content
@@ -438,7 +437,7 @@ router.route('/api/v1/admin/role/:client_side_uuid')
     */
     .delete(Middleware.AuthorizePermissionJWT("roles:delete"), async (req, res) => {
         try {
-            const { client_side_uuid } = req.body
+            const { client_side_uuid } = req.params
             await commandService.invoke(new DeleteCommand(client_side_uuid))
             res.sendStatus(204)
         } catch (error) {

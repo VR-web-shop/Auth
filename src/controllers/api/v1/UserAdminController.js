@@ -357,6 +357,12 @@ router.route('/api/v1/admin/user/:client_side_uuid')
     *     summary: Update a user
     *     security:
     *      - bearerAuth: []
+    *     parameters:
+    *     - in: path
+    *       name: client_side_uuid
+    *       required: true
+    *       schema:
+    *        type: string
     *     requestBody:
     *      required: true
     *      content:
@@ -364,16 +370,12 @@ router.route('/api/v1/admin/user/:client_side_uuid')
     *        schema:
     *         type: object
     *         required:
-    *          - client_side_uuid
     *          - first_name
     *          - last_name
     *          - email
     *          - password
     *          - role_client_side_uuid
     *         properties:
-    *          client_side_uuid:
-    *           type: string
-    *           default: 123e4567-e89b-12d3-a456-426614174000
     *          first_name:
     *           type: string
     *           default: John
@@ -446,7 +448,8 @@ router.route('/api/v1/admin/user/:client_side_uuid')
     */
     .patch(Middleware.AuthorizePermissionJWT("users:put"), async (req, res) => {
         try {
-            const { client_side_uuid, email, password, first_name, last_name, role_client_side_uuid } = req.body
+            const { client_side_uuid } = req.params
+            const { email, password, first_name, last_name, role_client_side_uuid } = req.body
             await commandService.invoke(new PutCommand(client_side_uuid, { email, password, first_name, last_name, role_client_side_uuid }))
             const response = await queryService.invoke(new ReadOneQuery(client_side_uuid))
             res.send({
@@ -475,17 +478,12 @@ router.route('/api/v1/admin/user/:client_side_uuid')
     *     summary: Delete a user
     *     security:
     *      - bearerAuth: []
-    *     requestBody:
-    *      required: true
-    *      content:
-    *       application/json:
-    *        schema:
-    *         type: object
-    *         required:
-    *          - client_side_uuid
-    *         properties:
-    *          client_side_uuid:
-    *           type: string
+    *     parameters:
+    *     - in: path
+    *       name: client_side_uuid
+    *       required: true
+    *       schema:
+    *        type: string
     *     responses:
     *      204:
     *        description: No Content
@@ -500,7 +498,7 @@ router.route('/api/v1/admin/user/:client_side_uuid')
     */
     .delete(Middleware.AuthorizePermissionJWT("users:delete"), async (req, res) => {
         try {
-            const { client_side_uuid } = req.body
+            const { client_side_uuid } = req.params
             await commandService.invoke(new DeleteCommand(client_side_uuid))
             res.sendStatus(204)
         } catch (error) {

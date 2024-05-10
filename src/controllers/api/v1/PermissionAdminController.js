@@ -311,6 +311,12 @@ router.route('/api/v1/admin/permissions/:name')
     *     summary: Update a permission
     *     security:
     *      - bearerAuth: []
+    *     parameters:
+    *     - in: path
+    *       name: name
+    *       required: true
+    *       schema:
+    *        type: string
     *     requestBody:
     *      required: true
     *      content:
@@ -318,11 +324,8 @@ router.route('/api/v1/admin/permissions/:name')
     *        schema:
     *         type: object
     *         required:
-    *          - name
     *          - description
     *         properties:
-    *          name:
-    *           type: string
     *          description:
     *           type: string
     *     responses:
@@ -374,7 +377,8 @@ router.route('/api/v1/admin/permissions/:name')
     */
     .patch(Middleware.AuthorizePermissionJWT("permissions:put"), async (req, res) => {
         try {
-            const { name, description } = req.body
+            const { name } = req.params
+            const { description } = req.body
             await commandService.invoke(new PutCommand(name, { description }))
             const response = await queryService.invoke(new ReadOneQuery(name))
             res.send({
@@ -403,17 +407,12 @@ router.route('/api/v1/admin/permissions/:name')
     *     summary: Delete a permission
     *     security:
     *      - bearerAuth: []
-    *     requestBody:
-    *      required: true
-    *      content:
-    *       application/json:
-    *        schema:
-    *         type: object
-    *         required:
-    *          - name
-    *         properties:
-    *          name:
-    *           type: string
+    *     parameters:
+    *     - in: path
+    *       name: name
+    *       required: true
+    *       schema:
+    *        type: string
     *     responses:
     *      204:
     *        description: No Content
@@ -428,7 +427,7 @@ router.route('/api/v1/admin/permissions/:name')
     */
     .delete(Middleware.AuthorizePermissionJWT("permissions:delete"), async (req, res) => {
         try {
-            const { name } = req.body
+            const { name } = req.params
             await commandService.invoke(new DeleteCommand(name))
             res.sendStatus(204)
         } catch (error) {

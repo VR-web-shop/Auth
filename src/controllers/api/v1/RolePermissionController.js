@@ -209,7 +209,7 @@ router.route('/api/v1/admin/role_permissions')
             return res.status(500).send({ message: 'Internal Server Error' })
         }
     })
-router.route('/api/v1/admin/role_permissions/:client_side_uuid')
+router.route('/api/v1/admin/role_permission/:client_side_uuid')
     /**
      * @openapi
      * '/api/v1/admin/role_permission/{client_side_uuid}':
@@ -294,17 +294,12 @@ router.route('/api/v1/admin/role_permissions/:client_side_uuid')
     *     summary: Delete a role permission
     *     security:
     *      - bearerAuth: []
-    *     requestBody:
-    *      required: true
-    *      content:
-    *       application/json:
-    *        schema:
-    *         type: object
-    *         required:
-    *          - client_side_uuid
-    *         properties:
-    *          client_side_uuid:
-    *           type: string
+    *     parameters:
+    *     - in: path
+    *       name: client_side_uuid
+    *       required: true
+    *       schema:
+    *        type: string
     *     responses:
     *      204:
     *        description: No Content
@@ -319,7 +314,7 @@ router.route('/api/v1/admin/role_permissions/:client_side_uuid')
     */
     .delete(Middleware.AuthorizePermissionJWT("role-permissions:delete"), async (req, res) => {
         try {
-            const { client_side_uuid } = req.body
+            const { client_side_uuid } = req.params
             await commandService.invoke(new DeleteCommand(client_side_uuid))
             res.sendStatus(204)
         } catch (error) {

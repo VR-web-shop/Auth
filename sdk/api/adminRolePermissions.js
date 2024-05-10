@@ -16,7 +16,7 @@ async function find(client_side_uuid) {
         throw new Error('client_side_uuid must be a string');
     }
 
-    const response = await fetchAPI.request(`admin/role_permissions/${client_side_uuid}`, { method: 'GET' }, true);
+    const response = await fetchAPI.request(`admin/role_permission/${client_side_uuid}`, { method: 'GET' }, true);
     return await response.json();
 }
 
