@@ -217,7 +217,7 @@ router.route('/api/v1/admin/permissions')
             return res.status(500).send({ message: 'Internal Server Error' })
         }
     })
-router.route('/api/v1/admin/permissions/:name')
+router.route('/api/v1/admin/permission/:name')
     /**
      * @openapi
      * '/api/v1/admin/permission/{name}':

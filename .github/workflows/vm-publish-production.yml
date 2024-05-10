@@ -58,5 +58,3 @@ jobs:
           docker build -t ${{ secrets.IMAGE_NAME }}:${{ secrets.IMAGE_TAG }} .
           docker save ${{ secrets.IMAGE_NAME }} > ${{ secrets.IMAGE_NAME }}.tar
           microk8s ctr image import ${{ secrets.IMAGE_NAME }}.tar
-          cd
-          microk8s kubectl apply -f kubernetes-conf.yaml
