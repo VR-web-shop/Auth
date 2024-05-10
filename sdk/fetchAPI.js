@@ -1,3 +1,9 @@
+/**
+ * @module sdk/fetchAPI
+ * @description Fetch API
+ * @requires module:/sdk/errors/SDKFetchError
+ * @requires module:/sdk/errors/SDKFetchMissingTokenError
+ */
 import SDKFetchError from './errors/SDKFetchError.js';
 import SDKFetchMissingTokenError from './errors/SDKFetchMissingTokenError.js';
 
@@ -7,30 +13,70 @@ let refreshMethod = null;
 let serverURL = 'http://localhost:5173';
 let tokenLocalStorageKey = 'auth';
 
+/**
+ * @function setServerURL
+ * @description Sets the server URL
+ * @param {string} url The server URL
+ * @returns {void}
+ */
 function setServerURL(url) {
     serverURL = url;
 }
 
+/**
+ * @function setRefreshMethod
+ * @description Sets the refresh method
+ * @param {function} method The refresh method
+ * @returns {void}
+ */
 function setRefreshMethod(method) {
     refreshMethod = method;
 }
 
+/**
+ * @function setAuthTokenKey
+ * @description Sets the auth token key
+ * @param {string} key The auth token key
+ * @returns {void}
+ */
 function setAuthTokenKey(key) {
     localStorage.setItem(tokenLocalStorageKey, key);
 }
 
+/**
+ * @function removeAuthToken
+ * @description Removes the auth token
+ * @returns {void}
+ */
 function removeAuthToken() {
     localStorage.removeItem(tokenLocalStorageKey);
 }
 
+/**
+ * @function setAuthToken
+ * @description Sets the auth token
+ * @param {string} token The auth token
+ * @returns {void}
+ */
 function setAuthToken(token) {
     localStorage.setItem(tokenLocalStorageKey, token);
 }
 
+/**
+ * @function getAuthToken
+ * @description Gets the auth token
+ * @returns {string} The auth token
+ */
 function getAuthToken() {
     return localStorage.getItem(tokenLocalStorageKey);
 }
 
+/**
+ * @function setAPIVersion
+ * @description Sets the API version
+ * @param {string} version The API version
+ * @returns {void}
+ */
 function setAPIVersion(version) {
     apiVersion = version;
 }

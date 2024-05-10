@@ -46,6 +46,23 @@ router.route('/api/v1/auth')
      *             properties:
      *               access_token:
      *                 type: string
+     *               _links:
+     *                 type: object
+     *                 properties:
+     *                  self:
+     *                   type: object
+     *                   properties:
+     *                    href:
+     *                     type: string
+     *                    method:
+     *                     type: string
+     *                  refresh:
+     *                   type: object
+     *                   properties:
+     *                    href:
+     *                     type: string
+     *                    method:
+     *                     type: string
      *      400:
      *        description: Bad Request
      *      404:
@@ -61,7 +78,13 @@ router.route('/api/v1/auth')
             const { access_token, refresh_token } = await AuthService.create(email, password)
 
             res.cookie('refresh_token', refresh_token, { httpOnly: true })
-            res.send({ access_token })
+            res.send({ 
+                access_token,
+                "_links": {
+                    "self": { "href": `/api/v1/auth`, "method": "POST" },
+                    "refresh": { "href": `/api/v1/auth`, "method": "PUT" }
+                }
+            })
         } catch (error) {
             if (error instanceof APIActorError) {
                 return res.status(error.statusCode).send({ message: error.message })
@@ -91,6 +114,16 @@ router.route('/api/v1/auth')
      *             properties:
      *               access_token:
      *                 type: string
+     *               _links:
+     *                 type: object
+     *                 properties:
+     *                  self:
+     *                   type: object
+     *                   properties:
+     *                    href:
+     *                     type: string
+     *                    method:
+     *                     type: string
      *      400:
      *        description: Bad Request
      *      404:
@@ -104,7 +137,12 @@ router.route('/api/v1/auth')
         try {
             const { refresh_token } = req.cookies
             const response = await AuthService.refresh(refresh_token)
-            res.send(response)
+            res.send({
+                ...response,
+                "_links": {
+                    "self": { "href": `/api/v1/auth`, "method": "PUT" }
+                }
+            })
         } catch (error) {
             if (error instanceof APIActorError) {
                 return res.status(error.statusCode).send({ message: error.message })

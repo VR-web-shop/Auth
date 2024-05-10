@@ -1,3 +1,16 @@
+/**
+ * @module sdk/sdk
+ * @description The SDK object
+ * @requires module:/sdk/fetchAPI
+ * @requires module:/sdk/errors/SDKFetchError
+ * @requires module:/sdk/errors/SDKFetchMissingTokenError
+ * @requires module:/sdk/api/users
+ * @requires module:/sdk/api/authentication
+ * @requires module:/sdk/api/adminUsers
+ * @requires module:/sdk/api/adminRoles
+ * @requires module:/sdk/api/adminRolePermissions
+ * @requires module:/sdk/api/adminPermissions
+ */
 import fetchAPI from './fetchAPI.js'
 
 import SDKFetchMissingTokenError from './errors/SDKFetchMissingTokenError.js'

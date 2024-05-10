@@ -1,3 +1,7 @@
+/**
+ * @module sdk/errors/SDKFetchError
+ * @description Error indicating that a SDK method had an error fetching data
+ */
 
 /**
  * @class SDKFetchError

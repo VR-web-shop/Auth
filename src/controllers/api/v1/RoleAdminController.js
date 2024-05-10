@@ -27,64 +27,6 @@ const queryService = new ModelQueryService()
 
 router.use(Middleware.AuthorizeJWT)
 
-router.route('/api/v1/admin/role/:client_side_uuid')
-    /**
-     * @openapi
-     * '/api/v1/admin/role/{client_side_uuid}':
-     *  get:
-     *     tags:
-     *       - Role Admin Controller
-     *     summary: Fetch a role by client_side_uuid
-     *     security:
-     *      - bearerAuth: []
-     *     parameters:
-     *      - in: path
-     *        name: client_side_uuid
-     *        required: true
-     *        schema:
-     *         type: string
-     *     responses:
-     *      200:
-     *        description: OK
-     *        content:
-     *         application/json:
-     *           schema:
-     *             type: object
-     *             properties:
-     *               client_side_uuid:
-     *                 type: string
-     *               name:
-     *                 type: string
-     *               description:
-     *                 type: string
-     *               defined_by_system:
-     *                 type: boolean
-     *      400:
-     *        description: Bad Request
-     *      404:
-     *        description: Not Found
-     *      401:
-     *        description: Unauthorized
-     *      500:
-     *        description: Internal Server Error
-     */
-    .get(Middleware.AuthorizePermissionJWT("roles:show"), async (req, res) => {
-        try {
-            const { client_side_uuid } = req.params
-            const response = await queryService.invoke(new ReadOneQuery(client_side_uuid))
-            res.send(response)
-        } catch (error) {
-            if (error instanceof APIActorError) {
-                return res.status(error.statusCode).send({ message: error.message })
-            }
-
-            console.error(error)
-            return res.status(500).send({ message: 'Internal Server Error' })
-        }
-    })
-
-
-
 router.route('/api/v1/admin/roles')
     /**
      * @openapi
@@ -124,6 +66,30 @@ router.route('/api/v1/admin/roles')
      *                type: string
      *               defined_by_system:
      *                 type: boolean
+     *               _links:
+     *                 type: object
+     *                 properties:
+     *                  self:
+     *                   type: object
+     *                   properties:
+     *                    href:
+     *                     type: string
+     *                    method:
+     *                     type: string
+     *                  next:
+     *                   type: object
+     *                   properties:
+     *                    href:
+     *                     type: string
+     *                    method:
+     *                     type: string
+     *                  prev:
+     *                   type: object
+     *                   properties:
+     *                    href:
+     *                     type: string
+     *                    method:
+     *                     type: string
      *      404:
      *        description: Not Found
      *      401:
@@ -135,7 +101,16 @@ router.route('/api/v1/admin/roles')
         try {
             const { limit, page } = req.query
             const { rows, count, pages } = await queryService.invoke(new ReadCollectionQuery({limit, page}))
-            res.send({ rows, count, pages })
+            res.send({ 
+                rows, 
+                count, 
+                pages,
+                "_links": {
+                    "self": { "href": `/api/v1/admin/roles?limit=${limit}&page=${page}`, "method": "GET" },
+                    "next": { "href": `/api/v1/admin/roles?limit=${limit}&page=${Math.min(parseInt(page) + 1, pages)}`, "method": "GET" },
+                    "prev": { "href": `/api/v1/admin/roles?limit=${limit}&page=${Math.min(parseInt(page) - 1, 1)}`, "method": "GET" }
+                }, 
+            })
         } catch (error) {
             console.error(error)
             return res.status(500).send({ message: 'Internal Server Error' })
@@ -183,6 +158,37 @@ router.route('/api/v1/admin/roles')
     *                 type: string
     *               defined_by_system:
     *                 type: boolean
+    *               _links:
+    *                 type: object
+    *                 properties:
+    *                  self:
+    *                   type: object
+    *                   properties:
+    *                    href:
+    *                     type: string
+    *                    method:
+    *                     type: string
+    *                  get:
+    *                   type: object
+    *                   properties:
+    *                    href:
+    *                     type: string
+    *                    method:
+    *                     type: string
+    *                  update:
+    *                   type: object
+    *                   properties:
+    *                    href:
+    *                     type: string
+    *                    method:
+    *                     type: string
+    *                  delete:
+    *                   type: object
+    *                   properties:
+    *                    href:
+    *                     type: string
+    *                    method:
+    *                     type: string
     *      400:
     *        description: Bad Request
     *      404:
@@ -197,7 +203,101 @@ router.route('/api/v1/admin/roles')
             const { client_side_uuid, name, description } = req.body
             await commandService.invoke(new PutCommand(client_side_uuid, { name, description }))
             const response = await queryService.invoke(new ReadOneQuery(client_side_uuid))
-            res.send(response)
+            res.send({
+                ...response,
+                "_links": {
+                    "self": { "href": `/api/v1/admin/role/${client_side_uuid}`, "method": "POST" },
+                    "get": { "href": `/api/v1/admin/role/${client_side_uuid}`, "method": "GET" },
+                    "update": { "href": `/api/v1/admin/role/${client_side_uuid}`, "method": "PATCH" },
+                    "delete": { "href": `/api/v1/admin/role/${client_side_uuid}`, "method": "DELETE" }
+                },
+            })
+        } catch (error) {
+            if (error instanceof APIActorError) {
+                return res.status(error.statusCode).send({ message: error.message })
+            }
+
+            console.error(error)
+            return res.status(500).send({ message: 'Internal Server Error' })
+        }
+    })
+router.route('/api/v1/admin/role/:client_side_uuid')
+    /**
+     * @openapi
+     * '/api/v1/admin/role/{client_side_uuid}':
+     *  get:
+     *     tags:
+     *       - Role Admin Controller
+     *     summary: Fetch a role by client_side_uuid
+     *     security:
+     *      - bearerAuth: []
+     *     parameters:
+     *      - in: path
+     *        name: client_side_uuid
+     *        required: true
+     *        schema:
+     *         type: string
+     *     responses:
+     *      200:
+     *        description: OK
+     *        content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               client_side_uuid:
+     *                 type: string
+     *               name:
+     *                 type: string
+     *               description:
+     *                 type: string
+     *               defined_by_system:
+     *                 type: boolean
+     *               _links:
+     *                 type: object
+     *                 properties:
+     *                  self:
+     *                   type: object
+     *                   properties:
+     *                    href:
+     *                     type: string
+     *                    method:
+     *                     type: string
+     *                  update:
+     *                   type: object
+     *                   properties:
+     *                    href:
+     *                     type: string
+     *                    method:
+     *                     type: string
+     *                  delete:
+     *                   type: object
+     *                   properties:
+     *                    href:
+     *                     type: string
+     *                    method:
+     *                     type: string
+     *      400:
+     *        description: Bad Request
+     *      404:
+     *        description: Not Found
+     *      401:
+     *        description: Unauthorized
+     *      500:
+     *        description: Internal Server Error
+     */
+    .get(Middleware.AuthorizePermissionJWT("roles:show"), async (req, res) => {
+        try {
+            const { client_side_uuid } = req.params
+            const response = await queryService.invoke(new ReadOneQuery(client_side_uuid))
+            res.send({
+                ...response,
+                "_links": {
+                    "self": { "href": `/api/v1/admin/role/${client_side_uuid}`, "method": "GET" },
+                    "update": { "href": `/api/v1/admin/role/${client_side_uuid}`, "method": "PATCH" },
+                    "delete": { "href": `/api/v1/admin/role/${client_side_uuid}`, "method": "DELETE" }
+                },
+            })
         } catch (error) {
             if (error instanceof APIActorError) {
                 return res.status(error.statusCode).send({ message: error.message })
@@ -209,8 +309,8 @@ router.route('/api/v1/admin/roles')
     })
     /**
     * @openapi
-    * '/api/v1/admin/roles':
-    *  put:
+    * '/api/v1/admin/role/{client_side_uuid}':
+    *  patch:
     *     tags:
     *       - Role Admin Controller
     *     summary: Update a role
@@ -249,6 +349,30 @@ router.route('/api/v1/admin/roles')
     *                 type: string
     *               defined_by_system:
     *                 type: boolean
+    *               _links:
+    *                 type: object
+    *                 properties:
+    *                  self:
+    *                   type: object
+    *                   properties:
+    *                    href:
+    *                     type: string
+    *                    method:
+    *                     type: string
+    *                  get:
+    *                   type: object
+    *                   properties:
+    *                    href:
+    *                     type: string
+    *                    method:
+    *                     type: string
+    *                  delete:
+    *                   type: object
+    *                   properties:
+    *                    href:
+    *                     type: string
+    *                    method:
+    *                     type: string
     *      400:
     *        description: Bad Request
     *      404:
@@ -258,12 +382,19 @@ router.route('/api/v1/admin/roles')
     *      500:
     *        description: Internal Server Error
     */
-    .put(Middleware.AuthorizePermissionJWT("roles:put"), async (req, res) => {
+    .patch(Middleware.AuthorizePermissionJWT("roles:put"), async (req, res) => {
         try {
             const { client_side_uuid, name, description } = req.body
             await commandService.invoke(new PutCommand(client_side_uuid, { name, description }))
             const response = await queryService.invoke(new ReadOneQuery(client_side_uuid))
-            res.send(response)
+            res.send({
+                ...response,
+                "_links": {
+                    "self": { "href": `/api/v1/admin/role/${client_side_uuid}`, "method": "PATCH" },
+                    "get": { "href": `/api/v1/admin/role/${client_side_uuid}`, "method": "GET" },
+                    "delete": { "href": `/api/v1/admin/role/${client_side_uuid}`, "method": "DELETE" }
+                },
+            })
         } catch (error) {
             if (error instanceof APIActorError) {
                 return res.status(error.statusCode).send({ message: error.message })
@@ -275,7 +406,7 @@ router.route('/api/v1/admin/roles')
     })
     /**
     * @openapi
-    * '/api/v1/admin/roles':
+    * '/api/v1/admin/role/{client_side_uuid}':
     *  delete:
     *     tags:
     *       - Role Admin Controller

@@ -27,68 +27,6 @@ const router = express.Router()
 const commandService = new ModelCommandService()
 const queryService = new ModelQueryService()
 
-router.route('/api/v1/user')
-    /**
-     * @openapi
-     * '/api/v1/user':
-     *  get:
-     *     tags:
-     *       - User Auth Controller
-     *     summary: Fetch authenticated user
-     *     security:
-     *      - bearerAuth: []
-     *     responses:
-     *      200:
-     *        description: OK
-     *        content:
-     *         application/json:
-     *           schema:
-     *             type: object
-     *             properties:
-     *               client_side_uuid:
-     *                 type: string
-     *                 default: aaa-bbb-ccc
-     *               first_name:
-     *                 type: string
-     *                 default: John
-     *               last_name:
-     *                 type: string
-     *                 default: Doe
-     *               email:
-     *                 type: string
-     *                 default: test@test.com
-    *               created_at:
-    *                 type: string
-    *                 default: 2022-01-01T00:00:00.000Z
-    *               updated_at:
-    *                 type: string
-    *                 default: 2022-01-01T00:00:00.000Z
-    *               role_client_side_uuid:
-    *                 type: string
-    *                 default: aaa-bbb-ccc
-     *      404:
-     *        description: Not Found
-     *      401:
-     *        description: Unauthorized
-     *      500:
-     *        description: Internal Server Error
-     */
-    .get(Middleware.AuthorizeJWT, Middleware.AuthorizePermissionJWT("auth:users:show"), async (req, res) => {
-        try {
-            const { sub } = req.user
-            const response = await queryService.invoke(new ReadOneQuery(sub))
-            res.send(response)
-        } catch (error) {
-            if (error instanceof APIActorError) {
-                return res.status(error.statusCode).send({ message: error.message })
-            }
-
-            console.error(error)
-            return res.status(500).send({ message: 'Internal Server Error' })
-        }
-    })
-
-
 router.route('/api/v1/users')
     /**
     * @openapi
@@ -135,6 +73,37 @@ router.route('/api/v1/users')
     *             properties:
     *               access_token:
     *                 type: string
+    *               _links:
+    *                 type: object
+    *                 properties:
+    *                  self:
+    *                   type: object
+    *                   properties:
+    *                    href:
+    *                     type: string
+    *                    method:
+    *                     type: string
+    *                  get:
+    *                   type: object
+    *                   properties:
+    *                    href:
+    *                     type: string
+    *                    method:
+    *                     type: string
+    *                  update:
+    *                   type: object
+    *                   properties:
+    *                    href:
+    *                     type: string
+    *                    method:
+    *                     type: string
+    *                  delete:
+    *                   type: object
+    *                   properties:
+    *                    href:
+    *                     type: string
+    *                    method:
+    *                     type: string
     *      400:
     *        description: Bad Request
     *      404:
@@ -158,7 +127,106 @@ router.route('/api/v1/users')
             await commandService.invoke(new CreateCommand(client_side_uuid, { email, password, first_name, last_name, role_client_side_uuid }))
             const { access_token, refresh_token } = await AuthService.create(email, password)
             res.cookie('refresh_token', refresh_token, { httpOnly: true })
-            res.send({ access_token })
+            res.send({ 
+                access_token,
+                "_links": {
+                    "self": { "href": `/api/v1/user`, "method": "POST" },
+                    "get": { "href": `/api/v1/user`, "method": "GET" },
+                    "update": { "href": `/api/v1/user`, "method": "PATCH" },
+                    "delete": { "href": `/api/v1/user`, "method": "DELETE" }
+                } 
+            })
+        } catch (error) {
+            if (error instanceof APIActorError) {
+                return res.status(error.statusCode).send({ message: error.message })
+            }
+
+            console.error(error)
+            return res.status(500).send({ message: 'Internal Server Error' })
+        }
+    })
+router.route('/api/v1/user')
+    /**
+     * @openapi
+     * '/api/v1/user':
+     *  get:
+     *     tags:
+     *       - User Auth Controller
+     *     summary: Fetch authenticated user
+     *     security:
+     *      - bearerAuth: []
+     *     responses:
+     *      200:
+     *        description: OK
+     *        content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               client_side_uuid:
+     *                 type: string
+     *                 default: aaa-bbb-ccc
+     *               first_name:
+     *                 type: string
+     *                 default: John
+     *               last_name:
+     *                 type: string
+     *                 default: Doe
+     *               email:
+     *                 type: string
+     *                 default: test@test.com
+    *               created_at:
+    *                 type: string
+    *                 default: 2022-01-01T00:00:00.000Z
+    *               updated_at:
+    *                 type: string
+    *                 default: 2022-01-01T00:00:00.000Z
+    *               role_client_side_uuid:
+    *                 type: string
+    *                 default: aaa-bbb-ccc
+    *               _links:
+    *                 type: object
+    *                 properties:
+    *                  self:
+    *                   type: object
+    *                   properties:
+    *                    href:
+    *                     type: string
+    *                    method:
+    *                     type: string
+    *                  update:
+    *                   type: object
+    *                   properties:
+    *                    href:
+    *                     type: string
+    *                    method:
+    *                     type: string
+    *                  delete:
+    *                   type: object
+    *                   properties:
+    *                    href:
+    *                     type: string
+    *                    method:
+    *                     type: string
+     *      404:
+     *        description: Not Found
+     *      401:
+     *        description: Unauthorized
+     *      500:
+     *        description: Internal Server Error
+     */
+    .get(Middleware.AuthorizeJWT, Middleware.AuthorizePermissionJWT("auth:users:show"), async (req, res) => {
+        try {
+            const { sub } = req.user
+            const response = await queryService.invoke(new ReadOneQuery(sub))
+            res.send({
+                ...response,
+                "_links": {
+                    "self": { "href": `/api/v1/user`, "method": "GET" },
+                    "update": { "href": `/api/v1/user`, "method": "PATCH" },
+                    "delete": { "href": `/api/v1/user`, "method": "DELETE" }
+                }
+            })
         } catch (error) {
             if (error instanceof APIActorError) {
                 return res.status(error.statusCode).send({ message: error.message })
@@ -170,8 +238,8 @@ router.route('/api/v1/users')
     })
     /**
     * @openapi
-    * '/api/v1/users':
-    *  put:
+    * '/api/v1/user':
+    *  patch:
     *     tags:
     *       - User Auth Controller
     *     summary: Update the authenticated user
@@ -226,6 +294,30 @@ router.route('/api/v1/users')
     *                 type: string
     *               role_client_side_uuid:
     *                 type: string
+    *               _links:
+    *                 type: object
+    *                 properties:
+    *                  self:
+    *                   type: object
+    *                   properties:
+    *                    href:
+    *                     type: string
+    *                    method:
+    *                     type: string
+    *                  get:
+    *                   type: object
+    *                   properties:
+    *                    href:
+    *                     type: string
+    *                    method:
+    *                     type: string
+    *                  delete:
+    *                   type: object
+    *                   properties:
+    *                    href:
+    *                     type: string
+    *                    method:
+    *                     type: string
     *      400:
     *        description: Bad Request
     *      404:
@@ -235,13 +327,20 @@ router.route('/api/v1/users')
     *      500:
     *        description: Internal Server Error
     */
-    .put(Middleware.AuthorizeJWT, Middleware.AuthorizePermissionJWT("auth:users:put"), async (req, res) => {
+    .patch(Middleware.AuthorizeJWT, Middleware.AuthorizePermissionJWT("auth:users:put"), async (req, res) => {
         try {
             const { sub } = req.user
             const { email, password, verifyPassword, first_name, last_name } = req.body
             await commandService.invoke(new ProtectedPutCommand(sub, { email, password, verifyPassword, first_name, last_name }))
             const response = await queryService.invoke(new ReadOneQuery(sub))
-            res.send(response)
+            res.send({
+                ...response,
+                "_links": {
+                    "self": { "href": `/api/v1/user`, "method": "PATCH" },
+                    "get": { "href": `/api/v1/user`, "method": "GET" },
+                    "delete": { "href": `/api/v1/user`, "method": "DELETE" }
+                }
+            })
         } catch (error) {
             if (error instanceof APIActorError) {
                 return res.status(error.statusCode).send({ message: error.message })
@@ -253,7 +352,7 @@ router.route('/api/v1/users')
     })
     /**
     * @openapi
-    * '/api/v1/users':
+    * '/api/v1/user':
     *  delete:
     *     tags:
     *       - User Auth Controller

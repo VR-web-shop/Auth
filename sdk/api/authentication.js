@@ -1,3 +1,8 @@
+/**
+ * @module sdk/api/authentication
+ * @description Authentication API
+ * @requires module:/fetchAPI
+ */
 import fetchAPI from '../fetchAPI.js'
 
 /**

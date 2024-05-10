@@ -1,21 +1,31 @@
+/**
+ * @module sdk/api/adminUsers
+ * @description Admin Users API
+ * @requires module:/fetchAPI
+ */
 import fetchAPI from '../fetchAPI.js'
 
 /**
  * @function find
  * @description Finds a user.
- * @param {Object} adminFindRequest The find request.
+ * @param {string} client_side_uuid The user's client_side_uuid
  * @returns {Promise<Object>} The user.
  */
-async function find(adminFindRequest) {
-    if (typeof adminFindRequest !== 'object') {
-        throw new Error('adminFindRequest must be an object');
-    } 
+async function find(client_side_uuid) {
+    if (typeof client_side_uuid !== 'string') {
+        throw new Error('client_side_uuid must be a string');
+    }
 
-    const { client_side_uuid } = adminFindRequest;
     const response = await fetchAPI.request(`admin/user/${client_side_uuid}`, { method: 'GET' }, true);
     return await response.json();
 }
 
+/**
+ * @function findAll
+ * @description Finds all users.
+ * @returns {Promise<Object[]>} The users.
+ * @throws {Error} If adminFindAllRequest is not provided.
+ */
 async function findAll(adminFindAllRequest) {
     if (typeof adminFindAllRequest !== 'object') {
         throw new Error('adminFindAllRequest must be an object');
@@ -51,16 +61,21 @@ async function create(createRequest) {
 /**
  * @function update
  * @description Updates a user.
+ * @param {string} client_side_uuid The user's client_side_uuid
  * @param {Object} updateRequest The update request.
  * @returns {Promise<Object>} The user.
  * @throws {Error} If updateRequest is not provided.
  */
-async function update(updateRequest) {
+async function update(client_side_uuid, updateRequest) {
+    if (typeof client_side_uuid !== 'string') {
+        throw new Error('client_side_uuid must be a string');
+    }
+
     if (typeof updateRequest !== 'object') {
         throw new Error('updateRequest must be an object');
     }
     
-    const response = await fetchAPI.request('admin/users', {
+    const response = await fetchAPI.request(`admin/user/${client_side_uuid}`, {
         method: 'PUT',
         body: updateRequest
     }, true);
@@ -71,21 +86,20 @@ async function update(updateRequest) {
 /**
  * @function destroy
  * @description Destroys a user.
- * @param {Object} deleteRequest The destroy request.
+ * @param {string} client_side_uuid The user's client_side_uuid
  * @returns {Promise<boolean>} Whether the user was destroyed or not.
  * @throws {Error} If deleteRequest is not provided.
  */
-async function destroy(deleteRequest) {
-    if (typeof deleteRequest !== 'object') {
-        throw new Error('deleteRequest must be an object');
+async function destroy(client_side_uuid) {
+    if (typeof client_side_uuid !== 'string') {
+        throw new Error('client_side_uuid must be a string');
     }
     
-    const response = await fetchAPI.request('admin/users', {
+    const response = await fetchAPI.request(`admin/user/${client_side_uuid}`, {
         method: 'DELETE',
-        body: deleteRequest
     }, true);
 
-    if (response.status === 203) {
+    if (response.status === 204) {
         return true;
     } else {
         return false;

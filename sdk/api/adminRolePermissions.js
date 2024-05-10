@@ -1,15 +1,31 @@
+/**
+ * @module sdk/api/adminRolePermissions
+ * @description Admin Role Permissions API
+ * @requires module:/fetchAPI
+ */
 import fetchAPI from '../fetchAPI.js'
 
-async function find(adminFindRequest) {
-    if (typeof adminFindRequest !== 'object') {
-        throw new Error('adminFindRequest must be an object');
+/**
+ * @function find
+ * @description Finds a role_permission.
+ * @param {string} client_side_uuid The role_permission's client_side_uuid
+ * @returns {Promise<Object>} The role_permission.
+ */
+async function find(client_side_uuid) {
+    if (typeof client_side_uuid !== 'string') {
+        throw new Error('client_side_uuid must be a string');
     }
 
-    const { client_side_uuid } = adminFindRequest;
     const response = await fetchAPI.request(`admin/role_permissions/${client_side_uuid}`, { method: 'GET' }, true);
     return await response.json();
 }
 
+/**
+ * @function findAll
+ * @description Finds all role_permissions.
+ * @returns {Promise<Object[]>} The role_permissions.
+ * @throws {Error} If adminFindAllRequest is not provided.
+ */
 async function findAll(adminFindAllRequest) {
     if (typeof adminFindAllRequest !== 'object') {
         throw new Error('adminFindAllRequest must be an object');
@@ -22,6 +38,13 @@ async function findAll(adminFindAllRequest) {
     return await response.json();
 }
 
+/**
+ * @function create
+ * @description Creates a role_permission.
+ * @param {Object} createRequest The create request.
+ * @returns {Promise<Object>} The role_permission.
+ * @throws {Error} If createRequest is not provided.
+ */
 async function create(createRequest) {
     if (typeof createRequest !== 'object') {
         throw new Error('createRequest must be an object');
@@ -35,12 +58,22 @@ async function create(createRequest) {
     return await response.json();
 }
 
-async function update(updateRequest) {
+/**
+ * @function update
+ * @description Updates a role_permission.
+ * @param {string} client_side_uuid The role_permission's client_side_uuid
+ * @param {Object} updateRequest The update request.
+ */
+async function update(client_side_uuid, updateRequest) {
+    if (typeof client_side_uuid !== 'string') {
+        throw new Error('client_side_uuid must be a string');
+    }
+
     if (typeof updateRequest !== 'object') {
         throw new Error('updateRequest must be an object');
     }
     
-    const response = await fetchAPI.request('admin/role_permissions', {
+    const response = await fetchAPI.request(`admin/role_permission/${client_side_uuid}`, {
         method: 'PUT',
         body: updateRequest
     }, true);
@@ -48,17 +81,23 @@ async function update(updateRequest) {
     return await response.json();
 }
 
-async function destroy(deleteRequest) {
-    if (typeof deleteRequest !== 'object') {
-        throw new Error('deleteRequest must be an object');
+/**
+ * @function destroy
+ * @description Destroys a role_permission.
+ * @param {string} client_side_uuid The role_permission's client_side_uuid
+ * @returns {Promise<boolean>} Whether the role_permission was destroyed or not.
+ * @throws {Error} If client_side_uuid is not provided.
+ */
+async function destroy(client_side_uuid) {
+    if (typeof client_side_uuid !== 'string') {
+        throw new Error('client_side_uuid must be a string');
     }
     
-    const response = await fetchAPI.request('admin/role_permissions', {
+    const response = await fetchAPI.request(`admin/role_permission/${client_side_uuid}`, {
         method: 'DELETE',
-        body: deleteRequest
     }, true);
 
-    if (response.status === 203) {
+    if (response.status === 204) {
         return true;
     } else {
         return false;

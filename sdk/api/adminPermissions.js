@@ -1,15 +1,32 @@
+/**
+ * @module sdk/api/adminPermissions
+ * @description Admin Permissions API
+ * @requires module:/fetchAPI
+ */
+
 import fetchAPI from '../fetchAPI.js'
 
-async function find(findRequest) {
-    if (typeof findRequest !== 'object') {
-        throw new Error('findRequest must be an object');
-    } 
+/**
+ * @function find
+ * @description Finds a permission.
+ * @param {string} name The permission's name
+ * @returns {Promise<Object>} The permission.
+ */
+async function find(name) {
+    if (typeof name !== 'string') {
+        throw new Error('name must be a string');
+    }
 
-    const { name } = findRequest;
-    const response = await fetchAPI.request(`admin/permissions/${name}`, { method: 'GET' }, true);
+    const response = await fetchAPI.request(`admin/permission/${name}`, { method: 'GET' }, true);
     return await response.json();
 }
 
+/**
+ * @function findAll
+ * @description Finds all permissions.
+ * @returns {Promise<Object[]>} The permissions.
+ * @throws {Error} If findAllRequest is not provided.
+ */
 async function findAll(findAllRequest) {
     if (typeof findAllRequest !== 'object') {
         throw new Error('findAllRequest must be an object');
@@ -22,6 +39,13 @@ async function findAll(findAllRequest) {
     return await response.json();
 }
 
+/**
+ * @function create
+ * @description Creates a permission.
+ * @param {Object} createRequest The create request.
+ * @returns {Promise<Object>} The permission.
+ * @throws {Error} If createRequest is not provided.
+ */
 async function create(createRequest) {
     if (typeof createRequest !== 'object') {
         throw new Error('createRequest must be an object');
@@ -35,12 +59,25 @@ async function create(createRequest) {
     return await response.json();
 }
 
-async function update(updateRequest) {
+/**
+ * @function update
+ * @description Updates a permission.
+ * @param {string} name The permission's name
+ * @param {Object} updateRequest The update request.
+ * @returns {Promise<Object>} The permission.
+ * @throws {Error} If name is not provided.
+ * @throws {Error} If updateRequest is not provided.
+ */
+async function update(name, updateRequest) {
+    if (typeof name !== 'string') {
+        throw new Error('name must be a string');
+    }
+
     if (typeof updateRequest !== 'object') {
         throw new Error('updateRequest must be an object');
     }
     
-    const response = await fetchAPI.request('admin/permissions', {
+    const response = await fetchAPI.request(`admin/permission/${name}`, {
         method: 'PUT',
         body: updateRequest
     }, true);
@@ -48,17 +85,23 @@ async function update(updateRequest) {
     return await response.json();
 }
 
-async function destroy(deleteRequest) {
-    if (typeof deleteRequest !== 'object') {
-        throw new Error('deleteRequest must be an object');
+/**
+ * @function destroy
+ * @description Destroys a permission.
+ * @param {string} name The permission's name
+ * @returns {Promise<boolean>} Whether the permission was destroyed or not.
+ * @throws {Error} If name is not provided.
+ */
+async function destroy(name) {
+    if (typeof name !== 'string') {
+        throw new Error('name must be a string');
     }
     
-    const response = await fetchAPI.request('admin/permissions', {
+    const response = await fetchAPI.request(`admin/permission/${name}`, {
         method: 'DELETE',
-        body: deleteRequest
     }, true);
 
-    if (response.status === 203) {
+    if (response.status === 204) {
         return true;
     } else {
         return false;

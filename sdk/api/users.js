@@ -1,3 +1,8 @@
+/**
+ * @module sdk/api/users
+ * @description Users API
+ * @requires module:/fetchAPI
+ */
 import fetchAPI from '../fetchAPI.js'
 
 /**
@@ -45,7 +50,7 @@ async function update(updateRequest) {
         throw new Error('updateRequest must be an object');
     } 
     
-    const response = await fetchAPI.request('users', {
+    const response = await fetchAPI.request('user', {
         method: 'PUT',
         body: updateRequest
     }, true);
@@ -65,7 +70,7 @@ async function destroy(deleteRequest) {
         throw new Error('deleteRequest must be an object');
     }
     
-    const response = await fetchAPI.request('users', {
+    const response = await fetchAPI.request('user', {
         method: 'DELETE',
         body: deleteRequest
     }, true);

@@ -1,16 +1,21 @@
+/**
+ * @module sdk/api/adminRoles
+ * @description Admin Roles API
+ * @requires module:/fetchAPI
+ */
 import fetchAPI from '../fetchAPI.js'
 
 /**
  * @function find
  * @description Finds a role.
+ * @param {string} client_side_uuid The role's client_side_uuid
  * @returns {Promise<Object>} The role.
  */
-async function find(adminFindRequest) {
-    if (typeof adminFindRequest !== 'object') {
-        throw new Error('adminFindRequest must be an object');
+async function find(client_side_uuid) {
+    if (typeof client_side_uuid !== 'string') {
+        throw new Error('client_side_uuid must be a string');
     }
 
-    const { client_side_uuid } = adminFindRequest;
     const response = await fetchAPI.request(`admin/role/${client_side_uuid}`, { method: 'GET' }, true);
     return await response.json();
 }
@@ -56,16 +61,21 @@ async function create(createRequest) {
 /**
  * @function update
  * @description Updates a roles.
+ * @param {string} client_side_uuid The role's client_side_uuid
  * @param {Object} updateRequest The update request.
  * @returns {Promise<Object>} The role.
  * @throws {Error} If updateRequest is not provided.
  */
-async function update(updateRequest) {
+async function update(client_side_uuid, updateRequest) {
+    if (typeof client_side_uuid !== 'string') {
+        throw new Error('client_side_uuid must be a string');
+    }
+
     if (typeof updateRequest !== 'object') {
         throw new Error('updateRequest must be an object');
     }
     
-    const response = await fetchAPI.request('admin/roles', {
+    const response = await fetchAPI.request(`admin/role/${client_side_uuid}`, {
         method: 'PUT',
         body: updateRequest
     }, true);
@@ -76,21 +86,20 @@ async function update(updateRequest) {
 /**
  * @function destroy
  * @description Destroys a role.
- * @param {Object} deleteRequest The destroy request.
+ * @param {string} client_side_uuid The role's client_side_uuid
  * @returns {Promise<boolean>} Whether the role was destroyed or not.
  * @throws {Error} If deleteRequest is not provided.
  */
-async function destroy(deleteRequest) {
-    if (typeof deleteRequest !== 'object') {
-        throw new Error('deleteRequest must be an object');
+async function destroy(client_side_uuid) {
+    if (typeof client_side_uuid !== 'string') {
+        throw new Error('client_side_uuid must be a string');
     }
     
-    const response = await fetchAPI.request('admin/roles', {
+    const response = await fetchAPI.request(`admin/role/${client_side_uuid}`, {
         method: 'DELETE',
-        body: deleteRequest
     }, true);
 
-    if (response.status === 203) {
+    if (response.status === 204) {
         return true;
     } else {
         return false;

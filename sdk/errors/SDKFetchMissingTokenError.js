@@ -1,3 +1,7 @@
+/**
+ * @module sdk/errors/SDKFetchMissingTokenError
+ * @description Error indicating that a SDK method is trying to fetch data with a token,
+ */
 
 /**
  * @class SDKFetchMissingTokenError
