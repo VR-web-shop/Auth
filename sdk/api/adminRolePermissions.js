@@ -74,7 +74,7 @@ async function update(client_side_uuid, updateRequest) {
     }
     
     const response = await fetchAPI.request(`admin/role_permission/${client_side_uuid}`, {
-        method: 'PUT',
+        method: 'PATCH',
         body: updateRequest
     }, true);
 

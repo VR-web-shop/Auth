@@ -78,7 +78,7 @@ async function update(name, updateRequest) {
     }
     
     const response = await fetchAPI.request(`admin/permission/${name}`, {
-        method: 'PUT',
+        method: 'PATCH',
         body: updateRequest
     }, true);
 

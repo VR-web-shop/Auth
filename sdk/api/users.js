@@ -51,7 +51,7 @@ async function update(updateRequest) {
     } 
     
     const response = await fetchAPI.request('user', {
-        method: 'PUT',
+        method: 'PATCH',
         body: updateRequest
     }, true);
 
