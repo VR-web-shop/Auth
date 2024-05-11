@@ -3,7 +3,8 @@
     "sourceType": "module",
     "source": {
         "include": [
-            "./src/"
+            "./src/",
+            "./sdk/"
         ],
         "includePattern": ".+\\.js(doc|x)?$",
         "excludePattern": "(node_modules/|docs)",

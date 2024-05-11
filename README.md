@@ -76,11 +76,19 @@ The configuration of the SDK package and deployment of SDK package includes:
 
 **SDK file:** `sdk.js` in the directory `sdk/` defines the functionality exposed in the package.
 
-### Deploy
+### Deploy SDK Package
 Execute the following command:
 ```
 $ npm run deploy_sdk
 ```
 
+## Docker
+1. Build Docker Image
+```
+$ docker build -t auth:v1.0 .
+```
 
-
+2. Run Docker Container
+```
+$ docker run -p 3000:3000 auth:v1.0
+```

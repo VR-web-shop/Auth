@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: src/commands/abstractions/PutCommand.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: src/commands/abstractions/PutCommand.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @module commands/abstractions/PutCommand
+ * @description A module that provides a command for putting a model instance
+ * @requires module:commands/abstractions/ModelCommand
+ * @requires module:controllers/api/errors/APIActorError
+ */
+import ModelCommand from "../abstractions/ModelCommand.js";
+import APIActorError from "../../controllers/api/errors/APIActorError.js";
+
+/**
+ * @class PutCommand
+ * @classdesc A command for putting a model instance
+ * @extends commands/abstractions/ModelCommand
+ */
+export default class PutCommand extends ModelCommand {
+
+    /**
+     * @constructor
+     * @param {string} pk - The primary key value
+     * @param {object} params - The model instance parameters
+     * @param {string} pkName - The primary key name
+     * @param {string} fkName - The foreign key name
+     * @param {string[]} casKeys - The keys to use for CAS calculation
+     * @param {string} modelName - The model name
+     * @param {string} snapshotName - The snapshot model name
+     * @param {string} tombstoneName - The tombstone model name
+     * @throws {Error} If pk is not provided or not a string
+     * @throws {Error} If params is not provided or not an object
+     * @throws {Error} If pkName is not provided or not a string
+     * @throws {Error} If fkName is not provided or not a string
+     * @throws {Error} If casKeys is not provided or not an array
+     * @throws {Error} If modelName is not provided or not a string
+     * @throws {Error} If snapshotName is not provided or not a string
+     * @throws {Error} If tombstoneName is not provided or not a string
+     */
+    constructor(pk, params, pkName, fkName, casKeys, modelName, snapshotName, tombstoneName) {
+        super();
+        if (!pk || typeof pk !== "string") {
+            throw new Error("pk is required and must be a string");
+        }
+
+        if (!params || typeof params !== "object") {
+            throw new Error("Params is required and must be an object");
+        }
+
+        if (!pkName || typeof pkName !== "string") {
+            throw new Error("pkName is required and must be a string");
+        }
+
+        if (!fkName || typeof fkName !== "string") {
+            throw new Error("fkName is required and must be a string");
+        }
+
+        if (!casKeys || !Array.isArray(casKeys)) {
+            throw new Error("casKeys is required and must be an array");
+        }
+
+        if (!modelName || typeof modelName !== "string") {
+            throw new Error("modelName is required and must be a string");
+        }
+
+        if (!snapshotName || typeof snapshotName !== "string") {
+            throw new Error("snapshotName is required and must be a string");
+        }
+
+        if (!tombstoneName || typeof tombstoneName !== "string") {
+            throw new Error("tombstoneName is required and must be a string");
+        }
+
+        this.pk = pk;
+        this.params = params;
+        this.pkName = pkName;
+        this.fkName = fkName;
+        this.casKeys = casKeys;
+        this.modelName = modelName;
+        this.snapshotName = snapshotName;
+        this.tombstoneName = tombstoneName;
+    }
+
+    /**
+     * @function execute
+     * @description Puts a model instance
+     * @param {object} db - The database connection
+     * @param {object} [options={}] - The options for the command
+     * @param {object} [options.beforeTransactions] - The transactions to run before the main transaction
+     * @param {object} [options.afterTransactions] - The transactions to run after the main transaction
+     * @returns {Promise&lt;void>} - The result of the command
+     * @throws {Error} If db is not provided or not an object
+     * @throws {APIActorError} If an error occurs while putting the entity
+     * @async
+     * @override
+     */
+    async execute(db, options={}) {
+        if (!db || typeof db !== "object") {
+            throw new Error("db is required and must be an object");
+        }
+
+        if (!options || typeof options !== "object") {
+            throw new Error("options is required and must be an object");
+        }
+
+        const pk = this.pk;
+        const pkName = this.pkName;
+        const fkName = this.fkName;
+        const casKeys = this.casKeys;
+        const params = this.params;
+        const modelName = this.modelName;
+        const snapshotName = this.snapshotName;
+        const tombstoneName = this.tombstoneName;
+        const time = {
+            created_at: new Date(),
+            updated_at: new Date(),
+        }
+
+        try {
+            await db.sequelize.transaction(async t => {
+                let entity = await db[modelName].findOne(
+                    { 
+                        where: { [pkName]: pk },
+                        include: [
+                            { 
+                                model: db[tombstoneName], 
+                                limit: 1,
+                                order: [["created_at", "DESC"]] 
+                            },
+                            { 
+                                model: db[snapshotName], 
+                                limit: 1,
+                                order: [["created_at", "DESC"]] 
+                            }
+                        ]
+                    },
+                    { transaction: t }
+                );
+
+                if (!entity) {
+                    entity = await db[modelName].create(
+                        { [pkName]: pk }, 
+                        { transaction: t }
+                    );
+                } else if (entity[`${tombstoneName}s`].length > 0) {
+                    // Undo remove
+                    await db[tombstoneName].destroy(
+                        { where: { [fkName]: pk } },
+                        { transaction: t }
+                    );
+                }
+
+                const snapshots = entity[`${snapshotName}s`];
+                if (snapshots &amp;&amp; snapshots.length > 0) {
+                    const description = snapshots[0];
+                    const inputString = casKeys.map(key => params[key]).join(", ");
+                    const currentString = casKeys.map(key => description[key]).join(", ");
+                    const inputCAS = PutCommand.calculateCAS(inputString);
+                    const currentCAS = PutCommand.calculateCAS(currentString);
+                    if (currentCAS === inputCAS) return; // No changes
+                }
+
+                if (options.beforeTransactions) {
+                    for (const transaction of options.beforeTransactions) {
+                        await transaction(t, entity, params);
+                    }
+                }
+
+                const snapshot = await db[snapshotName].create(
+                    { [fkName]: pk, ...params, ...time }, 
+                    { transaction: t }
+                );
+
+                if (options.afterTransactions) {
+                    for (const transaction of options.afterTransactions) {
+                        await transaction(t, entity, snapshot);
+                    }
+                }
+            });
+        } catch (error) {
+            console.log(error)
+
+            if (error instanceof APIActorError) {
+                throw error;
+            }
+
+            if (error.name === "SequelizeUniqueConstraintError") {
+                const paths = error.errors.map(e => e.path).join(", ");
+                throw new APIActorError(`The following fields must be unique: ${paths}`, 400);
+            }
+
+            throw new APIActorError("An error occurred while putting an entity", 500);
+        }
+    }
+
+    /**
+     * @function calculateCAS
+     * @description Calculates the CAS value
+     * @param {object} params - The parameters to calculate the CAS value
+     * @returns {string} - The CAS value
+     * @static
+     */
+    static calculateCAS = (params) => {
+        const base64 = Buffer.from(`${params}`).toString("base64");
+        return Buffer.from(base64).toString("base64");
+    }
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-commands_Permission_DeleteCommand.html">commands/Permission/DeleteCommand</a></li><li><a href="module-commands_Permission_PutCommand.html">commands/Permission/PutCommand</a></li><li><a href="module-commands_Role_DeleteCommand.html">commands/Role/DeleteCommand</a></li><li><a href="module-commands_Role_PutCommand.html">commands/Role/PutCommand</a></li><li><a href="module-commands_RolePermission_CreateCommand.html">commands/RolePermission/CreateCommand</a></li><li><a href="module-commands_RolePermission_DeleteCommand.html">commands/RolePermission/DeleteCommand</a></li><li><a href="module-commands_User_CreateCommand.html">commands/User/CreateCommand</a></li><li><a href="module-commands_User_DeleteCommand.html">commands/User/DeleteCommand</a></li><li><a href="module-commands_User_ProtectedDeleteCommand.html">commands/User/ProtectedDeleteCommand</a></li><li><a href="module-commands_User_ProtectedPutCommand.html">commands/User/ProtectedPutCommand</a></li><li><a href="module-commands_User_PutCommand.html">commands/User/PutCommand</a></li><li><a href="module-commands_abstractions_CreateCommand.html">commands/abstractions/CreateCommand</a></li><li><a href="module-commands_abstractions_DeleteCommand.html">commands/abstractions/DeleteCommand</a></li><li><a href="module-commands_abstractions_ModelCommand.html">commands/abstractions/ModelCommand</a></li><li><a href="module-commands_abstractions_PutCommand.html">commands/abstractions/PutCommand</a></li><li><a href="module-controllers_api_SwaggerController.html">controllers/api/SwaggerController</a></li><li><a href="module-controllers_api_errors_APIActorError.html">controllers/api/errors/APIActorError</a></li><li><a href="module-controllers_api_v1_AuthController.html">controllers/api/v1/AuthController</a></li><li><a href="module-controllers_api_v1_PermissionAdminController.html">controllers/api/v1/PermissionAdminController</a></li><li><a href="module-controllers_api_v1_RoleAdminController.html">controllers/api/v1/RoleAdminController</a></li><li><a href="module-controllers_api_v1_RolePermissionController.html">controllers/api/v1/RolePermissionController</a></li><li><a href="module-controllers_api_v1_UserAdminController.html">controllers/api/v1/UserAdminController</a></li><li><a href="module-controllers_api_v1_UserAuthController.html">controllers/api/v1/UserAuthController</a></li><li><a href="module-dtos_Permission.html">dtos/Permission</a></li><li><a href="module-dtos_Role.html">dtos/Role</a></li><li><a href="module-dtos_RolePermission.html">dtos/RolePermission</a></li><li><a href="module-dtos_User.html">dtos/User</a></li><li><a href="module-jwt_AuthenticateJWT.html">jwt/AuthenticateJWT</a></li><li><a href="module-jwt_MiddlewareJWT.html">jwt/MiddlewareJWT</a></li><li><a href="module-jwt_errors_AuthenticateJWTArgumentError.html">jwt/errors/AuthenticateJWTArgumentError</a></li><li><a href="module-jwt_errors_InvalidRefreshTokenError.html">jwt/errors/InvalidRefreshTokenError</a></li><li><a href="module-queries_Permission_ReadCollectionQuery.html">queries/Permission/ReadCollectionQuery</a></li><li><a href="module-queries_Permission_ReadOneQuery.html">queries/Permission/ReadOneQuery</a></li><li><a href="module-queries_Role_ReadCollectionQuery.html">queries/Role/ReadCollectionQuery</a></li><li><a href="module-queries_Role_ReadOneQuery.html">queries/Role/ReadOneQuery</a></li><li><a href="module-queries_RolePermission_ReadCollectionQuery.html">queries/RolePermission/ReadCollectionQuery</a></li><li><a href="module-queries_RolePermission_ReadOneQuery.html">queries/RolePermission/ReadOneQuery</a></li><li><a href="module-queries_User_ReadCollectionQuery.html">queries/User/ReadCollectionQuery</a></li><li><a href="module-queries_User_ReadOneQuery.html">queries/User/ReadOneQuery</a></li><li><a href="module-queries_abstractions_ModelQuery.html">queries/abstractions/ModelQuery</a></li><li><a href="module-queries_abstractions_ReadCollectionQuery.html">queries/abstractions/ReadCollectionQuery</a></li><li><a href="module-queries_abstractions_ReadOneQuery.html">queries/abstractions/ReadOneQuery</a></li><li><a href="module-sdk_api_adminPermissions.html">sdk/api/adminPermissions</a></li><li><a href="module-sdk_api_adminRolePermissions.html">sdk/api/adminRolePermissions</a></li><li><a href="module-sdk_api_adminRoles.html">sdk/api/adminRoles</a></li><li><a href="module-sdk_api_adminUsers.html">sdk/api/adminUsers</a></li><li><a href="module-sdk_api_authentication.html">sdk/api/authentication</a></li><li><a href="module-sdk_api_users.html">sdk/api/users</a></li><li><a href="module-sdk_errors_SDKFetchError.html">sdk/errors/SDKFetchError</a></li><li><a href="module-sdk_errors_SDKFetchMissingTokenError.html">sdk/errors/SDKFetchMissingTokenError</a></li><li><a href="module-sdk_fetchAPI.html">sdk/fetchAPI</a></li><li><a href="module-sdk_sdk.html">sdk/sdk</a></li><li><a href="module-services_AuthService.html">services/AuthService</a></li><li><a href="module-services_ModelCommandService.html">services/ModelCommandService</a></li><li><a href="module-services_ModelQueryService.html">services/ModelQueryService</a></li><li><a href="module-services_errors_ServiceArgumentError.html">services/errors/ServiceArgumentError</a></li><li><a href="module-services_errors_ServiceEntityDuplicateValueError.html">services/errors/ServiceEntityDuplicateValueError</a></li><li><a href="module-services_errors_ServiceEntityNotDeletableError.html">services/errors/ServiceEntityNotDeletableError</a></li><li><a href="module-services_errors_ServiceEntityNotFoundError.html">services/errors/ServiceEntityNotFoundError</a></li><li><a href="module-services_errors_ServiceIncorectPasswordError.html">services/errors/ServiceIncorectPasswordError</a></li></ul><h3>Classes</h3><ul><li><a href="module-commands_Permission_DeleteCommand.html">commands/Permission/DeleteCommand</a></li><li><a href="module-commands_Permission_DeleteCommand-DeleteCommand.html">DeleteCommand</a></li><li><a href="module-commands_Permission_PutCommand.html">commands/Permission/PutCommand</a></li><li><a href="module-commands_Permission_PutCommand-PutCommand.html">PutCommand</a></li><li><a href="module-commands_Role_DeleteCommand.html">commands/Role/DeleteCommand</a></li><li><a href="module-commands_Role_DeleteCommand-DeleteCommand.html">DeleteCommand</a></li><li><a href="module-commands_Role_PutCommand-PutCommand.html">PutCommand</a></li><li><a href="module-commands_RolePermission_CreateCommand.html">commands/RolePermission/CreateCommand</a></li><li><a href="module-commands_RolePermission_CreateCommand-CreateCommand.html">CreateCommand</a></li><li><a href="module-commands_RolePermission_DeleteCommand.html">commands/RolePermission/DeleteCommand</a></li><li><a href="module-commands_RolePermission_DeleteCommand-DeleteCommand.html">DeleteCommand</a></li><li><a href="module-commands_User_CreateCommand.html">commands/User/CreateCommand</a></li><li><a href="module-commands_User_CreateCommand-CreateCommand.html">CreateCommand</a></li><li><a href="module-commands_User_DeleteCommand.html">commands/User/DeleteCommand</a></li><li><a href="module-commands_User_DeleteCommand-DeleteCommand.html">DeleteCommand</a></li><li><a href="module-commands_User_ProtectedDeleteCommand.html">commands/User/ProtectedDeleteCommand</a></li><li><a href="module-commands_User_ProtectedDeleteCommand-ProtectedDeleteCommand.html">ProtectedDeleteCommand</a></li><li><a href="module-commands_User_ProtectedPutCommand.html">commands/User/ProtectedPutCommand</a></li><li><a href="module-commands_User_ProtectedPutCommand-ProtectedPutCommand.html">ProtectedPutCommand</a></li><li><a href="module-commands_User_PutCommand.html">commands/User/PutCommand</a></li><li><a href="module-commands_User_PutCommand-PutCommand.html">PutCommand</a></li><li><a href="module-commands_abstractions_CreateCommand.html">commands/abstractions/CreateCommand</a></li><li><a href="module-commands_abstractions_CreateCommand-CreateCommand.html">CreateCommand</a></li><li><a href="module-commands_abstractions_DeleteCommand.html">commands/abstractions/DeleteCommand</a></li><li><a href="module-commands_abstractions_DeleteCommand-DeleteCommand.html">DeleteCommand</a></li><li><a href="module-commands_abstractions_ModelCommand-ModelCommand.html">ModelCommand</a></li><li><a href="module-commands_abstractions_PutCommand.html">commands/abstractions/PutCommand</a></li><li><a href="module-commands_abstractions_PutCommand-PutCommand.html">PutCommand</a></li><li><a href="module-controllers_api_errors_APIActorError-APIActorError.html">APIActorError</a></li><li><a href="module-jwt_errors_AuthenticateJWTArgumentError-AuthenticateJWTArgumentError.html">AuthenticateJWTArgumentError</a></li><li><a href="module-jwt_errors_InvalidRefreshTokenError-InvalidRefreshTokenError.html">InvalidRefreshTokenError</a></li><li><a href="module-queries_Permission_ReadCollectionQuery.html">queries/Permission/ReadCollectionQuery</a></li><li><a href="module-queries_Permission_ReadCollectionQuery-ReadCollectionQuery.html">ReadCollectionQuery</a></li><li><a href="module-queries_Permission_ReadOneQuery.html">queries/Permission/ReadOneQuery</a></li><li><a href="module-queries_Permission_ReadOneQuery-ReadOneQuery.html">ReadOneQuery</a></li><li><a href="module-queries_Role_ReadCollectionQuery.html">queries/Role/ReadCollectionQuery</a></li><li><a href="module-queries_Role_ReadCollectionQuery-ReadCollectionQuery.html">ReadCollectionQuery</a></li><li><a href="module-queries_Role_ReadOneQuery.html">queries/Role/ReadOneQuery</a></li><li><a href="module-queries_Role_ReadOneQuery-ReadOneQuery.html">ReadOneQuery</a></li><li><a href="module-queries_RolePermission_ReadCollectionQuery.html">queries/RolePermission/ReadCollectionQuery</a></li><li><a href="module-queries_RolePermission_ReadCollectionQuery-ReadCollectionQuery.html">ReadCollectionQuery</a></li><li><a href="module-queries_RolePermission_ReadOneQuery.html">queries/RolePermission/ReadOneQuery</a></li><li><a href="module-queries_RolePermission_ReadOneQuery-ReadOneQuery.html">ReadOneQuery</a></li><li><a href="module-queries_User_ReadCollectionQuery.html">queries/User/ReadCollectionQuery</a></li><li><a href="module-queries_User_ReadCollectionQuery-ReadCollectionQuery.html">ReadCollectionQuery</a></li><li><a href="module-queries_User_ReadOneQuery.html">queries/User/ReadOneQuery</a></li><li><a href="module-queries_User_ReadOneQuery-ReadOneQuery.html">ReadOneQuery</a></li><li><a href="module-queries_abstractions_ModelQuery.html">queries/abstractions/ModelQuery</a></li><li><a href="module-queries_abstractions_ReadCollectionQuery.html">queries/abstractions/ReadCollectionQuery</a></li><li><a href="module-queries_abstractions_ReadCollectionQuery-ReadCollectionQuery.html">ReadCollectionQuery</a></li><li><a href="module-queries_abstractions_ReadOneQuery-ReadOneQuery.html">ReadOneQuery</a></li><li><a href="module-sdk_errors_SDKFetchError-SDKFetchError.html">SDKFetchError</a></li><li><a href="module-sdk_errors_SDKFetchMissingTokenError-SDKFetchMissingTokenError.html">SDKFetchMissingTokenError</a></li><li><a href="module-services_ModelCommandService.html">services/ModelCommandService</a></li><li><a href="module-services_ModelQueryService.html">services/ModelQueryService</a></li><li><a href="module-services_errors_ServiceArgumentError-ServiceArgumentError.html">ServiceArgumentError</a></li><li><a href="module-services_errors_ServiceEntityDuplicateValueError-ServiceEntityDuplicateValueError.html">ServiceEntityDuplicateValueError</a></li><li><a href="module-services_errors_ServiceEntityNotDeletableError-ServiceEntityNotDeletableError.html">ServiceEntityNotDeletableError</a></li><li><a href="module-services_errors_ServiceEntityNotFoundError-ServiceEntityNotFoundError.html">ServiceEntityNotFoundError</a></li><li><a href="module-services_errors_ServiceIncorectPasswordError-ServiceIncorectPasswordError.html">ServiceIncorectPasswordError</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.3</a> on Fri May 10 2024 04:35:04 GMT+0200 (Centraleuropæisk sommertid)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

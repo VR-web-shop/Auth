@@ -10,7 +10,11 @@
  * @requires module:services/ModelCommandService
  * @requires module:services/ModelQueryService
  * @requires module:controllers/api/errors/APIActorError
+ * @requires module:services/LinkService
+ * @requires module:rollbar
  */
+
+import LinkService from "../../../services/LinkService.js";
 import APIActorError from "../errors/APIActorError.js";
 import ReadOneQuery from "../../../queries/Role/ReadOneQuery.js";
 import ReadCollectionQuery from "../../../queries/Role/ReadCollectionQuery.js";
@@ -20,6 +24,7 @@ import ModelCommandService from "../../../services/ModelCommandService.js";
 import ModelQueryService from "../../../services/ModelQueryService.js";
 import Middleware from "../../../jwt/MiddlewareJWT.js";
 import express from 'express';
+import rollbar from "../../../../rollbar.js";
 
 const router = express.Router()
 const commandService = new ModelCommandService()
@@ -105,13 +110,15 @@ router.route('/api/v1/admin/roles')
                 rows, 
                 count, 
                 pages,
-                "_links": {
-                    "self": { "href": `/api/v1/admin/roles?limit=${limit}&page=${page}`, "method": "GET" },
-                    "next": { "href": `/api/v1/admin/roles?limit=${limit}&page=${Math.min(parseInt(page) + 1, pages)}`, "method": "GET" },
-                    "prev": { "href": `/api/v1/admin/roles?limit=${limit}&page=${Math.min(parseInt(page) - 1, 1)}`, "method": "GET" }
-                }, 
+                ...LinkService.paginateLinks(`api/v1/admin/roles`, parseInt(page), pages),
             })
         } catch (error) {
+            rollbar.error(error)
+
+            if (error instanceof APIActorError) {
+                return res.status(error.statusCode).send({ message: error.message })
+            }
+
             console.error(error)
             return res.status(500).send({ message: 'Internal Server Error' })
         }
@@ -205,14 +212,15 @@ router.route('/api/v1/admin/roles')
             const response = await queryService.invoke(new ReadOneQuery(client_side_uuid))
             res.send({
                 ...response,
-                "_links": {
-                    "self": { "href": `/api/v1/admin/role/${client_side_uuid}`, "method": "POST" },
-                    "get": { "href": `/api/v1/admin/role/${client_side_uuid}`, "method": "GET" },
-                    "update": { "href": `/api/v1/admin/role/${client_side_uuid}`, "method": "PATCH" },
-                    "delete": { "href": `/api/v1/admin/role/${client_side_uuid}`, "method": "DELETE" }
-                },
-            })
+                ...LinkService.entityLinks(`api/v1/admin/roles`, "POST", [
+                    { name: 'get', method: 'GET' },
+                    { name: 'update', method: 'PATCH' },
+                    { name: 'delete', method: 'DELETE', unless: response.defined_by_system === 1 }
+                ])
+            }, `api/v1/admin/role/${client_side_uuid}`)
         } catch (error) {
+            rollbar.error(error)
+
             if (error instanceof APIActorError) {
                 return res.status(error.statusCode).send({ message: error.message })
             }
@@ -292,13 +300,14 @@ router.route('/api/v1/admin/role/:client_side_uuid')
             const response = await queryService.invoke(new ReadOneQuery(client_side_uuid))
             res.send({
                 ...response,
-                "_links": {
-                    "self": { "href": `/api/v1/admin/role/${client_side_uuid}`, "method": "GET" },
-                    "update": { "href": `/api/v1/admin/role/${client_side_uuid}`, "method": "PATCH" },
-                    "delete": { "href": `/api/v1/admin/role/${client_side_uuid}`, "method": "DELETE" }
-                },
+                ...LinkService.entityLinks(`api/v1/admin/role/${client_side_uuid}`, "GET", [
+                    { name: 'update', method: 'PATCH' },
+                    { name: 'delete', method: 'DELETE', unless: response.defined_by_system === 1 }
+                ])
             })
         } catch (error) {
+            rollbar.error(error)
+
             if (error instanceof APIActorError) {
                 return res.status(error.statusCode).send({ message: error.message })
             }
@@ -393,13 +402,14 @@ router.route('/api/v1/admin/role/:client_side_uuid')
             const response = await queryService.invoke(new ReadOneQuery(client_side_uuid))
             res.send({
                 ...response,
-                "_links": {
-                    "self": { "href": `/api/v1/admin/role/${client_side_uuid}`, "method": "PATCH" },
-                    "get": { "href": `/api/v1/admin/role/${client_side_uuid}`, "method": "GET" },
-                    "delete": { "href": `/api/v1/admin/role/${client_side_uuid}`, "method": "DELETE" }
-                },
+                ...LinkService.entityLinks(`api/v1/admin/role/${client_side_uuid}`, "PATCH", [
+                    { name: 'get', method: 'GET' },
+                    { name: 'delete', method: 'DELETE', unless: response.defined_by_system === 1 }
+                ])
             })
         } catch (error) {
+            rollbar.error(error)
+
             if (error instanceof APIActorError) {
                 return res.status(error.statusCode).send({ message: error.message })
             }
@@ -441,6 +451,8 @@ router.route('/api/v1/admin/role/:client_side_uuid')
             await commandService.invoke(new DeleteCommand(client_side_uuid))
             res.sendStatus(204)
         } catch (error) {
+            rollbar.error(error)
+
             if (error instanceof APIActorError) {
                 return res.status(error.statusCode).send({ message: error.message })
             }

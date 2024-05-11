@@ -4,10 +4,14 @@
  * @requires module:express
  * @requires module:services/AuthService
  * @requires module:controllers/api/errors/APIActorError
+ * @requires module:services/LinkService
+ * @requires module:rollbar
  */
 
+import LinkService from "../../../services/LinkService.js";
 import APIActorError from "../errors/APIActorError.js";
 import AuthService from "../../../services/AuthService.js";
+import rollbar from "../../../../rollbar.js";
 import express from 'express';
 
 const router = express.Router()
@@ -76,16 +80,17 @@ router.route('/api/v1/auth')
         try {
             const { email, password } = req.body
             const { access_token, refresh_token } = await AuthService.create(email, password)
-
+            
             res.cookie('refresh_token', refresh_token, { httpOnly: true })
-            res.send({ 
+            res.send({
                 access_token,
-                "_links": {
-                    "self": { "href": `/api/v1/auth`, "method": "POST" },
-                    "refresh": { "href": `/api/v1/auth`, "method": "PUT" }
-                }
+                ...LinkService.entityLinks(`api/v1/auth`, "POST", [
+                    { name: 'refresh', method: 'PUT' },
+                ])
             })
         } catch (error) {
+            rollbar.error(error)
+
             if (error instanceof APIActorError) {
                 return res.status(error.statusCode).send({ message: error.message })
             }
@@ -139,11 +144,12 @@ router.route('/api/v1/auth')
             const response = await AuthService.refresh(refresh_token)
             res.send({
                 ...response,
-                "_links": {
-                    "self": { "href": `/api/v1/auth`, "method": "PUT" }
-                }
+                ...LinkService.entityLinks(`api/v1/auth`, "PUT", [
+                ])
             })
         } catch (error) {
+            rollbar.error(error)
+
             if (error instanceof APIActorError) {
                 return res.status(error.statusCode).send({ message: error.message })
             }

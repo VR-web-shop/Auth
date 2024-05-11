@@ -11,7 +11,11 @@
  * @requires module:services/ModelCommandService
  * @requires module:services/ModelQueryService
  * @requires module:services/AuthService
+ * @requires module:services/LinkService
+ * @requires module:rollbar
  */
+
+import LinkService from "../../../services/LinkService.js";
 import APIActorError from "../errors/APIActorError.js";
 import ReadOneQuery from "../../../queries/User/ReadOneQuery.js";
 import CreateCommand from "../../../commands/User/CreateCommand.js";
@@ -22,6 +26,7 @@ import ModelQueryService from "../../../services/ModelQueryService.js";
 import AuthService from "../../../services/AuthService.js";
 import Middleware from "../../../jwt/MiddlewareJWT.js";
 import express from 'express';
+import rollbar from "../../../../rollbar.js";
 
 const router = express.Router()
 const commandService = new ModelCommandService()
@@ -129,14 +134,15 @@ router.route('/api/v1/users')
             res.cookie('refresh_token', refresh_token, { httpOnly: true })
             res.send({ 
                 access_token,
-                "_links": {
-                    "self": { "href": `/api/v1/user`, "method": "POST" },
-                    "get": { "href": `/api/v1/user`, "method": "GET" },
-                    "update": { "href": `/api/v1/user`, "method": "PATCH" },
-                    "delete": { "href": `/api/v1/user`, "method": "DELETE" }
-                } 
+                ...LinkService.entityLinks(`api/v1/user`, "POST", [
+                    { name: 'get', method: 'GET' },
+                    { name: 'update', method: 'PATCH' },
+                    { name: 'delete', method: 'DELETE' }
+                ])
             })
         } catch (error) {
+            rollbar.error(error)
+
             if (error instanceof APIActorError) {
                 return res.status(error.statusCode).send({ message: error.message })
             }
@@ -221,13 +227,14 @@ router.route('/api/v1/user')
             const response = await queryService.invoke(new ReadOneQuery(sub))
             res.send({
                 ...response,
-                "_links": {
-                    "self": { "href": `/api/v1/user`, "method": "GET" },
-                    "update": { "href": `/api/v1/user`, "method": "PATCH" },
-                    "delete": { "href": `/api/v1/user`, "method": "DELETE" }
-                }
+                ...LinkService.entityLinks(`api/v1/user`, "GET", [
+                    { name: 'update', method: 'PATCH' },
+                    { name: 'delete', method: 'DELETE' }
+                ])
             })
         } catch (error) {
+            rollbar.error(error)
+
             if (error instanceof APIActorError) {
                 return res.status(error.statusCode).send({ message: error.message })
             }
@@ -335,13 +342,14 @@ router.route('/api/v1/user')
             const response = await queryService.invoke(new ReadOneQuery(sub))
             res.send({
                 ...response,
-                "_links": {
-                    "self": { "href": `/api/v1/user`, "method": "PATCH" },
-                    "get": { "href": `/api/v1/user`, "method": "GET" },
-                    "delete": { "href": `/api/v1/user`, "method": "DELETE" }
-                }
+                ...LinkService.entityLinks(`api/v1/user`, "PATCH", [
+                    { name: 'get', method: 'GET' },
+                    { name: 'delete', method: 'DELETE' }
+                ])
             })
         } catch (error) {
+            rollbar.error(error)
+
             if (error instanceof APIActorError) {
                 return res.status(error.statusCode).send({ message: error.message })
             }
@@ -390,6 +398,8 @@ router.route('/api/v1/user')
             await commandService.invoke(new ProtectedDeleteCommand(sub, verifyPassword))
             res.sendStatus(204)
         } catch (error) {
+            rollbar.error(error)
+
             if (error instanceof APIActorError) {
                 return res.status(error.statusCode).send({ message: error.message })
             }
