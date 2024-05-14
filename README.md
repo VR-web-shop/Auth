@@ -98,3 +98,24 @@ $ docker build -t auth:v1.0 .
 ```
 $ docker run -p 3000:3000 auth:v1.0
 ```
+
+## Docker Compose
+1. Setup Environment Variables
+```
+$ cp .env.example .env
+```
+
+2. Build Docker Image
+```
+$ docker build -t auth:v1.0 .
+```
+
+3. Save the image to a tar file
+```
+$ docker save -o auth.tar auth:v1.0
+```
+
+4. Run Docker Compose
+```
+$ docker-compose up --env-file .env
+```
