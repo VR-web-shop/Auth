@@ -15,9 +15,10 @@ import SwaggerController from './src/controllers/SwaggerController.js'
 
 const app = express()
 const port = process.env.SERVER_PORT
+const corsOrigins = process.env.CORS_ORIGINS.split(',')
 
 app.use(cors({
-    origin: ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175'],
+    origin: corsOrigins,
     credentials: true // Allow credentials (including cookies)
 }));
 

@@ -115,7 +115,12 @@ $ docker build -t auth:v1.0 .
 $ docker save -o auth.tar auth:v1.0
 ```
 
+4. Load the image into Docker
+```
+$ docker load -i auth.tar
+```
+
 4. Run Docker Compose
 ```
-$ docker-compose up --env-file .env
+$ docker compose up
 ```
