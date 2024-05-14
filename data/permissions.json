@@ -24,7 +24,8 @@
      { "name": "permissions:index", "description": "List all permissions" },
      { "name": "permissions:put", "description": "Put a permission" },
      { "name": "permissions:delete", "description": "Delete a permission" },
-
+     
+     { "name": "products:put:upload", "description": "Upload a file for a product" },
      { "name": "products:show", "description": "Show a product" },
      { "name": "products:index", "description": "List all products" },
      { "name": "products:put", "description": "Put a product" },
