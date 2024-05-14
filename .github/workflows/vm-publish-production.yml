@@ -55,8 +55,4 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           cd ${{ secrets.SERVER_LOCATION }}/github/workspace
-          docker build -t ${{ secrets.IMAGE_NAME }}:${{ secrets.IMAGE_TAG }} .
-          docker save ${{ secrets.IMAGE_NAME }} > ${{ secrets.IMAGE_NAME }}.tar
-          microk8s ctr image import ${{ secrets.IMAGE_NAME }}.tar
-          kompose convert -o ./kubernetes/
-          microk8s kubectl apply -f kubernetes/
+          bash local_deploy.sh
