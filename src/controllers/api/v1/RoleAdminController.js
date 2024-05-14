@@ -113,12 +113,12 @@ router.route('/api/v1/admin/roles')
                 ...LinkService.paginateLinks(`api/v1/admin/roles`, parseInt(page), pages),
             })
         } catch (error) {
-            rollbar.error(error)
-
             if (error instanceof APIActorError) {
+                rollbar.info('APIActorError', { code: error.statusCode, message: error.message })
                 return res.status(error.statusCode).send({ message: error.message })
             }
 
+            rollbar.error(error)
             console.error(error)
             return res.status(500).send({ message: 'Internal Server Error' })
         }
@@ -219,12 +219,12 @@ router.route('/api/v1/admin/roles')
                 ])
             }, `api/v1/admin/role/${client_side_uuid}`)
         } catch (error) {
-            rollbar.error(error)
-
             if (error instanceof APIActorError) {
+                rollbar.info('APIActorError', { code: error.statusCode, message: error.message })
                 return res.status(error.statusCode).send({ message: error.message })
             }
 
+            rollbar.error(error)
             console.error(error)
             return res.status(500).send({ message: 'Internal Server Error' })
         }
@@ -306,12 +306,12 @@ router.route('/api/v1/admin/role/:client_side_uuid')
                 ])
             })
         } catch (error) {
-            rollbar.error(error)
-
             if (error instanceof APIActorError) {
+                rollbar.info('APIActorError', { code: error.statusCode, message: error.message })
                 return res.status(error.statusCode).send({ message: error.message })
             }
 
+            rollbar.error(error)
             console.error(error)
             return res.status(500).send({ message: 'Internal Server Error' })
         }
@@ -408,12 +408,12 @@ router.route('/api/v1/admin/role/:client_side_uuid')
                 ])
             })
         } catch (error) {
-            rollbar.error(error)
-
             if (error instanceof APIActorError) {
+                rollbar.info('APIActorError', { code: error.statusCode, message: error.message })
                 return res.status(error.statusCode).send({ message: error.message })
             }
 
+            rollbar.error(error)
             console.error(error)
             return res.status(500).send({ message: 'Internal Server Error' })
         }
@@ -451,12 +451,12 @@ router.route('/api/v1/admin/role/:client_side_uuid')
             await commandService.invoke(new DeleteCommand(client_side_uuid))
             res.sendStatus(204)
         } catch (error) {
-            rollbar.error(error)
-
             if (error instanceof APIActorError) {
+                rollbar.info('APIActorError', { code: error.statusCode, message: error.message })
                 return res.status(error.statusCode).send({ message: error.message })
             }
 
+            rollbar.error(error)
             console.error(error)
             return res.status(500).send({ message: 'Internal Server Error' })
         }

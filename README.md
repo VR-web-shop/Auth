@@ -2,14 +2,15 @@
 Authentication Microservice
 
 ## Install
-1. Install Dependencies
-```
-$ npm install
-```
 
-2. Setup Environment Variables
+1. Setup Environment Variables
 ```
 $ cp .env.example .env
+```
+
+2. Install Dependencies
+```
+$ npm install
 ```
 
 3. Migrate Database
@@ -83,12 +84,17 @@ $ npm run deploy_sdk
 ```
 
 ## Docker
-1. Build Docker Image
+1. Setup Environment Variables
+```
+$ cp .env.example .env
+```
+
+2. Build Docker Image
 ```
 $ docker build -t auth:v1.0 .
 ```
 
-2. Run Docker Container
+3. Run Docker Container
 ```
 $ docker run -p 3000:3000 auth:v1.0
 ```

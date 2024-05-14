@@ -89,12 +89,12 @@ router.route('/api/v1/auth')
                 ])
             })
         } catch (error) {
-            rollbar.error(error)
-
             if (error instanceof APIActorError) {
+                rollbar.info('APIActorError', { code: error.statusCode, message: error.message })
                 return res.status(error.statusCode).send({ message: error.message })
             }
 
+            rollbar.error(error)
             console.error(error)
             return res.status(500).send({ message: 'Internal Server Error' })
         }
@@ -148,12 +148,12 @@ router.route('/api/v1/auth')
                 ])
             })
         } catch (error) {
-            rollbar.error(error)
-
             if (error instanceof APIActorError) {
+                rollbar.info('APIActorError', { code: error.statusCode, message: error.message })
                 return res.status(error.statusCode).send({ message: error.message })
             }
 
+            rollbar.error(error)
             console.error(error)
             return res.status(500).send({ message: 'Internal Server Error' })
         }
