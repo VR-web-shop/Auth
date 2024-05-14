@@ -55,4 +55,4 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           cd ${{ secrets.SERVER_LOCATION }}/github/workspace
-          bash local_deploy.sh
+          nohup local_deploy.sh &
