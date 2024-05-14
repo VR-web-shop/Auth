@@ -58,3 +58,5 @@ jobs:
           docker build -t ${{ secrets.IMAGE_NAME }}:${{ secrets.IMAGE_TAG }} .
           docker save ${{ secrets.IMAGE_NAME }} > ${{ secrets.IMAGE_NAME }}.tar
           microk8s ctr image import ${{ secrets.IMAGE_NAME }}.tar
+          kompose convert -o ./kubernetes/
+          microk8s kubectl apply -f kubernetes/

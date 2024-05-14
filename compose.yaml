@@ -1,14 +1,17 @@
 services:
-  web:
-    image: "./auth.tar"
+  auth:
+    image: auth:v1.0
+    environment:
+      - NODE_ENV=production
     ports:
       - "3000:3000"
+    depends_on:
+      - mysql
+    command: >
+      sh -c "npm run migrate && npm run seed && npm start"
   mysql:
     image: mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    env_file:
+      - ".env"
     ports:
       - "3306:3306"
