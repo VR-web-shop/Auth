@@ -13,7 +13,11 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
+      - name: Create .env file
+        run: echo "${{ secrets.ENV_FILE }}" > .env    
       - run: npm ci
+      - name: Remove .env file
+        run: rm .env
   
   test:
     needs: build
@@ -57,4 +61,5 @@ jobs:
           cd ${{ secrets.SERVER_LOCATION }}/github/workspace
           docker build -t ${{ secrets.IMAGE_NAME }}:${{ secrets.IMAGE_TAG }} .
           docker save ${{ secrets.IMAGE_NAME }} > ${{ secrets.IMAGE_NAME }}.tar
-          microk8s ctr image import ${{ secrets.IMAGE_NAME }}.tar
+          docker rmi ${{ secrets.IMAGE_NAME }}:${{ secrets.IMAGE_TAG }}
+          
