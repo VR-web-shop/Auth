@@ -20,7 +20,6 @@ const SERVER_URL = (() => {
  * @returns {string} The combined URL.
  */
 const combineUrl = (path) => `${SERVER_URL}/${path}`;
-
 /**
  * @function entityLinks
  * @description Creates an object with links for the entity.
