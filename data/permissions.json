@@ -86,6 +86,117 @@
      { "name": "cart-states:put", "description": "Put a cart state in shopping cart system" },
      { "name": "cart-states:delete", "description": "Delete a cart state in shopping cart system" },
 
+     { "name": "materials:index", "description": "List all materials" },
+     { "name": "materials:show", "description": "Show a material" },
+     { "name": "materials:put", "description": "Put a material" },
+     { "name": "materials:delete", "description": "Delete a material" },
+
+     { "name": "material-types", "description": "List all material types" },
+     { "name": "material-types:show", "description": "Show a material type" },
+     { "name": "material-types:put", "description": "Put a material type" },
+     { "name": "material-types:delete", "description": "Delete a material type" },
+
+     { "name": "material-textures:index", "description": "List all material textures" },
+     { "name": "material-textures:show", "description": "Show a material texture" },
+     { "name": "material-textures:put", "description": "Put a material texture" },
+     { "name": "material-textures:delete", "description": "Delete a material texture" },
+
+     { "name": "meshes:index", "description": "List all meshes" },
+     { "name": "meshes:show", "description": "Show a mesh" },
+     { "name": "meshes:put", "description": "Put a mesh" },
+     { "name": "meshes:delete", "description": "Delete a mesh" },
+
+     { "name": "mesh-materials:index", "description": "List all mesh materials" },
+     { "name": "mesh-materials:show", "description": "Show a mesh material" },
+     { "name": "mesh-materials:put", "description": "Put a mesh material" },
+     { "name": "mesh-materials:delete", "description": "Delete a mesh material" },
+
+     { "name": "scenes:index", "description": "List all scenes" },
+     { "name": "scenes:show", "description": "Show a scene" },
+     { "name": "scenes:put", "description": "Put a scene" },
+     { "name": "scenes:delete", "description": "Delete a scene" },
+
+     { "name": "scene-backgrounds:index", "description": "List all scene backgrounds" },
+     { "name": "scene-backgrounds:show", "description": "Show a scene background" },
+     { "name": "scene-backgrounds:put", "description": "Put a scene background" },
+     { "name": "scene-backgrounds:delete", "description": "Delete a scene background" },
+
+     { "name": "scene-baskets:index", "description": "List all scene baskets" },
+     { "name": "scene-baskets:show", "description": "Show a scene basket" },
+     { "name": "scene-baskets:put", "description": "Put a scene basket" },
+     { "name": "scene-baskets:delete", "description": "Delete a scene basket" },
+
+     { "name": "scene-basket-states:index", "description": "List all scene basket states" },
+     { "name": "scene-basket-states:show", "description": "Show a scene basket state" },
+     { "name": "scene-basket-states:put", "description": "Put a scene basket state" },
+     { "name": "scene-basket-states:delete", "description": "Delete a scene basket state" },
+
+     { "name": "scene-cameras:index", "description": "List all scene cameras" },
+     { "name": "scene-cameras:show", "description": "Show a scene camera" },
+     { "name": "scene-cameras:put", "description": "Put a scene camera" },
+     { "name": "scene-cameras:delete", "description": "Delete a scene camera" },
+
+     { "name": "scene-characters:index", "description": "List all scene characters" },
+     { "name": "scene-characters:show", "description": "Show a scene character" },
+     { "name": "scene-characters:put", "description": "Put a scene character" },
+     { "name": "scene-characters:delete", "description": "Delete a scene character" },
+
+     { "name": "scene-checkouts:index", "description": "List all scene checkouts" },
+     { "name": "scene-checkouts:show", "description": "Show a scene checkout" },
+     { "name": "scene-checkouts:put", "description": "Put a scene checkout" },
+     { "name": "scene-checkouts:delete", "description": "Delete a scene checkout" },
+
+     { "name": "scene-floors:index", "description": "List all scene floors" },
+     { "name": "scene-floors:show", "description": "Show a scene floor" },
+     { "name": "scene-floors:put", "description": "Put a scene floor" },
+     { "name": "scene-floors:delete", "description": "Delete a scene floor" },
+
+     { "name": "scene-lights:index", "description": "List all scene lights" },
+     { "name": "scene-lights:show", "description": "Show a scene light" },
+     { "name": "scene-lights:put", "description": "Put a scene light" },
+     { "name": "scene-lights:delete", "description": "Delete a scene light" },
+
+     { "name": "scene-light-types:index", "description": "List all scene light types" },
+     { "name": "scene-light-types:show", "description": "Show a scene light type" },
+     { "name": "scene-light-types:put", "description": "Put a scene light type" },
+     { "name": "scene-light-types:delete", "description": "Delete a scene light type" },
+
+     { "name": "scene-products:index", "description": "List all scene products" },
+     { "name": "scene-products:show", "description": "Show a scene product" },
+     { "name": "scene-products:put", "description": "Put a scene product" },
+     { "name": "scene-products:delete", "description": "Delete a scene product" },
+
+     { "name": "scene-product-states:index", "description": "List all scene product states" },
+     { "name": "scene-product-states:show", "description": "Show a scene product state" },
+     { "name": "scene-product-states:put", "description": "Put a scene product state" },
+     { "name": "scene-product-states:delete", "description": "Delete a scene product state" },
+
+     { "name": "scene-static-objects:index", "description": "List all scene static objects" },
+     { "name": "scene-static-objects:show", "description": "Show a scene static object" },
+     { "name": "scene-static-objects:put", "description": "Put a scene static object" },
+     { "name": "scene-static-objects:delete", "description": "Delete a scene static object" },
+
+     { "name": "textures:index", "description": "List all textures" },
+     { "name": "textures:show", "description": "Show a texture" },
+     { "name": "textures:put", "description": "Put a texture" },
+     { "name": "textures:delete", "description": "Delete a texture" },
+
+     { "name": "texture-types:index", "description": "List all texture types" },
+     { "name": "texture-types:show", "description": "Show a texture type" },
+     { "name": "texture-types:put", "description": "Put a texture type" },
+     { "name": "texture-types:delete", "description": "Delete a texture type" },
+
+     { "name": "vector3ds:index", "description": "List all vector3ds" },
+     { "name": "vector3ds:show", "description": "Show a vector3ds" },
+     { "name": "vector3ds:put", "description": "Put a vector3ds" },
+     { "name": "vector3ds:delete", "description": "Delete a vector3ds" },
+
+     { "name": "processed-messages:index", "description": "List all processed messages" },
+     { "name": "processed-messages:show", "description": "Show a processed message" },
+
+     { "name": "distributed-transactions:index", "description": "List all processed distributed transactions" },
+     { "name": "distributed-transactions:show", "description": "Show a processed distributed transaction" },
+
      { "name": "admin-client:access", "description": "Access the admin client" },
      { "name": "scenes-editor:client:access", "description": "Access the scenes editor client" }
 ]
