@@ -19,7 +19,6 @@ async function login(authCreateRequest) {
 
     const response = await fetchAPI.request('auth', {
         method: 'POST',
-        credentials: 'include',
         body: authCreateRequest
     });
 

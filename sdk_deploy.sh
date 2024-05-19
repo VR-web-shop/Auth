@@ -15,7 +15,7 @@ echo ""
 echo -e "\e[34mPushing the changes to the main branch\e[0m"
 git add .
 git commit -m "Bump version"
-git push origin main
+git push
 
 echo ""
 echo -e "\e[34mLooking for the release branch\e[0m"
