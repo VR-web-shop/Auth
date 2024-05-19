@@ -36,7 +36,6 @@ async function login(authCreateRequest) {
 async function refresh() {
     const response = await fetchAPI.request('auth', {
         method: 'PUT',
-        credentials: 'include'
     });
 
     const data = await response.json();
