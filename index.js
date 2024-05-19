@@ -18,8 +18,7 @@ const port = process.env.SERVER_PORT
 const corsOrigins = process.env.CORS_ORIGINS.split(',')
 
 app.use(cors({
-    origin: corsOrigins,
-    credentials: true // Allow credentials (including cookies)
+    origin: '*',
 }));
 
 app.use(bodyParser.urlencoded({ extended: true }))
