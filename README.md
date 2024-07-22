@@ -1,6 +1,8 @@
 # Auth
 Authentication Microservice
 
+**Important note:** The authentication microservice stores the permissions in the JWT token. This is a bad idea because it can lead to the server not being able to process the request if it contains too many permissions. It is, therefore, not possible to add more permissions than can be found within /data/permissions.json. This is a limitation that should be addressed in the future.
+
 ## Install
 
 1. Setup Environment Variables
