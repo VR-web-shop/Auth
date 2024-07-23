@@ -10,6 +10,7 @@
  * @requires module:/sdk/api/adminRoles
  * @requires module:/sdk/api/adminRolePermissions
  * @requires module:/sdk/api/adminPermissions
+ * @requires module:/sdk/api/adminHealth
  */
 import fetchAPI from './fetchAPI.js'
 
@@ -22,6 +23,7 @@ import adminUsers from './api/adminUsers.js'
 import adminRoles from './api/adminRoles.js'
 import adminRolePermissions from './api/adminRolePermissions.js'
 import adminPermissions from './api/adminPermissions.js'
+import adminHealth from './api/adminHealth.js'
 
 /**
  * @function SDK
@@ -76,7 +78,8 @@ const SDK = function(serverURL, APIVersion = 'v1', options={}) {
         adminUsers,
         adminRoles,
         adminRolePermissions,
-        adminPermissions
+        adminPermissions,
+        adminHealth,
     }
 
     /**

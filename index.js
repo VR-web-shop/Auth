@@ -11,16 +11,13 @@ import UserAdminController from './src/controllers/api/v1/UserAdminController.js
 import RoleAdminController from './src/controllers/api/v1/RoleAdminController.js'
 import RolePermissionController from './src/controllers/api/v1/RolePermissionController.js'
 import PermissionAdminController from './src/controllers/api/v1/PermissionAdminController.js'
+import HealthAdminController from './src/controllers/api/v1/HealthAdminController.js'
 import SwaggerController from './src/controllers/SwaggerController.js'
 
 const app = express()
 const port = process.env.SERVER_PORT
-const corsOrigins = process.env.CORS_ORIGINS.split(',')
 
-app.use(cors({
-    origin: '*',
-}));
-
+app.use(cors({ origin: '*' }));
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 app.use(cookieParser())
@@ -33,5 +30,18 @@ app.use(UserAdminController)
 app.use(RoleAdminController)
 app.use(RolePermissionController)
 app.use(PermissionAdminController)
+app.use(HealthAdminController)
 
-app.listen(port, () => console.log(`Server is running on port ${port}`));
+app.listen(port, () => {
+    console.log(`
+        === Auth Service ===
+        Server: Express
+        Port: ${port}
+        
+        === Swagger Docs ===
+        URL: http://localhost:${port}/api/v1/documentation
+
+        === Rollbar ===
+        Enabled: ${rollbar.client.options.enabled}
+    `);
+});
